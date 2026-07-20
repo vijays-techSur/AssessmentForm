@@ -1,6 +1,6 @@
 'use client';
 import { useState, useEffect, useCallback, useRef } from 'react';
-import { useRouter } from 'next/navigation';
+import { useRouter, useSearchParams } from 'next/navigation';
 import type { SessionResponse, SectionSummary, Question, AnswerPayload, ResponseItem } from '@/lib/api/types';
 import { useSectionList } from '@/hooks/useSectionList';
 import { useAutoSave } from '@/hooks/useAutoSave';
@@ -17,8 +17,15 @@ interface Props {
 
 export function AssessmentWizard({ session, token }: Props) {
   const router = useRouter();
+  const searchParams = useSearchParams();
+  // US-0.3 AC: fromReview param signals edit-from-review mode; Next returns to /assessment/review
+  const fromReview = searchParams.get('fromReview') === 'true';
+  const initialSection = parseInt(searchParams.get('section') ?? '', 10);
   const { sections, loadSections } = useSectionList();
-  const [currentIndex, setCurrentIndex] = useState(session.current_section_index);
+  // Use section index from URL param when navigating back from review (US-0.3 AC)
+  const [currentIndex, setCurrentIndex] = useState(
+    !isNaN(initialSection) && initialSection >= 0 ? initialSection : session.current_section_index
+  );
   const [currentQuestions, setCurrentQuestions] = useState<Question[]>([]);
   const [answers, setAnswers] = useState<Record<string, AnswerPayload>>(() => {
     const initial: Record<string, AnswerPayload> = {};
@@ -80,12 +87,17 @@ export function AssessmentWizard({ session, token }: Props) {
 
   const handleNext = useCallback(async () => {
     await triggerSave(); // US-4.1: auto-save on navigation
+    if (fromReview) {
+      // US-0.3 AC: After editing from Review Step, Next returns to Review Step (not next sequential section)
+      router.push('/assessment/review');
+      return;
+    }
     if (currentIndex >= sections.length - 1) {
       router.push('/assessment/review');
     } else {
       setCurrentIndex((i) => i + 1);
     }
-  }, [currentIndex, sections.length, triggerSave, router]);
+  }, [currentIndex, sections.length, triggerSave, router, fromReview]);
 
   const handlePrevious = useCallback(async () => {
     await triggerSave(); // US-4.1: auto-save on Previous too
