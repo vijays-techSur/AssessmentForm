@@ -46,7 +46,7 @@ Teams can efficiently self-assess their readiness for and expectations of a Deve
   - Data/API Governance teams
 - Assessment purpose: Enterprise-level vs team-level need assessment, capability gap identification
 - Due date window: ~2 weeks from assessment launch for edits
-- Section structure: 2 mandatory sections + up to 5-6 optional role-specific sections (max 7-8 sections)
+- Section structure: 3 mandatory sections (General DP Alignment, Current Status, Feedback & Adaptability) + up to 5 optional role-specific sections (max 7-8 sections total)
 - Questions per section: 5-6 questions
 - Question variety required to capture nuanced preferences (Likert for sentiment, Ranking for priority, Choice for selection, Free text for open feedback)
 

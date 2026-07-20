@@ -82,6 +82,7 @@ This Functional Requirements Document specifies the detailed behavior of every f
 | Security | Dashboard accessible only to System Owner role |
 | Data Privacy | Respondent email/name stored; no external data sharing |
 | Auditability | Submission timestamps and last-modified per response stored |
+| Dashboard refresh | The dashboard response summary (counts by team type, total/submitted/draft) auto-refreshes via client-side polling every 60 seconds while the System Owner has the dashboard open. Individual response list rows do not auto-refresh; the System Owner applies filters or reloads to see new rows. The idle timeout for polling resets if the System Owner navigates away from the dashboard. |
 
 ---
 ---
@@ -105,6 +106,7 @@ This Functional Requirements Document specifies the detailed behavior of every f
 - Pre-submission Review step with all answers displayed
 - Back navigation from Review to any section for edits
 - Keyboard accessibility for all navigation controls
+- **Direct section jump for returning users:** When a respondent returns to edit a submitted assessment (within the edit window), the progress indicator items are clickable, allowing direct navigation to any section without stepping through sequentially. Jump navigation is available only when `submission_status === "submitted"` and `is_closed === false`. (See F05 §Re-Edit Within Edit Window.)
 
 **Process:**
 1. Respondent completes identity entry (see F01) and team type selection (see F03).
@@ -398,6 +400,7 @@ This Functional Requirements Document specifies the detailed behavior of every f
 - Each section must have at least 1 and at most 6 questions (enforced at question configuration time, not here).
 - Mandatory sections `general_dp_alignment`, `current_status`, `feedback_adaptability` must always appear for all team types; if missing from config, system auto-inserts them.
 - `feedback_adaptability` must always be the last section in display order; system enforces this during section list construction regardless of configured order.
+- **Team type is locked after session creation.** On re-entry, the `team_type` field on the start page displays the stored value in read-only format. The server ignores any `team_type` submitted in a `POST /api/sessions` call for an existing session and returns the stored value. This prevents section-list changes that would invalidate existing saved responses.
 
 **Error States:**
 | Scenario | HTTP Status | Error Code | Message |
@@ -421,7 +424,7 @@ This Functional Requirements Document specifies the detailed behavior of every f
 **Terminology:**
 - **Auto-Save Trigger:** An event that initiates a background save: section navigation or idle timeout.
 - **Save State Indicator:** A persistent UI element showing the current save status: `Saved`, `Saving…`, or `Unsaved changes`.
-- **Idle Timeout:** A configurable inactivity period (default 30 seconds) after which auto-save fires if there are unsaved changes.
+- **Idle Timeout:** A configurable inactivity period (default 30 seconds) after which auto-save fires if there are unsaved changes. Configured via server-side environment variable `AUTO_SAVE_IDLE_SECONDS` (default: `30`). Not configurable from the dashboard.
 - **Draft State:** The `submission_status` value `draft` — answers are saved but not submitted.
 - **Dirty State:** The client-side flag indicating unsaved changes exist since the last successful auto-save.
 - **Pre-population:** On resume, the system fills in previously saved answers into the form fields automatically.
@@ -537,11 +540,11 @@ This Functional Requirements Document specifies the detailed behavior of every f
 1. Returning respondent loads session (GET /api/sessions/:sessionId).
 2. Server returns `submission_status: submitted` and due date.
 3. Client checks: Is current timestamp before due date?
-   - Yes: Render form in editable mode with "re-edit" banner (see F09 §re-entry banner).
+   - Yes: Render form in editable mode with "re-edit" banner (see F09 §re-entry banner). Progress indicator items are clickable for direct section jump.
    - No: Render form in read-only mode with "Assessment closed" message.
 4. Respondent makes changes; auto-save applies normally (see F04).
-5. Respondent clicks **Submit** again (or auto-save persists changes without re-submission needed — edits are live on save).
-6. Server updates `sessions.last_modified_at = NOW()`; `submission_status` remains `submitted`.
+5. **Auto-save is the sole mechanism for persisting edits within the edit window.** The Submit button is presented on the Review Step as an optional re-confirmation gesture, but clicking it is not required — auto-saved changes are final. Clicking Submit again updates `sessions.last_modified_at` only; `submitted_at` remains unchanged and no second submission record is created.
+6. Server updates `sessions.last_modified_at = NOW()` on each auto-save; `submission_status` remains `submitted`.
 
 **Post-Due-Date Enforcement:**
 1. On every `GET /api/sessions/:sessionId` response, server includes `{ is_closed: true/false, due_date: "..." }`.
@@ -639,6 +642,8 @@ This Functional Requirements Document specifies the detailed behavior of every f
 - **Choice Question Breakdown:** For each single/multi-choice question, a pie or horizontal bar chart showing option selection frequency.
 - All charts filter by the active team type filter when set.
 - Charts render using server-aggregated data (`GET /api/dashboard/analytics`).
+- **Empty state:** When no submitted responses exist, all chart areas display an empty state message: _"No responses yet. Charts will populate as respondents submit."_ No error is shown; the analytics panel structure is rendered with placeholders.
+- **Deduplication status banner:** The response list view displays a banner confirming: _"Deduplication active — 0 duplicate email addresses detected."_ This count is returned by `GET /api/dashboard/responses` as a `duplicate_count` summary field and is always 0 in a correctly functioning system.
 
 **CSV Export:**
 1. System Owner clicks **Export CSV**.
@@ -701,13 +706,17 @@ This Functional Requirements Document specifies the detailed behavior of every f
 
 **Process:**
 
-**Role Determination at Login:**
-1. Respondent or System Owner submits email + name via `POST /api/sessions` or `POST /api/auth/login` (dashboard login).
-2. Server checks email against `system_owner_emails` table (case-insensitive).
-3. If match found: `role = "system_owner"`.
-4. If no match: `role = "respondent"`.
-5. Server issues a signed JWT with payload `{ session_id, email, role, issued_at, expires_at }`. Expiry: 8 hours for System Owners; 24 hours for Respondents (to cover resume across days).
-6. JWT returned to client; stored in `localStorage` or `sessionStorage`.
+**Role Determination at Login — Two Separate Entry Points:**
+
+- **Respondents** use `POST /api/sessions` on the assessment start page (email + name + team type).
+- **System Owners** use `POST /api/auth/login` on the dedicated dashboard login page (email + name; no team type). The dashboard login page is a distinct UI route (e.g., `/dashboard/login`) separate from the assessment start page.
+
+These are not interchangeable: `POST /api/sessions` accepts `team_type` and returns `session_id` + respondent session context; `POST /api/auth/login` does not accept `team_type`, does not create a respondent session, and returns only a JWT with `role: "system_owner"`.
+
+1. **Respondent flow:** Respondent submits email + name + team_type via `POST /api/sessions`. Server checks email against `system_owner_emails`; if match, returns `SYSTEM_OWNER_CANNOT_RESPOND` (403). Otherwise issues a Respondent JWT and creates/loads the session.
+2. **System Owner flow:** System Owner submits email + name via `POST /api/auth/login`. Server checks email against `system_owner_emails`; if no match, returns `NOT_A_SYSTEM_OWNER` (403). If match, issues a System Owner JWT (no session record created).
+3. Server issues a signed JWT with payload `{ session_id, email, role, issued_at, expires_at }`. Expiry: 8 hours for System Owners; 24 hours for Respondents.
+4. JWT returned to client; stored in `localStorage` or `sessionStorage`.
 
 **System Owner Dashboard Access:**
 1. System Owner navigates to `/dashboard`.
@@ -872,10 +881,11 @@ This Functional Requirements Document specifies the detailed behavior of every f
 
 **Re-entry After Due Date (Assessment Closed):**
 1. Respondent returns to the assessment URL. Client sends `POST /api/sessions` with their email.
-2. Server returns `is_closed: true`.
+2. Server returns `is_closed: true` and `submission_status`.
 3. Client renders all sections in read-only mode.
-4. A dismissible banner is shown at the top of every section:
-   - _"This assessment is now closed. Your responses are saved and have been submitted to the System Owner."_
+4. A dismissible banner is shown at the top of every section, with message depending on `submission_status`:
+   - **If `submitted`:** _"This assessment is now closed. Your responses are saved and have been submitted to the System Owner."_
+   - **If `draft` (never submitted):** _"This assessment is now closed. Your draft responses were not submitted and will not be included in the analysis. Please contact the System Owner if you believe this is an error."_
 5. No Save, Submit, or navigation controls are active. Previous/Next buttons navigate read-only sections for review purposes only.
 
 **Inputs:**
@@ -1335,6 +1345,9 @@ Paginated list of all respondent sessions. System Owner only.
   "total": 87,
   "page": 1,
   "pageSize": 25,
+  "submitted_count": 72,
+  "draft_count": 15,
+  "duplicate_count": 0,
   "data": [
     {
       "session_id": "uuid",
@@ -1348,7 +1361,7 @@ Paginated list of all respondent sessions. System Owner only.
   ]
 }
 ```
-**Errors:** `400 INVALID_DATE_RANGE`, `401 AUTH_REQUIRED`, `403 ACCESS_DENIED`
+> `duplicate_count` is the count of email addresses appearing in more than one session record. In a correctly operating system this is always `0` (enforced by F5). The dashboard renders this as a deduplication status banner. **Errors:** `400 INVALID_DATE_RANGE`, `401 AUTH_REQUIRED`, `403 ACCESS_DENIED`
 
 ---
 

@@ -231,7 +231,7 @@
 - [ ] No empty or irrelevant sections are displayed at any point during the assessment
 - [ ] Section count is between 5 and 8 depending on team type (3 mandatory + team-type-specific optional sections)
 - [ ] The progress indicator reflects the actual total sections for the respondent's team type (not a static global count)
-- [ ] Changing team type on re-entry with an existing session does not break section routing
+- [ ] Team type is locked after first session creation: on re-entry, the team type field on the start page is displayed in read-only format with the stored value; the server ignores any new team type submitted for an existing session
 
 **Priority:** P0 | **Feature Ref:** F3
 
@@ -304,7 +304,7 @@
 - [ ] The idle timer resets on any user interaction (keystroke, click, selection change)
 - [ ] The Save State Indicator transitions from "Unsaved changes" to "Saving…" to "Saved at {time}" during idle auto-save
 - [ ] If a section transition occurs during a mid-flight idle save, the save completes and no answers are lost
-- [ ] The idle timeout interval is configurable (server-side) without a code deploy
+- [ ] The idle timeout interval is configurable via the server-side environment variable `AUTO_SAVE_IDLE_SECONDS` (default: 30 seconds); no code deploy required for this change, and no dashboard UI control is provided for this setting
 
 **Priority:** P0 | **Feature Ref:** F4
 
@@ -321,6 +321,24 @@
 - [ ] Pre-population completes before the first section is rendered (no visible empty → filled flash)
 
 **Priority:** P0 | **Feature Ref:** F4
+
+---
+
+## Epic 0 (continued): Multi-Step Assessment Workflow (F0)
+
+---
+
+### US-0.5: Jump Directly to Any Section When Returning to Edit a Submitted Assessment
+**As a** Marcus Reid or Priya Nair, **I want to** click directly on any section in the progress indicator when I return to edit my submitted assessment, **so that** I can reach the section I need to correct without stepping through every preceding section sequentially.
+
+**Acceptance Criteria:**
+- [ ] When a respondent returns with `submission_status === "submitted"` and within the edit window (`is_closed === false`), every item in the progress indicator is rendered as a clickable link
+- [ ] Clicking any progress indicator item navigates directly to that section without triggering validation on intermediate sections
+- [ ] The progress indicator is not clickable for navigation during a first-time (new respondent) assessment flow — click-to-jump is available only during an edit session
+- [ ] After navigating directly to a section and making a change, the respondent can use Previous/Next to continue from that point; clicking Review in the progress indicator goes to the Review Step
+- [ ] Keyboard focus is managed correctly on jump navigation (WCAG 2.1 AA)
+
+**Priority:** P0 | **Feature Ref:** F0, F5
 
 ---
 
@@ -350,9 +368,10 @@
 **Acceptance Criteria:**
 - [ ] A returning respondent who has already submitted sees a re-entry banner: "You've already submitted your assessment. You can update your answers until {due_date}."
 - [ ] The form is fully editable during the edit window (before due date) for submitted respondents
-- [ ] Auto-save continues to work normally for edits within the edit window
-- [ ] Edited answers are persisted immediately via auto-save; no need to re-submit to preserve changes
+- [ ] Auto-save continues to work normally for edits within the edit window; auto-save alone is sufficient to preserve changes — no re-submit is required
+- [ ] The Submit button is available on the Review Step as an optional re-confirmation action; clicking it is not required and does not create a duplicate record; it updates `last_modified_at` only
 - [ ] `last_modified_at` is updated on each save; `submitted_at` remains unchanged
+- [ ] **Direct section jump:** The progress indicator items are clickable when returning to edit a submitted assessment, allowing the respondent to navigate directly to any section without stepping through sequentially
 
 **Priority:** P0 | **Feature Ref:** F5
 
@@ -445,7 +464,8 @@
 - [ ] For each single/multi-choice question, a pie or horizontal bar chart shows option selection frequency
 - [ ] All charts respond to the active team type filter when set
 - [ ] Charts render using server-aggregated data (not client-side raw data); analytics endpoint: `GET /api/dashboard/analytics`
-- [ ] If analytics data is unavailable, a graceful error is shown: "Analytics could not be loaded. Please refresh."
+- [ ] When no submitted responses exist, all chart areas show an empty state message: "No responses yet. Charts will populate as respondents submit." No error is shown.
+- [ ] If analytics data is unavailable due to a server error, a graceful error is shown: "Analytics could not be loaded. Please refresh."
 
 **Priority:** P0 | **Feature Ref:** F6
 
@@ -607,12 +627,14 @@
 ---
 
 ### US-9.3: See a Clear "Assessment Closed" Message After the Due Date
-**As a** Marcus Reid, **I want to** see a clear message that the assessment is closed when I return after the deadline, **so that** I understand my submitted answers are final and have been received.
+**As a** Marcus Reid, **I want to** see a clear message that the assessment is closed when I return after the deadline, **so that** I understand the state of my responses.
 
 **Acceptance Criteria:**
-- [ ] Returning after the due date shows a dismissible banner on every section: "This assessment is now closed. Your responses are saved and have been submitted to the System Owner."
+- [ ] Returning after the due date shows a dismissible banner on every section with a message that depends on submission status:
+  - **If submitted:** "This assessment is now closed. Your responses are saved and have been submitted to the System Owner."
+  - **If draft (never submitted):** "This assessment is now closed. Your draft responses were not submitted and will not be included in the analysis. Please contact the System Owner if you believe this is an error."
 - [ ] All form inputs are read-only; no editing, saving, or re-submitting is possible
-- [ ] Previous/Next navigation still functions to allow the respondent to review their submitted answers
+- [ ] Previous/Next navigation still functions to allow the respondent to review their saved answers
 - [ ] The read-only state is enforced server-side; attempts to save via `PUT /api/responses/:sessionId` after the due date return 403 `ASSESSMENT_CLOSED`
 - [ ] The "Assessment closed" view is shown for both `submitted` and `draft` sessions after the due date
 
@@ -628,6 +650,7 @@
 | US-0.2 | Track Progress Through the Assessment | Marcus Reid | P0 | F0 |
 | US-0.3 | Review All Answers Before Submitting | Marcus Reid | P0 | F0 |
 | US-0.4 | Be Blocked With Unanswered Required Questions | Marcus Reid | P0 | F0 |
+| US-0.5 | Jump Directly to Any Section When Returning to Edit | Marcus Reid, Priya Nair | P0 | F0, F5 |
 | US-1.1 | Enter Identity to Start the Assessment | Marcus Reid | P0 | F1 |
 | US-1.2 | Resume the Assessment After Closing the Browser | Marcus Reid | P0 | F1 |
 | US-1.3 | Have Session Persisted Across the Assessment Window | Priya Nair | P0 | F1 |
@@ -663,7 +686,7 @@
 | US-9.2 | See a Re-Entry Banner When Returning After Submitting | Priya Nair | P1 | F9 |
 | US-9.3 | See a Clear "Assessment Closed" Message After the Due Date | Marcus Reid | P1 | F9 |
 
-**Total: 38 user stories across 10 epics**
+**Total: 39 user stories across 10 epics**
 
 ---
 
@@ -671,7 +694,7 @@
 
 | Priority | Stories | Features |
 |---|---|---|
-| **P0** — Critical MVP | 32 | F0, F1, F2, F3, F4, F5, F6, F7 |
+| **P0** — Critical MVP | 33 | F0, F1, F2, F3, F4, F5, F6, F7 |
 | **P1** — High / Pre-launch | 6 | F8, F9 |
 | **P2** — Medium / Deferrable | 0 | — |
 | **P3** — Out of scope for v1 | 0 | — |

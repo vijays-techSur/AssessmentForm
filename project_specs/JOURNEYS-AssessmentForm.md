@@ -102,7 +102,7 @@ Marcus completes all relevant sections across two sessions with zero lost answer
 #### Key Moments
 
 - **Decision Point:** Stage 1 — If the system doesn't recognize Marcus's email immediately and show his existing submission, he may create a duplicate entry or give up.
-- **Risk of Abandonment:** Stage 3 — Forced sequential navigation to reach one section in a 7-section form is a friction multiplier; a returning user needs direct jump navigation.
+- **Risk of Abandonment:** Stage 3 — Forced sequential navigation to reach one section in a 7-section form is a friction multiplier; a returning user needs direct jump navigation. **Addressed by US-0.5:** Progress indicator items are clickable for direct section jump when `submission_status === "submitted"` and within the edit window.
 - **Delight Opportunity:** Stage 5 — An explicit "updated, not duplicated" confirmation message eliminates post-submission anxiety for the respondent and maintains data integrity trust.
 
 #### Success Outcome
@@ -115,7 +115,7 @@ Marcus edits one answer and re-submits within 3 minutes of re-entry, with explic
 |---|---|
 | Return | F1 (Session recognition) |
 | Recognize | F5 (Edit window enforcement), F9 (Banner confirmation) |
-| Navigate | F0 (Section navigation) |
+| Navigate | F0 (Section navigation — direct jump via clickable progress indicator; US-0.5) |
 | Correct | F0, F2 (Question types), F4 (Auto-save) |
 | Re-submit | F0 (Summary), F5 (Deduplication), F9 (Updated confirmation) |
 
@@ -205,7 +205,7 @@ Priya updates her CI/CD ranking (onboarding automation from #3 to #1) and re-sub
 |---|---|
 | Re-enter | F1 (Session recognition), F5 (Edit window check) |
 | Load Previous Answers | F5 (Edit mode), F9 (Edit banner) |
-| Update Ranking | F2 (Ranking), F0 (Navigation), F4 (Auto-save) |
+| Update Ranking | F2 (Ranking), F0 (Navigation — direct jump via clickable progress indicator; US-0.5), F4 (Auto-save) |
 | Re-submit | F0 (Summary), F5 (Deduplication), F9 (Updated confirmation) |
 
 ---
@@ -316,7 +316,7 @@ Dana exports a clean, complete CSV with human-readable headers on day 15, confir
 
 ### Shared Opportunities
 
-- **Direct section jump on re-entry:** Both Marcus (JRN-01.2, Stage 3) and Priya (JRN-02.2, Stage 3) need to navigate to a specific section when returning to edit. Sequential next/previous navigation through all sections is a significant friction multiplier for returning users. A section progress indicator that doubles as direct navigation (click to jump) solves both journeys simultaneously.
+- **Direct section jump on re-entry:** Both Marcus (JRN-01.2, Stage 3) and Priya (JRN-02.2, Stage 3) need to navigate to a specific section when returning to edit. Sequential next/previous navigation through all sections is a significant friction multiplier for returning users. **Addressed by US-0.5:** A section progress indicator that doubles as direct navigation (click to jump) is available during edit-window re-entry sessions, solving both journeys simultaneously.
 
 - **Role-appropriate terminology in section questions:** Marcus struggles with DP jargon (JRN-01.1, Stage 3); Priya finds generic program-management language irrelevant (JRN-02.1, Stage 2). Both are partially addressed by section routing (F3), but inline tooltips and question-level tone calibration per section type provide the remaining fix.
 

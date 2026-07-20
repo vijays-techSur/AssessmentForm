@@ -17,7 +17,7 @@
 
 ## Overview
 
-This Story Map organizes all 38 user stories into a two-dimensional grid:
+This Story Map organizes all 39 user stories into a two-dimensional grid:
 
 - **X-axis (columns):** Journey stages drawn from JOURNEYS-AssessmentForm.md, consolidated into six cross-persona backbone stages that span the complete product experience — from first arrival through system owner data export.
 - **Y-axis (rows):** Individual user stories placed at the intersection of journey stage and epic/feature, ordered by priority within each stage.
@@ -102,11 +102,12 @@ Story map entries use `SM-{Epic}.{NN}` (e.g., SM-0.1 maps to US-0.1 in Epic 0).
 
 | SM-ID | Epic | Story | Persona | NaC (JTBD Source) | Rel |
 |---|---|---|---|---|---|
-| SM-5.2 | Epic 5 (F5) | **US-5.2** — Edit Submitted Answers Before the Due Date | PER-02 | *JTBD-02.2 → Load Previous Answers:* A returning submitted respondent within the edit window sees a re-entry banner with the due date; the form is fully editable and all question types (including ranking order and "Other" text) are pre-populated exactly | R1 |
-| SM-5.3 | Epic 5 (F5) | **US-5.3** — See a Read-Only View After the Assessment Due Date | PER-01 | *JTBD-01.2 → Re-submit:* After the due date, all form inputs are read-only; a persistent banner states "This assessment is now closed"; Previous/Next navigation still works for reviewing; server-side enforces 403 `ASSESSMENT_CLOSED` on save attempts | R1 |
+| SM-0.5 | Epic 0 (F0) | **US-0.5** — Jump Directly to Any Section When Returning to Edit | PER-01, PER-02 | *JTBD-01.2 / JTBD-02.2 → Navigate:* When a submitted respondent within the edit window clicks any section item in the progress indicator, the form navigates directly to that section without stepping through intermediate sections | R1 |
+| SM-5.2 | Epic 5 (F5) | **US-5.2** — Edit Submitted Answers Before the Due Date | PER-02 | *JTBD-02.2 → Load Previous Answers:* A returning submitted respondent within the edit window sees a re-entry banner with the due date; the form is fully editable and all question types (including ranking order and "Other" text) are pre-populated exactly; auto-save alone persists changes with no re-submit required | R1 |
+| SM-5.3 | Epic 5 (F5) | **US-5.3** — See a Read-Only View After the Assessment Due Date | PER-01 | *JTBD-01.2 → Re-submit:* After the due date, all form inputs are read-only; a persistent banner states the correct message based on submission status (submitted vs. draft-never-submitted); Previous/Next navigation still works for reviewing; server-side enforces 403 `ASSESSMENT_CLOSED` on save attempts | R1 |
 | SM-5.4 | Epic 5 (F5) | **US-5.4** — Be Prevented From Submitting After the Due Date | PER-01 | *JTBD-01.2 → Re-submit:* Attempting to submit after the due date returns a clear error message; draft sessions are also locked; the due-date check is enforced server-side on every submission attempt | R1 |
 | SM-9.2 | Epic 9 (F9) | **US-9.2** — See a Re-Entry Banner When Returning After Submitting | PER-02 | *JTBD-02.2 → Load Previous Answers:* A non-dismissible banner appears at the top of every section during a re-entry edit session, displaying the exact due date from `assessment_config`; the form is fully editable beneath the banner | R2 |
-| SM-9.3 | Epic 9 (F9) | **US-9.3** — See a Clear "Assessment Closed" Message After the Due Date | PER-01 | *JTBD-01.2 → Re-submit:* After the due date, a dismissible "Assessment is now closed" banner appears on every section view; all question inputs are non-interactive; server-side 403 is returned for any save attempt | R2 |
+| SM-9.3 | Epic 9 (F9) | **US-9.3** — See a Clear "Assessment Closed" Message After the Due Date | PER-01 | *JTBD-01.2 → Re-submit:* After the due date, a dismissible banner appears on every section with status-appropriate text (submitted vs. draft-never-submitted); all question inputs are non-interactive; server-side 403 is returned for any save attempt | R2 |
 
 ---
 
@@ -170,7 +171,7 @@ Full traceability: **JTBD Outcome → Journey Stage → NaC → Story**
 
 **JTBD Addressed:** JTBD-01.1, JTBD-01.2 (partial), JTBD-01.3, JTBD-02.1, JTBD-02.2 (partial), JTBD-02.3, JTBD-03.1, JTBD-03.2, JTBD-03.3 (partial)
 
-**Stories Included (32 stories):**
+**Stories Included (33 stories):**
 
 | Story | Epic | Priority | Journey Coverage |
 |---|---|---|---|
@@ -178,6 +179,7 @@ Full traceability: **JTBD Outcome → Journey Stage → NaC → Story**
 | US-0.2 | F0 | P0 | STG-02 |
 | US-0.3 | F0 | P0 | STG-04 |
 | US-0.4 | F0 | P0 | STG-02 |
+| US-0.5 | F0, F5 | P0 | STG-05 |
 | US-1.1 | F1 | P0 | STG-01 |
 | US-1.2 | F1 | P0 | STG-03 |
 | US-1.3 | F1 | P0 | STG-03 |
@@ -215,7 +217,7 @@ Full traceability: **JTBD Outcome → Journey Stage → NaC → Story**
 | PER-02 Priya | Full journey: Identify & Route → Technical Sections → Ranking → "Other" Free-Text → Submit → Re-entry Edit | Re-entry banner (US-9.2) deferred to R2; Priya can edit but banner communication is reduced |
 | PER-03 Dana | Full journey: Dashboard access → Response list → Filter → Drill-down → Analytics → CSV export | Config panel (US-8.1–8.3) deferred to R2; due date must be set at deployment in R1 |
 
-**R1 completes journeys:** JRN-01.1 (full), JRN-01.2 (full, without explicit updated-submission confirmation copy), JRN-02.1 (full), JRN-02.2 (full, without re-entry banner polish), JRN-03.1 (partial — no config panel), JRN-03.2 (full)
+**R1 completes journeys:** JRN-01.1 (full), JRN-01.2 (full including direct section jump, without explicit updated-submission confirmation copy), JRN-02.1 (full), JRN-02.2 (full including direct section jump, without re-entry banner polish), JRN-03.1 (partial — no config panel), JRN-03.2 (full)
 
 ---
 
@@ -280,7 +282,7 @@ Full traceability: **JTBD Outcome → Journey Stage → NaC → Story**
 | STG-02: Answer Questions | US-0.1, US-0.2, US-0.4, US-2.1, US-2.2, US-2.3, US-2.4, US-2.5 | — | ✅ Full in R1 |
 | STG-03: Pause & Persist | US-1.2, US-1.3, US-4.1, US-4.2, US-4.3, US-7.4 | — | ✅ Full in R1 |
 | STG-04: Review & Submit | US-0.3, US-5.1, US-7.2 | US-9.1 | ✅ Functional in R1; messaging polished in R2 |
-| STG-05: Return & Edit | US-5.2, US-5.3, US-5.4 | US-9.2, US-9.3 | ✅ Functional in R1; UX trust signals in R2 |
+| STG-05: Return & Edit | US-0.5, US-5.2, US-5.3, US-5.4 | US-9.2, US-9.3 | ✅ Functional in R1 including direct section jump; UX trust signals in R2 |
 | STG-06: Monitor & Export | US-6.1, US-6.2, US-6.3, US-6.4, US-6.5, US-7.1, US-7.3 | US-8.1, US-8.2, US-8.3 | ✅ Full visibility in R1; self-service config in R2 |
 
 ### 6.4 Gap Analysis
@@ -292,7 +294,7 @@ Full traceability: **JTBD Outcome → Journey Stage → NaC → Story**
 - None. All 9 JTBD outcomes have at least one derived NaC in the NaC Derivation Table.
 
 **Orphan stories (not mapped to any journey stage):**
-- None. All 38 user stories (US-0.1 through US-9.3) are placed on the map.
+- None. All 39 user stories (US-0.1 through US-9.3) are placed on the map.
 
 **Journey stages partially served in R1 (addressed in R2):**
 - STG-04 (Review & Submit): US-9.1 (confirmation screen) deferred to R2 — functional submission works but messaging is minimal.

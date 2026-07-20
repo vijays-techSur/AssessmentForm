@@ -234,6 +234,7 @@ AssessmentForm-Express addresses these gaps by providing a structured, guided as
 - **Time-to-complete:** Average assessment completion time under 20 minutes per respondent
 - **Data quality:** ≥ 90% of submitted responses have all mandatory section questions answered
 - **Team type coverage:** All 4 team types represented in the final response dataset
+- **Decision readiness:** System Owner can present analytics charts and export a clean CSV dataset at the close of the window without any manual post-processing (no Excel rebuilding, no deduplication work)
 
 ---
 
