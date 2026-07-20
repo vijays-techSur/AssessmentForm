@@ -9,9 +9,10 @@ import type { AuthenticatedRequest } from '@/types/auth';
 // FRD F07: 403 SESSION_ACCESS_DENIED
 export function requireSessionOwner(
   handler: (req: AuthenticatedRequest, sessionId: string) => Promise<NextResponse>
-): (req: AuthenticatedRequest, ctx: { params: { sessionId: string } }) => Promise<NextResponse> {
-  return async (req: AuthenticatedRequest, ctx: { params: { sessionId: string } }) => {
-    const { sessionId } = ctx.params;
+): (req: AuthenticatedRequest, ctx: { params: Promise<{ sessionId: string }> | { sessionId: string } }) => Promise<NextResponse> {
+  return async (req: AuthenticatedRequest, ctx: { params: Promise<{ sessionId: string }> | { sessionId: string } }) => {
+    const resolvedParams = ctx.params instanceof Promise ? await ctx.params : ctx.params;
+    const { sessionId } = resolvedParams;
 
     // System Owners: bypass ownership check (but dashboard routes use requireSystemOwner instead)
     if (req.user.role === 'system_owner') {

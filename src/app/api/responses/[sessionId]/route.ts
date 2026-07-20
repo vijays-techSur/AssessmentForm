@@ -26,9 +26,9 @@ import { PutResponsesBodySchema } from '@/lib/schemas/answerPayload';
  */
 export async function PUT(
   request: NextRequest,
-  { params }: { params: { sessionId: string } }
+  { params }: { params: Promise<{ sessionId: string }> }
 ) {
-  const { sessionId } = params;
+  const { sessionId } = await params;
 
   // 1. assessmentOpenGuard — reject if due date has passed (TechArch §2.4)
   // FRD F04: If submission_status is 'submitted' AND due date passed → ASSESSMENT_CLOSED

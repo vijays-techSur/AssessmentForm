@@ -26,9 +26,9 @@ import { sendSubmissionConfirmation } from '@/lib/services/emailService';
  */
 export async function POST(
   request: NextRequest,
-  { params }: { params: { sessionId: string } }
+  { params }: { params: Promise<{ sessionId: string }> }
 ) {
-  const { sessionId } = params;
+  const { sessionId } = await params;
 
   // 1. requireSessionOwner — verify JWT + session ownership
   // Note: requireSessionOwner also blocks system_owner role (returns 403 SYSTEM_OWNER_CANNOT_SUBMIT)

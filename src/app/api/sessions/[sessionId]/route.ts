@@ -37,7 +37,7 @@ async function handleGet(
 // TechArch §2.4: jwtMiddleware applied; requireSessionOwner verifies ownership
 export async function GET(
   req: NextRequest,
-  ctx: { params: { sessionId: string } }
+  ctx: { params: Promise<{ sessionId: string }> }
 ): Promise<NextResponse> {
   return jwtMiddleware(req, (authedReq) =>
     requireSessionOwner(handleGet)(authedReq, ctx)
