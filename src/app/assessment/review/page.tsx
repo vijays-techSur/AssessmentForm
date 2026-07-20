@@ -1,5 +1,5 @@
 'use client';
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useEffect, useRef } from 'react';
 import { useRouter } from 'next/navigation';
 import { AuthGuard } from '@/components/assessment/AuthGuard';
 import { ReviewStep } from '@/components/assessment/ReviewStep';
@@ -13,22 +13,22 @@ import type { SubmitResult } from '@/components/assessment/ReviewStep';
 // US-0.3 (review before submit), US-5.1 (submit only on review step)
 export default function ReviewPage() {
   const router = useRouter();
-  const { session, token } = useSession();
+  const { session, token, isLoading } = useSession();
   const { sections, loadSections } = useSectionList();
-  const [sectionsLoaded, setSectionsLoaded] = useState(false);
+  // Track whether we've initiated section loading (avoid repeated calls)
+  const sectionsLoadStarted = useRef(false);
 
-  // Load section list for the respondent's team type
+  // Load section list for the respondent's team type as soon as session is available
   useEffect(() => {
-    if (session && token && !sectionsLoaded) {
+    if (session && token && !sectionsLoadStarted.current) {
+      sectionsLoadStarted.current = true;
       // Read team type from sessionStorage (written by page.tsx at identity form submit)
       const storedTeamType = sessionStorage.getItem('af_team_type');
-      if (storedTeamType && token) {
-        loadSections(storedTeamType, token).finally(() => setSectionsLoaded(true));
-      } else {
-        setSectionsLoaded(true); // Cannot load sections without team type; ReviewStep handles gracefully
+      if (storedTeamType) {
+        loadSections(storedTeamType, token);
       }
     }
-  }, [session, token, sectionsLoaded, loadSections]);
+  }, [session, token, loadSections]);
 
   // Edit a section: navigate to /assessment with section index and fromReview flag
   // US-0.3 AC: After editing from Review Step, Next returns to Review (not next sequential section)
@@ -53,10 +53,6 @@ export default function ReviewPage() {
     router.replace('/assessment/confirmation');
   }, [router]);
 
-  if (!session || !token) {
-    return null; // AuthGuard handles redirect
-  }
-
   return (
     <AuthGuard requiredRole="respondent">
       <div className="min-h-screen bg-gray-50">
@@ -67,7 +63,17 @@ export default function ReviewPage() {
         </header>
 
         <main className="max-w-2xl mx-auto px-4 py-8">
-          {session && token && sectionsLoaded ? (
+          {/* Show loading indicator while session is resolving */}
+          {isLoading && (
+            <div className="flex items-center justify-center py-12 text-gray-400 text-sm">
+              Loading review…
+            </div>
+          )}
+          {/* Render ReviewStep as soon as session and token are available.
+              Sections may still be loading — ReviewStep renders heading and
+              submit button immediately (with empty sections list) so the page
+              is not blank during the async section fetch. */}
+          {!isLoading && session && token && (
             <ReviewStep
               session={session}
               token={token}
@@ -75,11 +81,8 @@ export default function ReviewPage() {
               onEditSection={handleEditSection}
               onSubmitSuccess={handleSubmitSuccess}
             />
-          ) : (
-            <div className="flex items-center justify-center py-12 text-gray-400 text-sm">
-              Loading review…
-            </div>
           )}
+          {/* No session after loading completes — AuthGuard handles the redirect */}
         </main>
       </div>
     </AuthGuard>

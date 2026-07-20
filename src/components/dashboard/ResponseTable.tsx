@@ -61,25 +61,10 @@ export function ResponseTable({
     return new Date(iso).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
   }
 
-  if (loading) {
-    return (
-      <div className="bg-white rounded-lg border border-gray-200 p-8 text-center text-gray-500 text-sm">
-        Loading responses…
-      </div>
-    );
-  }
-
-  if (error) {
-    return (
-      <div className="bg-white rounded-lg border border-gray-200 p-8 text-center text-red-600 text-sm">
-        {error}
-      </div>
-    );
-  }
-
   return (
     <div className="bg-white rounded-lg border border-gray-200 overflow-hidden">
       <table className="w-full text-sm">
+        {/* Table headers are always rendered so column roles are always accessible */}
         <thead className="bg-gray-50 border-b border-gray-200">
           <tr>
             {COLUMNS.map(col => (
@@ -104,7 +89,19 @@ export function ResponseTable({
           </tr>
         </thead>
         <tbody className="divide-y divide-gray-100">
-          {data.length === 0 ? (
+          {loading ? (
+            <tr>
+              <td colSpan={6} className="px-4 py-8 text-center text-gray-500 text-sm">
+                Loading responses…
+              </td>
+            </tr>
+          ) : error ? (
+            <tr>
+              <td colSpan={6} className="px-4 py-8 text-center text-red-600 text-sm">
+                {error}
+              </td>
+            </tr>
+          ) : data.length === 0 ? (
             <tr>
               <td colSpan={6} className="px-4 py-8 text-center text-gray-500">
                 No responses match your current filters.

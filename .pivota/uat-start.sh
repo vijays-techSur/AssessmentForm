@@ -1,7 +1,9 @@
 #!/usr/bin/env bash
+# Idempotent, detached UAT app launcher (written by verify-express). Re-run after
+# any code fix to (re)start the app — it frees the port first.
 set -u
 PORT="${UAT_PORT:-3000}"
-BS="${BUILD_SYSTEM:-npm}"
+BS="${BUILD_SYSTEM:-}"
 LOG=/tmp/pivota-uat-app.log
 PRIOR_PID="$(cat /tmp/pivota-uat-app.pid 2>/dev/null || true)"
 if [ -n "$PRIOR_PID" ] && kill -0 "$PRIOR_PID" 2>/dev/null; then
@@ -12,8 +14,14 @@ fi
 fuser -k "${PORT}/tcp" 2>/dev/null || true
 pkill -f 'next (dev|start)' 2>/dev/null || true
 sleep 1
+if [ "$BS" = "docker-compose" ] || ls docker-compose.y*ml compose.y*ml >/dev/null 2>&1; then
+  COMPOSE_CMD="${COMPOSE:-docker compose}"
+  $COMPOSE_CMD up -d
+  echo "[uat] ${COMPOSE_CMD} up -d"
+  exit 0
+fi
 if [ ! -f package.json ]; then
-  echo "[uat] no package.json found — start the app manually" >&2
+  echo "[uat] no compose file or package.json found — start the app manually" >&2
   exit 1
 fi
 if grep -qE '"start"[[:space:]]*:' package.json 2>/dev/null; then

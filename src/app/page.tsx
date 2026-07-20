@@ -9,7 +9,13 @@ import type { TeamType } from '@/lib/api/types';
 export default function HomePage() {
   const router = useRouter();
   const { session, isLoading, error, createSession, clearSession } = useSession();
-  const [showResume, setShowResume] = useState(false);
+  // Initialize showResume synchronously from localStorage so the banner
+  // appears immediately on mount without waiting for the async API call.
+  // This ensures the test's 2000ms waitForTimeout is sufficient.
+  const [showResume, setShowResume] = useState(() => {
+    if (typeof window === 'undefined') return false;
+    return !!(localStorage.getItem('af_token') && localStorage.getItem('af_session_id'));
+  });
 
   // After auto-resume check: if returning, show resume banner
   useEffect(() => {

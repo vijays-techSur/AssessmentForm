@@ -1,0 +1,1763 @@
+{
+  "config": {
+    "argv": [
+      "/usr/bin/node",
+      "/home/daytona/project/node_modules/.bin/playwright",
+      "test",
+      "e2e/uat/assessmentform-express-spa-multi-step-as.spec.ts",
+      "--timeout=20000"
+    ],
+    "configFile": "/home/daytona/project/playwright.config.ts",
+    "rootDir": "/home/daytona/project/e2e/uat",
+    "failOnFlakyTests": false,
+    "forbidOnly": false,
+    "fullyParallel": false,
+    "globalSetup": null,
+    "globalTeardown": null,
+    "globalTimeout": 0,
+    "grep": {},
+    "grepInvert": null,
+    "maxFailures": 0,
+    "metadata": {
+      "actualWorkers": 1
+    },
+    "preserveOutput": "always",
+    "projects": [
+      {
+        "outputDir": "/home/daytona/project/test-results",
+        "repeatEach": 1,
+        "retries": 0,
+        "metadata": {
+          "actualWorkers": 1
+        },
+        "id": "",
+        "name": "",
+        "testDir": "/home/daytona/project/e2e/uat",
+        "testIgnore": [],
+        "testMatch": [
+          "**/*.@(spec|test).?(c|m)[jt]s?(x)"
+        ],
+        "timeout": 20000
+      }
+    ],
+    "quiet": false,
+    "reporter": [
+      [
+        "json",
+        {
+          "outputFile": "playwright-results.json"
+        }
+      ],
+      [
+        "list",
+        null
+      ]
+    ],
+    "reportSlowTests": {
+      "max": 5,
+      "threshold": 300000
+    },
+    "shard": null,
+    "tags": [],
+    "updateSnapshots": "missing",
+    "updateSourceMethod": "patch",
+    "version": "1.61.1",
+    "workers": 8,
+    "webServer": null
+  },
+  "suites": [
+    {
+      "title": "assessmentform-express-spa-multi-step-as.spec.ts",
+      "file": "assessmentform-express-spa-multi-step-as.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [],
+      "suites": [
+        {
+          "title": "US-1.1: Enter Identity to Start the Assessment",
+          "file": "assessmentform-express-spa-multi-step-as.spec.ts",
+          "line": 74,
+          "column": 6,
+          "specs": [
+            {
+              "title": "identity form has email, name, and team_type fields",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 15000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "",
+                  "projectName": "",
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 104,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-07-20T20:25:32.008Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "ac8319e88d7018f426a4-76c0691124afec13b3cd",
+              "file": "assessmentform-express-spa-multi-step-as.spec.ts",
+              "line": 75,
+              "column": 7
+            },
+            {
+              "title": "team_type dropdown contains all four team options",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 15000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "",
+                  "projectName": "",
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 106,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-07-20T20:25:32.153Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "ac8319e88d7018f426a4-3fd1cdc02fdca9f8e0ed",
+              "file": "assessmentform-express-spa-multi-step-as.spec.ts",
+              "line": 84,
+              "column": 7
+            },
+            {
+              "title": "Start Assessment button is disabled until all fields are filled",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 15000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "",
+                  "projectName": "",
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 98,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-07-20T20:25:32.266Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "ac8319e88d7018f426a4-46abc67cfbfaa1fb0597",
+              "file": "assessmentform-express-spa-multi-step-as.spec.ts",
+              "line": 98,
+              "column": 7
+            },
+            {
+              "title": "submitting identity form navigates to /assessment or shows resume banner",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 15000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "",
+                  "projectName": "",
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 168,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-07-20T20:25:32.368Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "ac8319e88d7018f426a4-979c1a7eb54eca995bc5",
+              "file": "assessmentform-express-spa-multi-step-as.spec.ts",
+              "line": 113,
+              "column": 7
+            },
+            {
+              "title": "section count preview appears after selecting a team type",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 15000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "",
+                  "projectName": "",
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 90,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-07-20T20:25:32.540Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "ac8319e88d7018f426a4-6ca985eb94be2e34a9dd",
+              "file": "assessmentform-express-spa-multi-step-as.spec.ts",
+              "line": 124,
+              "column": 7
+            }
+          ]
+        },
+        {
+          "title": "US-1.2: Resume a Previous Session (returning respondent)",
+          "file": "assessmentform-express-spa-multi-step-as.spec.ts",
+          "line": 136,
+          "column": 6,
+          "specs": [
+            {
+              "title": "app shows resume banner when valid session exists in localStorage",
+              "ok": false,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 15000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "",
+                  "projectName": "",
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "failed",
+                      "duration": 2182,
+                      "error": {
+                        "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mtoBe\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m) // Object.is equality\u001b[22m\n\nExpected: \u001b[32mtrue\u001b[39m\nReceived: \u001b[31mfalse\u001b[39m",
+                        "stack": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mtoBe\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m) // Object.is equality\u001b[22m\n\nExpected: \u001b[32mtrue\u001b[39m\nReceived: \u001b[31mfalse\u001b[39m\n    at /home/daytona/project/e2e/uat/assessmentform-express-spa-multi-step-as.spec.ts:154:48",
+                        "location": {
+                          "file": "/home/daytona/project/e2e/uat/assessmentform-express-spa-multi-step-as.spec.ts",
+                          "column": 48,
+                          "line": 154
+                        },
+                        "snippet": "  152 |     const isResumeBanner = await page.getByText(/welcome back/i).isVisible().catch(() => false);\n  153 |     const isAssessmentPage = page.url().includes('/assessment');\n> 154 |     expect(isResumeBanner || isAssessmentPage).toBe(true);\n      |                                                ^\n  155 |   });\n  156 |\n  157 |   test('resume banner has a Continue Assessment button', async ({ page }) => {"
+                      },
+                      "errors": [
+                        {
+                          "location": {
+                            "file": "/home/daytona/project/e2e/uat/assessmentform-express-spa-multi-step-as.spec.ts",
+                            "column": 48,
+                            "line": 154
+                          },
+                          "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mtoBe\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m) // Object.is equality\u001b[22m\n\nExpected: \u001b[32mtrue\u001b[39m\nReceived: \u001b[31mfalse\u001b[39m\n\n  152 |     const isResumeBanner = await page.getByText(/welcome back/i).isVisible().catch(() => false);\n  153 |     const isAssessmentPage = page.url().includes('/assessment');\n> 154 |     expect(isResumeBanner || isAssessmentPage).toBe(true);\n      |                                                ^\n  155 |   });\n  156 |\n  157 |   test('resume banner has a Continue Assessment button', async ({ page }) => {\n    at /home/daytona/project/e2e/uat/assessmentform-express-spa-multi-step-as.spec.ts:154:48"
+                        }
+                      ],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-07-20T20:25:32.634Z",
+                      "annotations": [],
+                      "attachments": [
+                        {
+                          "name": "screenshot",
+                          "contentType": "image/png",
+                          "path": "/home/daytona/project/test-results/assessmentform-express-spa-d601f-sion-exists-in-localStorage/test-failed-1.png"
+                        },
+                        {
+                          "name": "error-context",
+                          "contentType": "text/markdown",
+                          "path": "/home/daytona/project/test-results/assessmentform-express-spa-d601f-sion-exists-in-localStorage/error-context.md"
+                        }
+                      ],
+                      "errorLocation": {
+                        "file": "/home/daytona/project/e2e/uat/assessmentform-express-spa-multi-step-as.spec.ts",
+                        "column": 48,
+                        "line": 154
+                      }
+                    }
+                  ],
+                  "status": "unexpected"
+                }
+              ],
+              "id": "ac8319e88d7018f426a4-e7c5baa714d359a14b0f",
+              "file": "assessmentform-express-spa-multi-step-as.spec.ts",
+              "line": 137,
+              "column": 7
+            },
+            {
+              "title": "resume banner has a Continue Assessment button",
+              "ok": false,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 15000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "",
+                  "projectName": "",
+                  "results": [
+                    {
+                      "workerIndex": 1,
+                      "parallelIndex": 0,
+                      "status": "failed",
+                      "duration": 2179,
+                      "error": {
+                        "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mtoContain\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m) // indexOf\u001b[22m\n\nExpected substring: \u001b[32m\"/assessment\"\u001b[39m\nReceived string:    \u001b[31m\"http://localhost:3000/\"\u001b[39m",
+                        "stack": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mtoContain\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m) // indexOf\u001b[22m\n\nExpected substring: \u001b[32m\"/assessment\"\u001b[39m\nReceived string:    \u001b[31m\"http://localhost:3000/\"\u001b[39m\n    at /home/daytona/project/e2e/uat/assessmentform-express-spa-multi-step-as.spec.ts:171:26",
+                        "location": {
+                          "file": "/home/daytona/project/e2e/uat/assessmentform-express-spa-multi-step-as.spec.ts",
+                          "column": 26,
+                          "line": 171
+                        },
+                        "snippet": "  169 |     } else {\n  170 |       // Returning user was auto-redirected to /assessment — that is also valid\n> 171 |       expect(page.url()).toContain('/assessment');\n      |                          ^\n  172 |     }\n  173 |   });\n  174 | });"
+                      },
+                      "errors": [
+                        {
+                          "location": {
+                            "file": "/home/daytona/project/e2e/uat/assessmentform-express-spa-multi-step-as.spec.ts",
+                            "column": 26,
+                            "line": 171
+                          },
+                          "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mtoContain\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m) // indexOf\u001b[22m\n\nExpected substring: \u001b[32m\"/assessment\"\u001b[39m\nReceived string:    \u001b[31m\"http://localhost:3000/\"\u001b[39m\n\n  169 |     } else {\n  170 |       // Returning user was auto-redirected to /assessment — that is also valid\n> 171 |       expect(page.url()).toContain('/assessment');\n      |                          ^\n  172 |     }\n  173 |   });\n  174 | });\n    at /home/daytona/project/e2e/uat/assessmentform-express-spa-multi-step-as.spec.ts:171:26"
+                        }
+                      ],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-07-20T20:25:35.053Z",
+                      "annotations": [],
+                      "attachments": [
+                        {
+                          "name": "screenshot",
+                          "contentType": "image/png",
+                          "path": "/home/daytona/project/test-results/assessmentform-express-spa-3f32b--Continue-Assessment-button/test-failed-1.png"
+                        },
+                        {
+                          "name": "error-context",
+                          "contentType": "text/markdown",
+                          "path": "/home/daytona/project/test-results/assessmentform-express-spa-3f32b--Continue-Assessment-button/error-context.md"
+                        }
+                      ],
+                      "errorLocation": {
+                        "file": "/home/daytona/project/e2e/uat/assessmentform-express-spa-multi-step-as.spec.ts",
+                        "column": 26,
+                        "line": 171
+                      }
+                    }
+                  ],
+                  "status": "unexpected"
+                }
+              ],
+              "id": "ac8319e88d7018f426a4-f6624421350edd8430a8",
+              "file": "assessmentform-express-spa-multi-step-as.spec.ts",
+              "line": 157,
+              "column": 7
+            }
+          ]
+        },
+        {
+          "title": "US-1.3: Session Persisted Across Browser Refresh",
+          "file": "assessmentform-express-spa-multi-step-as.spec.ts",
+          "line": 178,
+          "column": 6,
+          "specs": [
+            {
+              "title": "af_token and af_session_id written to localStorage after identity submit",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 15000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "",
+                  "projectName": "",
+                  "results": [
+                    {
+                      "workerIndex": 2,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 186,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-07-20T20:25:37.500Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "ac8319e88d7018f426a4-baa6e7df3c15d0d264cb",
+              "file": "assessmentform-express-spa-multi-step-as.spec.ts",
+              "line": 179,
+              "column": 7
+            },
+            {
+              "title": "assessment page is accessible after page refresh using stored session",
+              "ok": false,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 15000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "",
+                  "projectName": "",
+                  "results": [
+                    {
+                      "workerIndex": 2,
+                      "parallelIndex": 0,
+                      "status": "failed",
+                      "duration": 2190,
+                      "error": {
+                        "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mtoBe\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m) // Object.is equality\u001b[22m\n\nExpected: \u001b[32mtrue\u001b[39m\nReceived: \u001b[31mfalse\u001b[39m",
+                        "stack": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mtoBe\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m) // Object.is equality\u001b[22m\n\nExpected: \u001b[32mtrue\u001b[39m\nReceived: \u001b[31mfalse\u001b[39m\n    at /home/daytona/project/e2e/uat/assessmentform-express-spa-multi-step-as.spec.ts:206:48",
+                        "location": {
+                          "file": "/home/daytona/project/e2e/uat/assessmentform-express-spa-multi-step-as.spec.ts",
+                          "column": 48,
+                          "line": 206
+                        },
+                        "snippet": "  204 |     const isAssessmentPage = url.includes('/assessment');\n  205 |     const isResumeBanner = await page.getByText(/welcome back/i).isVisible().catch(() => false);\n> 206 |     expect(isAssessmentPage || isResumeBanner).toBe(true);\n      |                                                ^\n  207 |   });\n  208 | });\n  209 |"
+                      },
+                      "errors": [
+                        {
+                          "location": {
+                            "file": "/home/daytona/project/e2e/uat/assessmentform-express-spa-multi-step-as.spec.ts",
+                            "column": 48,
+                            "line": 206
+                          },
+                          "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mtoBe\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m) // Object.is equality\u001b[22m\n\nExpected: \u001b[32mtrue\u001b[39m\nReceived: \u001b[31mfalse\u001b[39m\n\n  204 |     const isAssessmentPage = url.includes('/assessment');\n  205 |     const isResumeBanner = await page.getByText(/welcome back/i).isVisible().catch(() => false);\n> 206 |     expect(isAssessmentPage || isResumeBanner).toBe(true);\n      |                                                ^\n  207 |   });\n  208 | });\n  209 |\n    at /home/daytona/project/e2e/uat/assessmentform-express-spa-multi-step-as.spec.ts:206:48"
+                        }
+                      ],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-07-20T20:25:37.725Z",
+                      "annotations": [],
+                      "attachments": [
+                        {
+                          "name": "screenshot",
+                          "contentType": "image/png",
+                          "path": "/home/daytona/project/test-results/assessmentform-express-spa-e6046-efresh-using-stored-session/test-failed-1.png"
+                        },
+                        {
+                          "name": "error-context",
+                          "contentType": "text/markdown",
+                          "path": "/home/daytona/project/test-results/assessmentform-express-spa-e6046-efresh-using-stored-session/error-context.md"
+                        }
+                      ],
+                      "errorLocation": {
+                        "file": "/home/daytona/project/e2e/uat/assessmentform-express-spa-multi-step-as.spec.ts",
+                        "column": 48,
+                        "line": 206
+                      }
+                    }
+                  ],
+                  "status": "unexpected"
+                }
+              ],
+              "id": "ac8319e88d7018f426a4-77381576c66c0eadfc27",
+              "file": "assessmentform-express-spa-multi-step-as.spec.ts",
+              "line": 193,
+              "column": 7
+            }
+          ]
+        },
+        {
+          "title": "US-0.1: Navigate the Assessment Section by Section",
+          "file": "assessmentform-express-spa-multi-step-as.spec.ts",
+          "line": 212,
+          "column": 6,
+          "specs": [
+            {
+              "title": "Next button is visible on first section of assessment",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 15000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "",
+                  "projectName": "",
+                  "results": [
+                    {
+                      "workerIndex": 3,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 2161,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-07-20T20:25:40.146Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "ac8319e88d7018f426a4-955511a0c70092589b8d",
+              "file": "assessmentform-express-spa-multi-step-as.spec.ts",
+              "line": 213,
+              "column": 7
+            },
+            {
+              "title": "Previous button is NOT shown on first section",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 15000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "",
+                  "projectName": "",
+                  "results": [
+                    {
+                      "workerIndex": 3,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 2157,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-07-20T20:25:42.347Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "ac8319e88d7018f426a4-ba1672fc970fcaff06c6",
+              "file": "assessmentform-express-spa-multi-step-as.spec.ts",
+              "line": 237,
+              "column": 7
+            },
+            {
+              "title": "section counter text shows current section out of total",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 15000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "",
+                  "projectName": "",
+                  "results": [
+                    {
+                      "workerIndex": 3,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 2146,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-07-20T20:25:44.509Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "ac8319e88d7018f426a4-287dbfb7d32c9e922d25",
+              "file": "assessmentform-express-spa-multi-step-as.spec.ts",
+              "line": 255,
+              "column": 7
+            }
+          ]
+        },
+        {
+          "title": "US-0.2: Track Progress Through the Assessment",
+          "file": "assessmentform-express-spa-multi-step-as.spec.ts",
+          "line": 276,
+          "column": 6,
+          "specs": [
+            {
+              "title": "progress nav is visible with aria-label \"Assessment progress\"",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 15000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "",
+                  "projectName": "",
+                  "results": [
+                    {
+                      "workerIndex": 3,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 2151,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-07-20T20:25:46.660Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "ac8319e88d7018f426a4-a5c1646279c2dd8b752f",
+              "file": "assessmentform-express-spa-multi-step-as.spec.ts",
+              "line": 277,
+              "column": 7
+            },
+            {
+              "title": "progress nav items have ARIA labels describing current/completed/upcoming state",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 15000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "",
+                  "projectName": "",
+                  "results": [
+                    {
+                      "workerIndex": 3,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 2171,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-07-20T20:25:48.817Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "ac8319e88d7018f426a4-7333d83e36da5b6f63d7",
+              "file": "assessmentform-express-spa-multi-step-as.spec.ts",
+              "line": 296,
+              "column": 7
+            },
+            {
+              "title": "current section item has aria-current=\"step\"",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 15000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "",
+                  "projectName": "",
+                  "results": [
+                    {
+                      "workerIndex": 3,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 2143,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-07-20T20:25:50.994Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "ac8319e88d7018f426a4-0258d4de5ea53a05650e",
+              "file": "assessmentform-express-spa-multi-step-as.spec.ts",
+              "line": 316,
+              "column": 7
+            }
+          ]
+        },
+        {
+          "title": "US-0.3: Review All Answers Before Submitting",
+          "file": "assessmentform-express-spa-multi-step-as.spec.ts",
+          "line": 338,
+          "column": 6,
+          "specs": [
+            {
+              "title": "/assessment/review page has \"Review Your Answers\" heading",
+              "ok": false,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 15000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "",
+                  "projectName": "",
+                  "results": [
+                    {
+                      "workerIndex": 3,
+                      "parallelIndex": 0,
+                      "status": "failed",
+                      "duration": 7287,
+                      "error": {
+                        "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoBeVisible\u001b[2m(\u001b[22m\u001b[2m)\u001b[22m failed\n\nLocator: getByRole('heading', { name: /review your answers/i })\nExpected: visible\nTimeout: 5000ms\nError: element(s) not found\n\nCall log:\n\u001b[2m  - Expect \"toBeVisible\" with timeout 5000ms\u001b[22m\n\u001b[2m  - waiting for getByRole('heading', { name: /review your answers/i })\u001b[22m\n",
+                        "stack": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoBeVisible\u001b[2m(\u001b[22m\u001b[2m)\u001b[22m failed\n\nLocator: getByRole('heading', { name: /review your answers/i })\nExpected: visible\nTimeout: 5000ms\nError: element(s) not found\n\nCall log:\n\u001b[2m  - Expect \"toBeVisible\" with timeout 5000ms\u001b[22m\n\u001b[2m  - waiting for getByRole('heading', { name: /review your answers/i })\u001b[22m\n\n    at /home/daytona/project/e2e/uat/assessmentform-express-spa-multi-step-as.spec.ts:362:79",
+                        "location": {
+                          "file": "/home/daytona/project/e2e/uat/assessmentform-express-spa-multi-step-as.spec.ts",
+                          "column": 79,
+                          "line": 362
+                        },
+                        "snippet": "  360 |     await page.waitForTimeout(2000);\n  361 |\n> 362 |     await expect(page.getByRole('heading', { name: /review your answers/i })).toBeVisible();\n      |                                                                               ^\n  363 |   });\n  364 |\n  365 |   test('/assessment/review has a Submit Assessment button', async ({ page }) => {"
+                      },
+                      "errors": [
+                        {
+                          "location": {
+                            "file": "/home/daytona/project/e2e/uat/assessmentform-express-spa-multi-step-as.spec.ts",
+                            "column": 79,
+                            "line": 362
+                          },
+                          "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoBeVisible\u001b[2m(\u001b[22m\u001b[2m)\u001b[22m failed\n\nLocator: getByRole('heading', { name: /review your answers/i })\nExpected: visible\nTimeout: 5000ms\nError: element(s) not found\n\nCall log:\n\u001b[2m  - Expect \"toBeVisible\" with timeout 5000ms\u001b[22m\n\u001b[2m  - waiting for getByRole('heading', { name: /review your answers/i })\u001b[22m\n\n\n  360 |     await page.waitForTimeout(2000);\n  361 |\n> 362 |     await expect(page.getByRole('heading', { name: /review your answers/i })).toBeVisible();\n      |                                                                               ^\n  363 |   });\n  364 |\n  365 |   test('/assessment/review has a Submit Assessment button', async ({ page }) => {\n    at /home/daytona/project/e2e/uat/assessmentform-express-spa-multi-step-as.spec.ts:362:79"
+                        }
+                      ],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-07-20T20:25:53.142Z",
+                      "annotations": [],
+                      "attachments": [
+                        {
+                          "name": "screenshot",
+                          "contentType": "image/png",
+                          "path": "/home/daytona/project/test-results/assessmentform-express-spa-32f47-Review-Your-Answers-heading/test-failed-1.png"
+                        },
+                        {
+                          "name": "error-context",
+                          "contentType": "text/markdown",
+                          "path": "/home/daytona/project/test-results/assessmentform-express-spa-32f47-Review-Your-Answers-heading/error-context.md"
+                        }
+                      ],
+                      "errorLocation": {
+                        "file": "/home/daytona/project/e2e/uat/assessmentform-express-spa-multi-step-as.spec.ts",
+                        "column": 79,
+                        "line": 362
+                      }
+                    }
+                  ],
+                  "status": "unexpected"
+                }
+              ],
+              "id": "ac8319e88d7018f426a4-12bc887e3e86f3632ce8",
+              "file": "assessmentform-express-spa-multi-step-as.spec.ts",
+              "line": 339,
+              "column": 7
+            },
+            {
+              "title": "/assessment/review has a Submit Assessment button",
+              "ok": false,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 15000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "",
+                  "projectName": "",
+                  "results": [
+                    {
+                      "workerIndex": 4,
+                      "parallelIndex": 0,
+                      "status": "failed",
+                      "duration": 7178,
+                      "error": {
+                        "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoBeVisible\u001b[2m(\u001b[22m\u001b[2m)\u001b[22m failed\n\nLocator: getByRole('button', { name: /submit assessment/i })\nExpected: visible\nTimeout: 5000ms\nError: element(s) not found\n\nCall log:\n\u001b[2m  - Expect \"toBeVisible\" with timeout 5000ms\u001b[22m\n\u001b[2m  - waiting for getByRole('button', { name: /submit assessment/i })\u001b[22m\n",
+                        "stack": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoBeVisible\u001b[2m(\u001b[22m\u001b[2m)\u001b[22m failed\n\nLocator: getByRole('button', { name: /submit assessment/i })\nExpected: visible\nTimeout: 5000ms\nError: element(s) not found\n\nCall log:\n\u001b[2m  - Expect \"toBeVisible\" with timeout 5000ms\u001b[22m\n\u001b[2m  - waiting for getByRole('button', { name: /submit assessment/i })\u001b[22m\n\n    at /home/daytona/project/e2e/uat/assessmentform-express-spa-multi-step-as.spec.ts:385:76",
+                        "location": {
+                          "file": "/home/daytona/project/e2e/uat/assessmentform-express-spa-multi-step-as.spec.ts",
+                          "column": 76,
+                          "line": 385
+                        },
+                        "snippet": "  383 |     await page.waitForTimeout(2000);\n  384 |\n> 385 |     await expect(page.getByRole('button', { name: /submit assessment/i })).toBeVisible();\n      |                                                                            ^\n  386 |   });\n  387 |\n  388 |   test('/assessment/review shows Edit buttons for each section', async ({ page }) => {"
+                      },
+                      "errors": [
+                        {
+                          "location": {
+                            "file": "/home/daytona/project/e2e/uat/assessmentform-express-spa-multi-step-as.spec.ts",
+                            "column": 76,
+                            "line": 385
+                          },
+                          "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoBeVisible\u001b[2m(\u001b[22m\u001b[2m)\u001b[22m failed\n\nLocator: getByRole('button', { name: /submit assessment/i })\nExpected: visible\nTimeout: 5000ms\nError: element(s) not found\n\nCall log:\n\u001b[2m  - Expect \"toBeVisible\" with timeout 5000ms\u001b[22m\n\u001b[2m  - waiting for getByRole('button', { name: /submit assessment/i })\u001b[22m\n\n\n  383 |     await page.waitForTimeout(2000);\n  384 |\n> 385 |     await expect(page.getByRole('button', { name: /submit assessment/i })).toBeVisible();\n      |                                                                            ^\n  386 |   });\n  387 |\n  388 |   test('/assessment/review shows Edit buttons for each section', async ({ page }) => {\n    at /home/daytona/project/e2e/uat/assessmentform-express-spa-multi-step-as.spec.ts:385:76"
+                        }
+                      ],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-07-20T20:26:00.658Z",
+                      "annotations": [],
+                      "attachments": [
+                        {
+                          "name": "screenshot",
+                          "contentType": "image/png",
+                          "path": "/home/daytona/project/test-results/assessmentform-express-spa-8aff8--a-Submit-Assessment-button/test-failed-1.png"
+                        },
+                        {
+                          "name": "error-context",
+                          "contentType": "text/markdown",
+                          "path": "/home/daytona/project/test-results/assessmentform-express-spa-8aff8--a-Submit-Assessment-button/error-context.md"
+                        }
+                      ],
+                      "errorLocation": {
+                        "file": "/home/daytona/project/e2e/uat/assessmentform-express-spa-multi-step-as.spec.ts",
+                        "column": 76,
+                        "line": 385
+                      }
+                    }
+                  ],
+                  "status": "unexpected"
+                }
+              ],
+              "id": "ac8319e88d7018f426a4-cfbb74ff775881ad54b2",
+              "file": "assessmentform-express-spa-multi-step-as.spec.ts",
+              "line": 365,
+              "column": 7
+            },
+            {
+              "title": "/assessment/review shows Edit buttons for each section",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 15000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "",
+                  "projectName": "",
+                  "results": [
+                    {
+                      "workerIndex": 5,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 3226,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-07-20T20:26:08.105Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "ac8319e88d7018f426a4-ed22bd7c2fa8c73f20e7",
+              "file": "assessmentform-express-spa-multi-step-as.spec.ts",
+              "line": 388,
+              "column": 7
+            }
+          ]
+        },
+        {
+          "title": "US-0.4: Unanswered Required Questions Block Advancement",
+          "file": "assessmentform-express-spa-multi-step-as.spec.ts",
+          "line": 419,
+          "column": 6,
+          "specs": [
+            {
+              "title": "clicking Next without answering required questions shows inline error",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 15000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "",
+                  "projectName": "",
+                  "results": [
+                    {
+                      "workerIndex": 5,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 2709,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-07-20T20:26:11.372Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "ac8319e88d7018f426a4-e13985eb90ef8b34adc1",
+              "file": "assessmentform-express-spa-multi-step-as.spec.ts",
+              "line": 420,
+              "column": 7
+            },
+            {
+              "title": "validation error message tells user to answer required questions",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 15000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "",
+                  "projectName": "",
+                  "results": [
+                    {
+                      "workerIndex": 5,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 2678,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-07-20T20:26:14.087Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "ac8319e88d7018f426a4-693356f281efec5bf793",
+              "file": "assessmentform-express-spa-multi-step-as.spec.ts",
+              "line": 452,
+              "column": 7
+            }
+          ]
+        },
+        {
+          "title": "US-2.x: Question Types Render Correctly",
+          "file": "assessmentform-express-spa-multi-step-as.spec.ts",
+          "line": 483,
+          "column": 6,
+          "specs": [
+            {
+              "title": "at least one radio button is rendered for single_choice questions",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 15000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "",
+                  "projectName": "",
+                  "results": [
+                    {
+                      "workerIndex": 5,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 2652,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-07-20T20:26:16.770Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "ac8319e88d7018f426a4-39e96f47b94939f92034",
+              "file": "assessmentform-express-spa-multi-step-as.spec.ts",
+              "line": 500,
+              "column": 7
+            },
+            {
+              "title": "radio inputs are present when single_choice question is rendered",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 15000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "",
+                  "projectName": "",
+                  "results": [
+                    {
+                      "workerIndex": 5,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 2644,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-07-20T20:26:19.426Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "ac8319e88d7018f426a4-5e6b39d425d30e49c9ee",
+              "file": "assessmentform-express-spa-multi-step-as.spec.ts",
+              "line": 514,
+              "column": 7
+            },
+            {
+              "title": "checkbox inputs are present when multi_choice question is rendered",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 15000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "",
+                  "projectName": "",
+                  "results": [
+                    {
+                      "workerIndex": 5,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 2648,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-07-20T20:26:22.074Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "ac8319e88d7018f426a4-ca2d47fd8115d36122f4",
+              "file": "assessmentform-express-spa-multi-step-as.spec.ts",
+              "line": 532,
+              "column": 7
+            },
+            {
+              "title": "textarea is present when free_text_long question is rendered",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 15000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "",
+                  "projectName": "",
+                  "results": [
+                    {
+                      "workerIndex": 5,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 2658,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-07-20T20:26:24.728Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "ac8319e88d7018f426a4-9cf026561c4eafa07a0e",
+              "file": "assessmentform-express-spa-multi-step-as.spec.ts",
+              "line": 547,
+              "column": 7
+            },
+            {
+              "title": "likert scale renders a radiogroup with 1-5 options when present",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 15000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "",
+                  "projectName": "",
+                  "results": [
+                    {
+                      "workerIndex": 5,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 2647,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-07-20T20:26:27.391Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "ac8319e88d7018f426a4-727c8d4a49d90b047e7c",
+              "file": "assessmentform-express-spa-multi-step-as.spec.ts",
+              "line": 562,
+              "column": 7
+            }
+          ]
+        },
+        {
+          "title": "US-5.1/US-5.2: Submission Confirmation",
+          "file": "assessmentform-express-spa-multi-step-as.spec.ts",
+          "line": 584,
+          "column": 6,
+          "specs": [
+            {
+              "title": "/assessment/confirmation page renders with confirmation content when seeded via sessionStorage",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 15000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "",
+                  "projectName": "",
+                  "results": [
+                    {
+                      "workerIndex": 5,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 3681,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-07-20T20:26:30.045Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "ac8319e88d7018f426a4-d3dd992b485f30de44d6",
+              "file": "assessmentform-express-spa-multi-step-as.spec.ts",
+              "line": 585,
+              "column": 7
+            },
+            {
+              "title": "submit button appears on /assessment/review (not on section screens)",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 15000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "",
+                  "projectName": "",
+                  "results": [
+                    {
+                      "workerIndex": 5,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 4683,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-07-20T20:26:33.731Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "ac8319e88d7018f426a4-50f6aa68138a91e86e51",
+              "file": "assessmentform-express-spa-multi-step-as.spec.ts",
+              "line": 621,
+              "column": 7
+            }
+          ]
+        },
+        {
+          "title": "US-6.1: System Owner Dashboard Login",
+          "file": "assessmentform-express-spa-multi-step-as.spec.ts",
+          "line": 653,
+          "column": 6,
+          "specs": [
+            {
+              "title": "/dashboard/login renders the System Owner Login heading",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 15000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "",
+                  "projectName": "",
+                  "results": [
+                    {
+                      "workerIndex": 5,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 74,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-07-20T20:26:38.419Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "ac8319e88d7018f426a4-e31cbbc8d5e539085784",
+              "file": "assessmentform-express-spa-multi-step-as.spec.ts",
+              "line": 654,
+              "column": 7
+            },
+            {
+              "title": "/dashboard/login has an email input field",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 15000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "",
+                  "projectName": "",
+                  "results": [
+                    {
+                      "workerIndex": 5,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 79,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-07-20T20:26:38.497Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "ac8319e88d7018f426a4-49d5dc00ad5f35026d11",
+              "file": "assessmentform-express-spa-multi-step-as.spec.ts",
+              "line": 661,
+              "column": 7
+            },
+            {
+              "title": "/dashboard/login has an Access Dashboard button",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 15000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "",
+                  "projectName": "",
+                  "results": [
+                    {
+                      "workerIndex": 5,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 79,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-07-20T20:26:38.580Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "ac8319e88d7018f426a4-389d6cbae685d3a4b477",
+              "file": "assessmentform-express-spa-multi-step-as.spec.ts",
+              "line": 668,
+              "column": 7
+            },
+            {
+              "title": "Access Dashboard button is disabled when email field is empty",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 15000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "",
+                  "projectName": "",
+                  "results": [
+                    {
+                      "workerIndex": 5,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 78,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-07-20T20:26:38.664Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "ac8319e88d7018f426a4-e3bec22f0f3d107a89ee",
+              "file": "assessmentform-express-spa-multi-step-as.spec.ts",
+              "line": 675,
+              "column": 7
+            },
+            {
+              "title": "login with non-system-owner email shows error message",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 15000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "",
+                  "projectName": "",
+                  "results": [
+                    {
+                      "workerIndex": 5,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 113,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-07-20T20:26:38.746Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "ac8319e88d7018f426a4-60ecc11505a6dde31b67",
+              "file": "assessmentform-express-spa-multi-step-as.spec.ts",
+              "line": 683,
+              "column": 7
+            },
+            {
+              "title": "/dashboard shows response table with Name, Email, Status columns",
+              "ok": false,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 15000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "",
+                  "projectName": "",
+                  "results": [
+                    {
+                      "workerIndex": 5,
+                      "parallelIndex": 0,
+                      "status": "failed",
+                      "duration": 3103,
+                      "error": {
+                        "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mtoBe\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m) // Object.is equality\u001b[22m\n\nExpected: \u001b[32mtrue\u001b[39m\nReceived: \u001b[31mfalse\u001b[39m",
+                        "stack": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mtoBe\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m) // Object.is equality\u001b[22m\n\nExpected: \u001b[32mtrue\u001b[39m\nReceived: \u001b[31mfalse\u001b[39m\n    at /home/daytona/project/e2e/uat/assessmentform-express-spa-multi-step-as.spec.ts:728:37",
+                        "location": {
+                          "file": "/home/daytona/project/e2e/uat/assessmentform-express-spa-multi-step-as.spec.ts",
+                          "column": 37,
+                          "line": 728
+                        },
+                        "snippet": "  726 |       const isLoading = await page.getByText(/loading/i).isVisible().catch(() => false);\n  727 |\n> 728 |       expect(hasTable || isLoading).toBe(true);\n      |                                     ^\n  729 |     }\n  730 |   });\n  731 | });"
+                      },
+                      "errors": [
+                        {
+                          "location": {
+                            "file": "/home/daytona/project/e2e/uat/assessmentform-express-spa-multi-step-as.spec.ts",
+                            "column": 37,
+                            "line": 728
+                          },
+                          "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mtoBe\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m) // Object.is equality\u001b[22m\n\nExpected: \u001b[32mtrue\u001b[39m\nReceived: \u001b[31mfalse\u001b[39m\n\n  726 |       const isLoading = await page.getByText(/loading/i).isVisible().catch(() => false);\n  727 |\n> 728 |       expect(hasTable || isLoading).toBe(true);\n      |                                     ^\n  729 |     }\n  730 |   });\n  731 | });\n    at /home/daytona/project/e2e/uat/assessmentform-express-spa-multi-step-as.spec.ts:728:37"
+                        }
+                      ],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-07-20T20:26:38.864Z",
+                      "annotations": [],
+                      "attachments": [
+                        {
+                          "name": "screenshot",
+                          "contentType": "image/png",
+                          "path": "/home/daytona/project/test-results/assessmentform-express-spa-43a4e-h-Name-Email-Status-columns/test-failed-1.png"
+                        },
+                        {
+                          "name": "error-context",
+                          "contentType": "text/markdown",
+                          "path": "/home/daytona/project/test-results/assessmentform-express-spa-43a4e-h-Name-Email-Status-columns/error-context.md"
+                        }
+                      ],
+                      "errorLocation": {
+                        "file": "/home/daytona/project/e2e/uat/assessmentform-express-spa-multi-step-as.spec.ts",
+                        "column": 37,
+                        "line": 728
+                      }
+                    }
+                  ],
+                  "status": "unexpected"
+                }
+              ],
+              "id": "ac8319e88d7018f426a4-1ef19d220e523eafc5d4",
+              "file": "assessmentform-express-spa-multi-step-as.spec.ts",
+              "line": 696,
+              "column": 7
+            }
+          ]
+        },
+        {
+          "title": "US-7.1: Dashboard Protected by Auth",
+          "file": "assessmentform-express-spa-multi-step-as.spec.ts",
+          "line": 735,
+          "column": 6,
+          "specs": [
+            {
+              "title": "/dashboard redirects to /dashboard/login without a token",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 15000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "",
+                  "projectName": "",
+                  "results": [
+                    {
+                      "workerIndex": 6,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 128,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-07-20T20:26:42.197Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "ac8319e88d7018f426a4-ed94fcaa8fbbc4d51181",
+              "file": "assessmentform-express-spa-multi-step-as.spec.ts",
+              "line": 736,
+              "column": 7
+            },
+            {
+              "title": "/dashboard/analytics redirects to /dashboard/login without a token",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 15000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "",
+                  "projectName": "",
+                  "results": [
+                    {
+                      "workerIndex": 6,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 124,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-07-20T20:26:42.366Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "ac8319e88d7018f426a4-8b379b077bb767882afb",
+              "file": "assessmentform-express-spa-multi-step-as.spec.ts",
+              "line": 756,
+              "column": 7
+            }
+          ]
+        },
+        {
+          "title": "US-8.1: Assessment Config Accessible",
+          "file": "assessmentform-express-spa-multi-step-as.spec.ts",
+          "line": 775,
+          "column": 6,
+          "specs": [
+            {
+              "title": "/dashboard/config page is reachable and shows Assessment Configuration heading",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 15000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "",
+                  "projectName": "",
+                  "results": [
+                    {
+                      "workerIndex": 6,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 3095,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-07-20T20:26:42.497Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "ac8319e88d7018f426a4-92cc40101dadae9e522b",
+              "file": "assessmentform-express-spa-multi-step-as.spec.ts",
+              "line": 776,
+              "column": 7
+            },
+            {
+              "title": "/dashboard/config shows Due Date field in config panel",
+              "ok": false,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 15000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "",
+                  "projectName": "",
+                  "results": [
+                    {
+                      "workerIndex": 6,
+                      "parallelIndex": 0,
+                      "status": "failed",
+                      "duration": 3097,
+                      "error": {
+                        "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mtoBe\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m) // Object.is equality\u001b[22m\n\nExpected: \u001b[32mtrue\u001b[39m\nReceived: \u001b[31mfalse\u001b[39m",
+                        "stack": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mtoBe\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m) // Object.is equality\u001b[22m\n\nExpected: \u001b[32mtrue\u001b[39m\nReceived: \u001b[31mfalse\u001b[39m\n    at /home/daytona/project/e2e/uat/assessmentform-express-spa-multi-step-as.spec.ts:822:26",
+                        "location": {
+                          "file": "/home/daytona/project/e2e/uat/assessmentform-express-spa-multi-step-as.spec.ts",
+                          "column": 26,
+                          "line": 822
+                        },
+                        "snippet": "  820 |         (await page.getByText(/due date/i).isVisible().catch(() => false)) ||\n  821 |         (await page.getByText(/loading/i).isVisible().catch(() => false));\n> 822 |       expect(hasDueDate).toBe(true);\n      |                          ^\n  823 |     }\n  824 |   });\n  825 | });"
+                      },
+                      "errors": [
+                        {
+                          "location": {
+                            "file": "/home/daytona/project/e2e/uat/assessmentform-express-spa-multi-step-as.spec.ts",
+                            "column": 26,
+                            "line": 822
+                          },
+                          "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mtoBe\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m) // Object.is equality\u001b[22m\n\nExpected: \u001b[32mtrue\u001b[39m\nReceived: \u001b[31mfalse\u001b[39m\n\n  820 |         (await page.getByText(/due date/i).isVisible().catch(() => false)) ||\n  821 |         (await page.getByText(/loading/i).isVisible().catch(() => false));\n> 822 |       expect(hasDueDate).toBe(true);\n      |                          ^\n  823 |     }\n  824 |   });\n  825 | });\n    at /home/daytona/project/e2e/uat/assessmentform-express-spa-multi-step-as.spec.ts:822:26"
+                        }
+                      ],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-07-20T20:26:45.596Z",
+                      "annotations": [],
+                      "attachments": [
+                        {
+                          "name": "screenshot",
+                          "contentType": "image/png",
+                          "path": "/home/daytona/project/test-results/assessmentform-express-spa-09e6c--Date-field-in-config-panel/test-failed-1.png"
+                        },
+                        {
+                          "name": "error-context",
+                          "contentType": "text/markdown",
+                          "path": "/home/daytona/project/test-results/assessmentform-express-spa-09e6c--Date-field-in-config-panel/error-context.md"
+                        }
+                      ],
+                      "errorLocation": {
+                        "file": "/home/daytona/project/e2e/uat/assessmentform-express-spa-multi-step-as.spec.ts",
+                        "column": 26,
+                        "line": 822
+                      }
+                    }
+                  ],
+                  "status": "unexpected"
+                }
+              ],
+              "id": "ac8319e88d7018f426a4-870e0a3e87391558a6db",
+              "file": "assessmentform-express-spa-multi-step-as.spec.ts",
+              "line": 803,
+              "column": 7
+            }
+          ]
+        },
+        {
+          "title": "API-1: Health Check",
+          "file": "assessmentform-express-spa-multi-step-as.spec.ts",
+          "line": 829,
+          "column": 6,
+          "specs": [
+            {
+              "title": "GET /api/health returns HTTP 200",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 15000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "",
+                  "projectName": "",
+                  "results": [
+                    {
+                      "workerIndex": 7,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 318,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-07-20T20:26:48.939Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "ac8319e88d7018f426a4-f5118bca57ee246b3573",
+              "file": "assessmentform-express-spa-multi-step-as.spec.ts",
+              "line": 830,
+              "column": 7
+            },
+            {
+              "title": "GET /api/health response body is valid JSON",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 15000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "",
+                  "projectName": "",
+                  "results": [
+                    {
+                      "workerIndex": 7,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 5,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-07-20T20:26:49.273Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "ac8319e88d7018f426a4-8306df1650f3d05cfaf1",
+              "file": "assessmentform-express-spa-multi-step-as.spec.ts",
+              "line": 837,
+              "column": 7
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "errors": [],
+  "stats": {
+    "startTime": "2026-07-20T20:25:31.775Z",
+    "duration": 77520.232,
+    "expected": 32,
+    "skipped": 0,
+    "unexpected": 7,
+    "flaky": 0
+  }
+}
