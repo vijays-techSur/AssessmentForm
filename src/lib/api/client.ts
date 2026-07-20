@@ -79,3 +79,18 @@ export async function putResponses(
     { method: 'PUT', body: JSON.stringify(body), token }
   );
 }
+
+// POST /api/submissions/:sessionId — finalize submission (plan 04)
+// TechArch §4.3: POST /api/submissions/:sessionId
+// Request: {} (empty — data already saved via auto-save)
+// Response 200: { submitted: true, submitted_at: string, due_date: string, edit_window_open: boolean }
+// Errors: 400 MANDATORY_QUESTIONS_INCOMPLETE, 401 AUTH_REQUIRED, 403 ASSESSMENT_CLOSED, 403 SYSTEM_OWNER_CANNOT_SUBMIT, 404 SESSION_NOT_FOUND, 500 SUBMISSION_FAILED
+export async function submitAssessment(
+  sessionId: string,
+  token: string
+): Promise<{ submitted: true; submitted_at: string; due_date: string; edit_window_open: boolean }> {
+  return apiFetch<{ submitted: true; submitted_at: string; due_date: string; edit_window_open: boolean }>(
+    `/api/submissions/${sessionId}`,
+    { method: 'POST', body: JSON.stringify({}), token }
+  );
+}

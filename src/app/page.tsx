@@ -22,6 +22,10 @@ export default function HomePage() {
     try {
       localStorage.setItem('af_team_type', teamType); // store for AssessmentWizard
       const sess = await createSession({ email, name, team_type: teamType });
+      // Store respondent details in sessionStorage for Review/Confirmation pages (plan 07)
+      sessionStorage.setItem('af_respondent_name', name);
+      sessionStorage.setItem('af_respondent_email', email);
+      sessionStorage.setItem('af_team_type', teamType);
       if (sess.is_returning) {
         setShowResume(true);
       } else {
