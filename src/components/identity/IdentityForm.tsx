@@ -58,7 +58,7 @@ export function IdentityForm({ onSuccess, isLoading, serverError, dueDate }: Pro
           <p className="text-gray-600 mt-1">Help us understand your team&apos;s needs and readiness for Developer Platform tooling.</p>
           <div className="flex gap-4 mt-3 text-sm text-gray-500">
             <span>⏱ ~15–20 minutes</span>
-            <span>📋 {teamType ? SECTION_COUNTS[teamType] + ' sections' : 'sections'}</span>
+            <span>📋 Multi-section assessment</span>
             <span>🔒 Auto-saved</span>
           </div>
         </div>

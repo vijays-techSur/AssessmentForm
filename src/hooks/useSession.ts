@@ -6,10 +6,20 @@ import { createSession as apiCreateSession, getSession } from '@/lib/api/client'
 const SESSION_TOKEN_KEY = 'af_token';
 const SESSION_ID_KEY = 'af_session_id';
 
+// Check synchronously whether we have stored credentials (client-side only).
+// Used to initialise isLoading=true so that route guards don't fire before the
+// async resume attempt completes (prevents race-condition redirect to '/').
+function hasStoredCredentials(): boolean {
+  if (typeof window === 'undefined') return false;
+  return !!(localStorage.getItem(SESSION_TOKEN_KEY) && localStorage.getItem(SESSION_ID_KEY));
+}
+
 export function useSession() {
   const [session, setSession] = useState<SessionResponse | null>(null);
   const [token, setToken] = useState<string | null>(null);
-  const [isLoading, setIsLoading] = useState(false);
+  // Initialise to true when localStorage has a stored session so that any
+  // route guard that checks `!isLoading && !session` doesn't fire prematurely.
+  const [isLoading, setIsLoading] = useState(() => hasStoredCredentials());
   const [error, setError] = useState<string | null>(null);
 
   // On mount: attempt auto-resume from localStorage
@@ -31,6 +41,9 @@ export function useSession() {
           setError('Your previous session could not be found. Please re-enter your details.');
         })
         .finally(() => setIsLoading(false));
+    } else {
+      // No stored credentials — ensure isLoading is false (handles SSR/hydration edge cases)
+      setIsLoading(false);
     }
   }, []);
 
