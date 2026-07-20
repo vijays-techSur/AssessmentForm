@@ -95,12 +95,12 @@
                       "workerIndex": 0,
                       "parallelIndex": 0,
                       "status": "passed",
-                      "duration": 104,
+                      "duration": 93,
                       "errors": [],
                       "stdout": [],
                       "stderr": [],
                       "retry": 0,
-                      "startTime": "2026-07-20T20:25:32.008Z",
+                      "startTime": "2026-07-20T20:36:58.025Z",
                       "annotations": [],
                       "attachments": []
                     }
@@ -129,12 +129,12 @@
                       "workerIndex": 0,
                       "parallelIndex": 0,
                       "status": "passed",
-                      "duration": 106,
+                      "duration": 90,
                       "errors": [],
                       "stdout": [],
                       "stderr": [],
                       "retry": 0,
-                      "startTime": "2026-07-20T20:25:32.153Z",
+                      "startTime": "2026-07-20T20:36:58.158Z",
                       "annotations": [],
                       "attachments": []
                     }
@@ -168,7 +168,7 @@
                       "stdout": [],
                       "stderr": [],
                       "retry": 0,
-                      "startTime": "2026-07-20T20:25:32.266Z",
+                      "startTime": "2026-07-20T20:36:58.255Z",
                       "annotations": [],
                       "attachments": []
                     }
@@ -197,12 +197,12 @@
                       "workerIndex": 0,
                       "parallelIndex": 0,
                       "status": "passed",
-                      "duration": 168,
+                      "duration": 161,
                       "errors": [],
                       "stdout": [],
                       "stderr": [],
                       "retry": 0,
-                      "startTime": "2026-07-20T20:25:32.368Z",
+                      "startTime": "2026-07-20T20:36:58.358Z",
                       "annotations": [],
                       "attachments": []
                     }
@@ -231,12 +231,12 @@
                       "workerIndex": 0,
                       "parallelIndex": 0,
                       "status": "passed",
-                      "duration": 90,
+                      "duration": 97,
                       "errors": [],
                       "stdout": [],
                       "stderr": [],
                       "retry": 0,
-                      "startTime": "2026-07-20T20:25:32.540Z",
+                      "startTime": "2026-07-20T20:36:58.523Z",
                       "annotations": [],
                       "attachments": []
                     }
@@ -273,7 +273,7 @@
                       "workerIndex": 0,
                       "parallelIndex": 0,
                       "status": "failed",
-                      "duration": 2182,
+                      "duration": 2166,
                       "error": {
                         "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mtoBe\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m) // Object.is equality\u001b[22m\n\nExpected: \u001b[32mtrue\u001b[39m\nReceived: \u001b[31mfalse\u001b[39m",
                         "stack": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mtoBe\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m) // Object.is equality\u001b[22m\n\nExpected: \u001b[32mtrue\u001b[39m\nReceived: \u001b[31mfalse\u001b[39m\n    at /home/daytona/project/e2e/uat/assessmentform-express-spa-multi-step-as.spec.ts:154:48",
@@ -297,7 +297,7 @@
                       "stdout": [],
                       "stderr": [],
                       "retry": 0,
-                      "startTime": "2026-07-20T20:25:32.634Z",
+                      "startTime": "2026-07-20T20:36:58.623Z",
                       "annotations": [],
                       "attachments": [
                         {
@@ -342,7 +342,7 @@
                       "workerIndex": 1,
                       "parallelIndex": 0,
                       "status": "failed",
-                      "duration": 2179,
+                      "duration": 2195,
                       "error": {
                         "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mtoContain\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m) // indexOf\u001b[22m\n\nExpected substring: \u001b[32m\"/assessment\"\u001b[39m\nReceived string:    \u001b[31m\"http://localhost:3000/\"\u001b[39m",
                         "stack": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mtoContain\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m) // indexOf\u001b[22m\n\nExpected substring: \u001b[32m\"/assessment\"\u001b[39m\nReceived string:    \u001b[31m\"http://localhost:3000/\"\u001b[39m\n    at /home/daytona/project/e2e/uat/assessmentform-express-spa-multi-step-as.spec.ts:171:26",
@@ -366,7 +366,7 @@
                       "stdout": [],
                       "stderr": [],
                       "retry": 0,
-                      "startTime": "2026-07-20T20:25:35.053Z",
+                      "startTime": "2026-07-20T20:37:01.027Z",
                       "annotations": [],
                       "attachments": [
                         {
@@ -419,12 +419,12 @@
                       "workerIndex": 2,
                       "parallelIndex": 0,
                       "status": "passed",
-                      "duration": 186,
+                      "duration": 181,
                       "errors": [],
                       "stdout": [],
                       "stderr": [],
                       "retry": 0,
-                      "startTime": "2026-07-20T20:25:37.500Z",
+                      "startTime": "2026-07-20T20:37:03.495Z",
                       "annotations": [],
                       "attachments": []
                     }
@@ -453,7 +453,7 @@
                       "workerIndex": 2,
                       "parallelIndex": 0,
                       "status": "failed",
-                      "duration": 2190,
+                      "duration": 2192,
                       "error": {
                         "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mtoBe\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m) // Object.is equality\u001b[22m\n\nExpected: \u001b[32mtrue\u001b[39m\nReceived: \u001b[31mfalse\u001b[39m",
                         "stack": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mtoBe\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m) // Object.is equality\u001b[22m\n\nExpected: \u001b[32mtrue\u001b[39m\nReceived: \u001b[31mfalse\u001b[39m\n    at /home/daytona/project/e2e/uat/assessmentform-express-spa-multi-step-as.spec.ts:206:48",
@@ -477,7 +477,7 @@
                       "stdout": [],
                       "stderr": [],
                       "retry": 0,
-                      "startTime": "2026-07-20T20:25:37.725Z",
+                      "startTime": "2026-07-20T20:37:03.715Z",
                       "annotations": [],
                       "attachments": [
                         {
@@ -530,12 +530,12 @@
                       "workerIndex": 3,
                       "parallelIndex": 0,
                       "status": "passed",
-                      "duration": 2161,
+                      "duration": 2177,
                       "errors": [],
                       "stdout": [],
                       "stderr": [],
                       "retry": 0,
-                      "startTime": "2026-07-20T20:25:40.146Z",
+                      "startTime": "2026-07-20T20:37:06.143Z",
                       "annotations": [],
                       "attachments": []
                     }
@@ -564,12 +564,12 @@
                       "workerIndex": 3,
                       "parallelIndex": 0,
                       "status": "passed",
-                      "duration": 2157,
+                      "duration": 2166,
                       "errors": [],
                       "stdout": [],
                       "stderr": [],
                       "retry": 0,
-                      "startTime": "2026-07-20T20:25:42.347Z",
+                      "startTime": "2026-07-20T20:37:08.361Z",
                       "annotations": [],
                       "attachments": []
                     }
@@ -598,12 +598,12 @@
                       "workerIndex": 3,
                       "parallelIndex": 0,
                       "status": "passed",
-                      "duration": 2146,
+                      "duration": 2145,
                       "errors": [],
                       "stdout": [],
                       "stderr": [],
                       "retry": 0,
-                      "startTime": "2026-07-20T20:25:44.509Z",
+                      "startTime": "2026-07-20T20:37:10.532Z",
                       "annotations": [],
                       "attachments": []
                     }
@@ -640,12 +640,12 @@
                       "workerIndex": 3,
                       "parallelIndex": 0,
                       "status": "passed",
-                      "duration": 2151,
+                      "duration": 2150,
                       "errors": [],
                       "stdout": [],
                       "stderr": [],
                       "retry": 0,
-                      "startTime": "2026-07-20T20:25:46.660Z",
+                      "startTime": "2026-07-20T20:37:12.682Z",
                       "annotations": [],
                       "attachments": []
                     }
@@ -674,12 +674,12 @@
                       "workerIndex": 3,
                       "parallelIndex": 0,
                       "status": "passed",
-                      "duration": 2171,
+                      "duration": 2167,
                       "errors": [],
                       "stdout": [],
                       "stderr": [],
                       "retry": 0,
-                      "startTime": "2026-07-20T20:25:48.817Z",
+                      "startTime": "2026-07-20T20:37:14.837Z",
                       "annotations": [],
                       "attachments": []
                     }
@@ -708,12 +708,12 @@
                       "workerIndex": 3,
                       "parallelIndex": 0,
                       "status": "passed",
-                      "duration": 2143,
+                      "duration": 2151,
                       "errors": [],
                       "stdout": [],
                       "stderr": [],
                       "retry": 0,
-                      "startTime": "2026-07-20T20:25:50.994Z",
+                      "startTime": "2026-07-20T20:37:17.009Z",
                       "annotations": [],
                       "attachments": []
                     }
@@ -736,7 +736,7 @@
           "specs": [
             {
               "title": "/assessment/review page has \"Review Your Answers\" heading",
-              "ok": false,
+              "ok": true,
               "tags": [],
               "tests": [
                 {
@@ -749,53 +749,18 @@
                     {
                       "workerIndex": 3,
                       "parallelIndex": 0,
-                      "status": "failed",
-                      "duration": 7287,
-                      "error": {
-                        "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoBeVisible\u001b[2m(\u001b[22m\u001b[2m)\u001b[22m failed\n\nLocator: getByRole('heading', { name: /review your answers/i })\nExpected: visible\nTimeout: 5000ms\nError: element(s) not found\n\nCall log:\n\u001b[2m  - Expect \"toBeVisible\" with timeout 5000ms\u001b[22m\n\u001b[2m  - waiting for getByRole('heading', { name: /review your answers/i })\u001b[22m\n",
-                        "stack": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoBeVisible\u001b[2m(\u001b[22m\u001b[2m)\u001b[22m failed\n\nLocator: getByRole('heading', { name: /review your answers/i })\nExpected: visible\nTimeout: 5000ms\nError: element(s) not found\n\nCall log:\n\u001b[2m  - Expect \"toBeVisible\" with timeout 5000ms\u001b[22m\n\u001b[2m  - waiting for getByRole('heading', { name: /review your answers/i })\u001b[22m\n\n    at /home/daytona/project/e2e/uat/assessmentform-express-spa-multi-step-as.spec.ts:362:79",
-                        "location": {
-                          "file": "/home/daytona/project/e2e/uat/assessmentform-express-spa-multi-step-as.spec.ts",
-                          "column": 79,
-                          "line": 362
-                        },
-                        "snippet": "  360 |     await page.waitForTimeout(2000);\n  361 |\n> 362 |     await expect(page.getByRole('heading', { name: /review your answers/i })).toBeVisible();\n      |                                                                               ^\n  363 |   });\n  364 |\n  365 |   test('/assessment/review has a Submit Assessment button', async ({ page }) => {"
-                      },
-                      "errors": [
-                        {
-                          "location": {
-                            "file": "/home/daytona/project/e2e/uat/assessmentform-express-spa-multi-step-as.spec.ts",
-                            "column": 79,
-                            "line": 362
-                          },
-                          "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoBeVisible\u001b[2m(\u001b[22m\u001b[2m)\u001b[22m failed\n\nLocator: getByRole('heading', { name: /review your answers/i })\nExpected: visible\nTimeout: 5000ms\nError: element(s) not found\n\nCall log:\n\u001b[2m  - Expect \"toBeVisible\" with timeout 5000ms\u001b[22m\n\u001b[2m  - waiting for getByRole('heading', { name: /review your answers/i })\u001b[22m\n\n\n  360 |     await page.waitForTimeout(2000);\n  361 |\n> 362 |     await expect(page.getByRole('heading', { name: /review your answers/i })).toBeVisible();\n      |                                                                               ^\n  363 |   });\n  364 |\n  365 |   test('/assessment/review has a Submit Assessment button', async ({ page }) => {\n    at /home/daytona/project/e2e/uat/assessmentform-express-spa-multi-step-as.spec.ts:362:79"
-                        }
-                      ],
+                      "status": "passed",
+                      "duration": 2172,
+                      "errors": [],
                       "stdout": [],
                       "stderr": [],
                       "retry": 0,
-                      "startTime": "2026-07-20T20:25:53.142Z",
+                      "startTime": "2026-07-20T20:37:19.165Z",
                       "annotations": [],
-                      "attachments": [
-                        {
-                          "name": "screenshot",
-                          "contentType": "image/png",
-                          "path": "/home/daytona/project/test-results/assessmentform-express-spa-32f47-Review-Your-Answers-heading/test-failed-1.png"
-                        },
-                        {
-                          "name": "error-context",
-                          "contentType": "text/markdown",
-                          "path": "/home/daytona/project/test-results/assessmentform-express-spa-32f47-Review-Your-Answers-heading/error-context.md"
-                        }
-                      ],
-                      "errorLocation": {
-                        "file": "/home/daytona/project/e2e/uat/assessmentform-express-spa-multi-step-as.spec.ts",
-                        "column": 79,
-                        "line": 362
-                      }
+                      "attachments": []
                     }
                   ],
-                  "status": "unexpected"
+                  "status": "expected"
                 }
               ],
               "id": "ac8319e88d7018f426a4-12bc887e3e86f3632ce8",
@@ -816,10 +781,10 @@
                   "projectName": "",
                   "results": [
                     {
-                      "workerIndex": 4,
+                      "workerIndex": 3,
                       "parallelIndex": 0,
                       "status": "failed",
-                      "duration": 7178,
+                      "duration": 7163,
                       "error": {
                         "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoBeVisible\u001b[2m(\u001b[22m\u001b[2m)\u001b[22m failed\n\nLocator: getByRole('button', { name: /submit assessment/i })\nExpected: visible\nTimeout: 5000ms\nError: element(s) not found\n\nCall log:\n\u001b[2m  - Expect \"toBeVisible\" with timeout 5000ms\u001b[22m\n\u001b[2m  - waiting for getByRole('button', { name: /submit assessment/i })\u001b[22m\n",
                         "stack": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoBeVisible\u001b[2m(\u001b[22m\u001b[2m)\u001b[22m failed\n\nLocator: getByRole('button', { name: /submit assessment/i })\nExpected: visible\nTimeout: 5000ms\nError: element(s) not found\n\nCall log:\n\u001b[2m  - Expect \"toBeVisible\" with timeout 5000ms\u001b[22m\n\u001b[2m  - waiting for getByRole('button', { name: /submit assessment/i })\u001b[22m\n\n    at /home/daytona/project/e2e/uat/assessmentform-express-spa-multi-step-as.spec.ts:385:76",
@@ -843,7 +808,7 @@
                       "stdout": [],
                       "stderr": [],
                       "retry": 0,
-                      "startTime": "2026-07-20T20:26:00.658Z",
+                      "startTime": "2026-07-20T20:37:21.342Z",
                       "annotations": [],
                       "attachments": [
                         {
@@ -885,15 +850,15 @@
                   "projectName": "",
                   "results": [
                     {
-                      "workerIndex": 5,
+                      "workerIndex": 4,
                       "parallelIndex": 0,
                       "status": "passed",
-                      "duration": 3226,
+                      "duration": 3199,
                       "errors": [],
                       "stdout": [],
                       "stderr": [],
                       "retry": 0,
-                      "startTime": "2026-07-20T20:26:08.105Z",
+                      "startTime": "2026-07-20T20:37:28.739Z",
                       "annotations": [],
                       "attachments": []
                     }
@@ -927,15 +892,15 @@
                   "projectName": "",
                   "results": [
                     {
-                      "workerIndex": 5,
+                      "workerIndex": 4,
                       "parallelIndex": 0,
                       "status": "passed",
-                      "duration": 2709,
+                      "duration": 2689,
                       "errors": [],
                       "stdout": [],
                       "stderr": [],
                       "retry": 0,
-                      "startTime": "2026-07-20T20:26:11.372Z",
+                      "startTime": "2026-07-20T20:37:31.978Z",
                       "annotations": [],
                       "attachments": []
                     }
@@ -961,15 +926,15 @@
                   "projectName": "",
                   "results": [
                     {
-                      "workerIndex": 5,
+                      "workerIndex": 4,
                       "parallelIndex": 0,
                       "status": "passed",
-                      "duration": 2678,
+                      "duration": 2679,
                       "errors": [],
                       "stdout": [],
                       "stderr": [],
                       "retry": 0,
-                      "startTime": "2026-07-20T20:26:14.087Z",
+                      "startTime": "2026-07-20T20:37:34.677Z",
                       "annotations": [],
                       "attachments": []
                     }
@@ -1003,15 +968,15 @@
                   "projectName": "",
                   "results": [
                     {
-                      "workerIndex": 5,
+                      "workerIndex": 4,
                       "parallelIndex": 0,
                       "status": "passed",
-                      "duration": 2652,
+                      "duration": 2651,
                       "errors": [],
                       "stdout": [],
                       "stderr": [],
                       "retry": 0,
-                      "startTime": "2026-07-20T20:26:16.770Z",
+                      "startTime": "2026-07-20T20:37:37.361Z",
                       "annotations": [],
                       "attachments": []
                     }
@@ -1037,15 +1002,15 @@
                   "projectName": "",
                   "results": [
                     {
-                      "workerIndex": 5,
+                      "workerIndex": 4,
                       "parallelIndex": 0,
                       "status": "passed",
-                      "duration": 2644,
+                      "duration": 2654,
                       "errors": [],
                       "stdout": [],
                       "stderr": [],
                       "retry": 0,
-                      "startTime": "2026-07-20T20:26:19.426Z",
+                      "startTime": "2026-07-20T20:37:40.018Z",
                       "annotations": [],
                       "attachments": []
                     }
@@ -1071,15 +1036,15 @@
                   "projectName": "",
                   "results": [
                     {
-                      "workerIndex": 5,
+                      "workerIndex": 4,
                       "parallelIndex": 0,
                       "status": "passed",
-                      "duration": 2648,
+                      "duration": 2645,
                       "errors": [],
                       "stdout": [],
                       "stderr": [],
                       "retry": 0,
-                      "startTime": "2026-07-20T20:26:22.074Z",
+                      "startTime": "2026-07-20T20:37:42.682Z",
                       "annotations": [],
                       "attachments": []
                     }
@@ -1105,15 +1070,15 @@
                   "projectName": "",
                   "results": [
                     {
-                      "workerIndex": 5,
+                      "workerIndex": 4,
                       "parallelIndex": 0,
                       "status": "passed",
-                      "duration": 2658,
+                      "duration": 2644,
                       "errors": [],
                       "stdout": [],
                       "stderr": [],
                       "retry": 0,
-                      "startTime": "2026-07-20T20:26:24.728Z",
+                      "startTime": "2026-07-20T20:37:45.332Z",
                       "annotations": [],
                       "attachments": []
                     }
@@ -1139,15 +1104,15 @@
                   "projectName": "",
                   "results": [
                     {
-                      "workerIndex": 5,
+                      "workerIndex": 4,
                       "parallelIndex": 0,
                       "status": "passed",
-                      "duration": 2647,
+                      "duration": 2657,
                       "errors": [],
                       "stdout": [],
                       "stderr": [],
                       "retry": 0,
-                      "startTime": "2026-07-20T20:26:27.391Z",
+                      "startTime": "2026-07-20T20:37:47.980Z",
                       "annotations": [],
                       "attachments": []
                     }
@@ -1181,15 +1146,15 @@
                   "projectName": "",
                   "results": [
                     {
-                      "workerIndex": 5,
+                      "workerIndex": 4,
                       "parallelIndex": 0,
                       "status": "passed",
-                      "duration": 3681,
+                      "duration": 3673,
                       "errors": [],
                       "stdout": [],
                       "stderr": [],
                       "retry": 0,
-                      "startTime": "2026-07-20T20:26:30.045Z",
+                      "startTime": "2026-07-20T20:37:50.642Z",
                       "annotations": [],
                       "attachments": []
                     }
@@ -1215,15 +1180,15 @@
                   "projectName": "",
                   "results": [
                     {
-                      "workerIndex": 5,
+                      "workerIndex": 4,
                       "parallelIndex": 0,
                       "status": "passed",
-                      "duration": 4683,
+                      "duration": 4699,
                       "errors": [],
                       "stdout": [],
                       "stderr": [],
                       "retry": 0,
-                      "startTime": "2026-07-20T20:26:33.731Z",
+                      "startTime": "2026-07-20T20:37:54.322Z",
                       "annotations": [],
                       "attachments": []
                     }
@@ -1257,15 +1222,15 @@
                   "projectName": "",
                   "results": [
                     {
-                      "workerIndex": 5,
+                      "workerIndex": 4,
                       "parallelIndex": 0,
                       "status": "passed",
-                      "duration": 74,
+                      "duration": 89,
                       "errors": [],
                       "stdout": [],
                       "stderr": [],
                       "retry": 0,
-                      "startTime": "2026-07-20T20:26:38.419Z",
+                      "startTime": "2026-07-20T20:37:59.025Z",
                       "annotations": [],
                       "attachments": []
                     }
@@ -1291,15 +1256,15 @@
                   "projectName": "",
                   "results": [
                     {
-                      "workerIndex": 5,
+                      "workerIndex": 4,
                       "parallelIndex": 0,
                       "status": "passed",
-                      "duration": 79,
+                      "duration": 92,
                       "errors": [],
                       "stdout": [],
                       "stderr": [],
                       "retry": 0,
-                      "startTime": "2026-07-20T20:26:38.497Z",
+                      "startTime": "2026-07-20T20:37:59.119Z",
                       "annotations": [],
                       "attachments": []
                     }
@@ -1325,15 +1290,15 @@
                   "projectName": "",
                   "results": [
                     {
-                      "workerIndex": 5,
+                      "workerIndex": 4,
                       "parallelIndex": 0,
                       "status": "passed",
-                      "duration": 79,
+                      "duration": 80,
                       "errors": [],
                       "stdout": [],
                       "stderr": [],
                       "retry": 0,
-                      "startTime": "2026-07-20T20:26:38.580Z",
+                      "startTime": "2026-07-20T20:37:59.219Z",
                       "annotations": [],
                       "attachments": []
                     }
@@ -1359,15 +1324,15 @@
                   "projectName": "",
                   "results": [
                     {
-                      "workerIndex": 5,
+                      "workerIndex": 4,
                       "parallelIndex": 0,
                       "status": "passed",
-                      "duration": 78,
+                      "duration": 80,
                       "errors": [],
                       "stdout": [],
                       "stderr": [],
                       "retry": 0,
-                      "startTime": "2026-07-20T20:26:38.664Z",
+                      "startTime": "2026-07-20T20:37:59.302Z",
                       "annotations": [],
                       "attachments": []
                     }
@@ -1393,7 +1358,7 @@
                   "projectName": "",
                   "results": [
                     {
-                      "workerIndex": 5,
+                      "workerIndex": 4,
                       "parallelIndex": 0,
                       "status": "passed",
                       "duration": 113,
@@ -1401,7 +1366,7 @@
                       "stdout": [],
                       "stderr": [],
                       "retry": 0,
-                      "startTime": "2026-07-20T20:26:38.746Z",
+                      "startTime": "2026-07-20T20:37:59.386Z",
                       "annotations": [],
                       "attachments": []
                     }
@@ -1416,7 +1381,7 @@
             },
             {
               "title": "/dashboard shows response table with Name, Email, Status columns",
-              "ok": false,
+              "ok": true,
               "tags": [],
               "tests": [
                 {
@@ -1427,55 +1392,20 @@
                   "projectName": "",
                   "results": [
                     {
-                      "workerIndex": 5,
+                      "workerIndex": 4,
                       "parallelIndex": 0,
-                      "status": "failed",
-                      "duration": 3103,
-                      "error": {
-                        "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mtoBe\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m) // Object.is equality\u001b[22m\n\nExpected: \u001b[32mtrue\u001b[39m\nReceived: \u001b[31mfalse\u001b[39m",
-                        "stack": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mtoBe\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m) // Object.is equality\u001b[22m\n\nExpected: \u001b[32mtrue\u001b[39m\nReceived: \u001b[31mfalse\u001b[39m\n    at /home/daytona/project/e2e/uat/assessmentform-express-spa-multi-step-as.spec.ts:728:37",
-                        "location": {
-                          "file": "/home/daytona/project/e2e/uat/assessmentform-express-spa-multi-step-as.spec.ts",
-                          "column": 37,
-                          "line": 728
-                        },
-                        "snippet": "  726 |       const isLoading = await page.getByText(/loading/i).isVisible().catch(() => false);\n  727 |\n> 728 |       expect(hasTable || isLoading).toBe(true);\n      |                                     ^\n  729 |     }\n  730 |   });\n  731 | });"
-                      },
-                      "errors": [
-                        {
-                          "location": {
-                            "file": "/home/daytona/project/e2e/uat/assessmentform-express-spa-multi-step-as.spec.ts",
-                            "column": 37,
-                            "line": 728
-                          },
-                          "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mtoBe\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m) // Object.is equality\u001b[22m\n\nExpected: \u001b[32mtrue\u001b[39m\nReceived: \u001b[31mfalse\u001b[39m\n\n  726 |       const isLoading = await page.getByText(/loading/i).isVisible().catch(() => false);\n  727 |\n> 728 |       expect(hasTable || isLoading).toBe(true);\n      |                                     ^\n  729 |     }\n  730 |   });\n  731 | });\n    at /home/daytona/project/e2e/uat/assessmentform-express-spa-multi-step-as.spec.ts:728:37"
-                        }
-                      ],
+                      "status": "passed",
+                      "duration": 3098,
+                      "errors": [],
                       "stdout": [],
                       "stderr": [],
                       "retry": 0,
-                      "startTime": "2026-07-20T20:26:38.864Z",
+                      "startTime": "2026-07-20T20:37:59.503Z",
                       "annotations": [],
-                      "attachments": [
-                        {
-                          "name": "screenshot",
-                          "contentType": "image/png",
-                          "path": "/home/daytona/project/test-results/assessmentform-express-spa-43a4e-h-Name-Email-Status-columns/test-failed-1.png"
-                        },
-                        {
-                          "name": "error-context",
-                          "contentType": "text/markdown",
-                          "path": "/home/daytona/project/test-results/assessmentform-express-spa-43a4e-h-Name-Email-Status-columns/error-context.md"
-                        }
-                      ],
-                      "errorLocation": {
-                        "file": "/home/daytona/project/e2e/uat/assessmentform-express-spa-multi-step-as.spec.ts",
-                        "column": 37,
-                        "line": 728
-                      }
+                      "attachments": []
                     }
                   ],
-                  "status": "unexpected"
+                  "status": "expected"
                 }
               ],
               "id": "ac8319e88d7018f426a4-1ef19d220e523eafc5d4",
@@ -1504,15 +1434,15 @@
                   "projectName": "",
                   "results": [
                     {
-                      "workerIndex": 6,
+                      "workerIndex": 4,
                       "parallelIndex": 0,
                       "status": "passed",
-                      "duration": 128,
+                      "duration": 110,
                       "errors": [],
                       "stdout": [],
                       "stderr": [],
                       "retry": 0,
-                      "startTime": "2026-07-20T20:26:42.197Z",
+                      "startTime": "2026-07-20T20:38:02.605Z",
                       "annotations": [],
                       "attachments": []
                     }
@@ -1538,15 +1468,15 @@
                   "projectName": "",
                   "results": [
                     {
-                      "workerIndex": 6,
+                      "workerIndex": 4,
                       "parallelIndex": 0,
                       "status": "passed",
-                      "duration": 124,
+                      "duration": 112,
                       "errors": [],
                       "stdout": [],
                       "stderr": [],
                       "retry": 0,
-                      "startTime": "2026-07-20T20:26:42.366Z",
+                      "startTime": "2026-07-20T20:38:02.720Z",
                       "annotations": [],
                       "attachments": []
                     }
@@ -1580,7 +1510,7 @@
                   "projectName": "",
                   "results": [
                     {
-                      "workerIndex": 6,
+                      "workerIndex": 4,
                       "parallelIndex": 0,
                       "status": "passed",
                       "duration": 3095,
@@ -1588,7 +1518,7 @@
                       "stdout": [],
                       "stderr": [],
                       "retry": 0,
-                      "startTime": "2026-07-20T20:26:42.497Z",
+                      "startTime": "2026-07-20T20:38:02.837Z",
                       "annotations": [],
                       "attachments": []
                     }
@@ -1603,7 +1533,7 @@
             },
             {
               "title": "/dashboard/config shows Due Date field in config panel",
-              "ok": false,
+              "ok": true,
               "tags": [],
               "tests": [
                 {
@@ -1614,55 +1544,20 @@
                   "projectName": "",
                   "results": [
                     {
-                      "workerIndex": 6,
+                      "workerIndex": 4,
                       "parallelIndex": 0,
-                      "status": "failed",
-                      "duration": 3097,
-                      "error": {
-                        "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mtoBe\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m) // Object.is equality\u001b[22m\n\nExpected: \u001b[32mtrue\u001b[39m\nReceived: \u001b[31mfalse\u001b[39m",
-                        "stack": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mtoBe\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m) // Object.is equality\u001b[22m\n\nExpected: \u001b[32mtrue\u001b[39m\nReceived: \u001b[31mfalse\u001b[39m\n    at /home/daytona/project/e2e/uat/assessmentform-express-spa-multi-step-as.spec.ts:822:26",
-                        "location": {
-                          "file": "/home/daytona/project/e2e/uat/assessmentform-express-spa-multi-step-as.spec.ts",
-                          "column": 26,
-                          "line": 822
-                        },
-                        "snippet": "  820 |         (await page.getByText(/due date/i).isVisible().catch(() => false)) ||\n  821 |         (await page.getByText(/loading/i).isVisible().catch(() => false));\n> 822 |       expect(hasDueDate).toBe(true);\n      |                          ^\n  823 |     }\n  824 |   });\n  825 | });"
-                      },
-                      "errors": [
-                        {
-                          "location": {
-                            "file": "/home/daytona/project/e2e/uat/assessmentform-express-spa-multi-step-as.spec.ts",
-                            "column": 26,
-                            "line": 822
-                          },
-                          "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mtoBe\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m) // Object.is equality\u001b[22m\n\nExpected: \u001b[32mtrue\u001b[39m\nReceived: \u001b[31mfalse\u001b[39m\n\n  820 |         (await page.getByText(/due date/i).isVisible().catch(() => false)) ||\n  821 |         (await page.getByText(/loading/i).isVisible().catch(() => false));\n> 822 |       expect(hasDueDate).toBe(true);\n      |                          ^\n  823 |     }\n  824 |   });\n  825 | });\n    at /home/daytona/project/e2e/uat/assessmentform-express-spa-multi-step-as.spec.ts:822:26"
-                        }
-                      ],
+                      "status": "passed",
+                      "duration": 3095,
+                      "errors": [],
                       "stdout": [],
                       "stderr": [],
                       "retry": 0,
-                      "startTime": "2026-07-20T20:26:45.596Z",
+                      "startTime": "2026-07-20T20:38:05.936Z",
                       "annotations": [],
-                      "attachments": [
-                        {
-                          "name": "screenshot",
-                          "contentType": "image/png",
-                          "path": "/home/daytona/project/test-results/assessmentform-express-spa-09e6c--Date-field-in-config-panel/test-failed-1.png"
-                        },
-                        {
-                          "name": "error-context",
-                          "contentType": "text/markdown",
-                          "path": "/home/daytona/project/test-results/assessmentform-express-spa-09e6c--Date-field-in-config-panel/error-context.md"
-                        }
-                      ],
-                      "errorLocation": {
-                        "file": "/home/daytona/project/e2e/uat/assessmentform-express-spa-multi-step-as.spec.ts",
-                        "column": 26,
-                        "line": 822
-                      }
+                      "attachments": []
                     }
                   ],
-                  "status": "unexpected"
+                  "status": "expected"
                 }
               ],
               "id": "ac8319e88d7018f426a4-870e0a3e87391558a6db",
@@ -1691,15 +1586,15 @@
                   "projectName": "",
                   "results": [
                     {
-                      "workerIndex": 7,
+                      "workerIndex": 4,
                       "parallelIndex": 0,
                       "status": "passed",
-                      "duration": 318,
+                      "duration": 312,
                       "errors": [],
                       "stdout": [],
                       "stderr": [],
                       "retry": 0,
-                      "startTime": "2026-07-20T20:26:48.939Z",
+                      "startTime": "2026-07-20T20:38:09.035Z",
                       "annotations": [],
                       "attachments": []
                     }
@@ -1725,15 +1620,15 @@
                   "projectName": "",
                   "results": [
                     {
-                      "workerIndex": 7,
+                      "workerIndex": 4,
                       "parallelIndex": 0,
                       "status": "passed",
-                      "duration": 5,
+                      "duration": 4,
                       "errors": [],
                       "stdout": [],
                       "stderr": [],
                       "retry": 0,
-                      "startTime": "2026-07-20T20:26:49.273Z",
+                      "startTime": "2026-07-20T20:38:09.351Z",
                       "annotations": [],
                       "attachments": []
                     }
@@ -1753,11 +1648,11 @@
   ],
   "errors": [],
   "stats": {
-    "startTime": "2026-07-20T20:25:31.775Z",
-    "duration": 77520.232,
-    "expected": 32,
+    "startTime": "2026-07-20T20:36:57.797Z",
+    "duration": 71583.058,
+    "expected": 35,
     "skipped": 0,
-    "unexpected": 7,
+    "unexpected": 4,
     "flaky": 0
   }
 }

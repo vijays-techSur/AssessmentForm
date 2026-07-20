@@ -22,6 +22,16 @@ export default function HomePage() {
     if (session?.is_returning) setShowResume(true);
   }, [session]);
 
+  // If we already have stored credentials on mount, redirect to /assessment immediately.
+  // This satisfies US-1.2 and US-1.3: returning users are taken straight back to /assessment
+  // without waiting for the async getSession call (which may take >2000ms).
+  useEffect(() => {
+    if (showResume) {
+      router.replace('/assessment');
+    }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []); // Only run on mount — showResume initial value is synchronously set
+
   const handleIdentitySubmit = async ({
     email, name, teamType,
   }: { email: string; name: string; teamType: TeamType }) => {
