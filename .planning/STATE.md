@@ -3,7 +3,7 @@
 **Workflow Mode:** spec-express
 **Current Milestone:** v1
 **Status:** initialized
-**Last activity:** 2026-07-20 - Project initialized in spec-express mode, spec docs generated
+**Last activity:** 2026-07-20 - Completed express task: Multi-Step Assessment Form SPA (Next.js + PostgreSQL + Drizzle ORM)
 
 ---
 
@@ -28,6 +28,12 @@ Spec documents were generated in `project_specs/` during initialization. Use `/p
 
 | # | Description | Date | Commit | UAT | Directory |
 |---|-------------|------|--------|-----|-----------|
+
+### Express Tasks Completed
+
+| # | Description | Date | Commit | Directory |
+|---|-------------|------|--------|-----------|
+| assessmentform-express-spa-multi-step-as | Multi-Step Assessment Form SPA (Next.js + PostgreSQL + Drizzle ORM) | 2026-07-20 | 0f7bc82 | [assessmentform-express-spa-multi-step-as](./express/assessmentform-express-spa-multi-step-as/) |
 
 ## Blockers/Concerns
 
