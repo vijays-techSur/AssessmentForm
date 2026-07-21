@@ -117,13 +117,10 @@ export function ReviewStep({ session, token, sections, onEditSection, onSubmitSu
       })
     : null;
 
-  if (loadingQuestions) {
-    return (
-      <div className="flex items-center justify-center py-12 text-gray-400 text-sm">
-        Loading your answers for review…
-      </div>
-    );
-  }
+  // NOTE: We do NOT gate the entire component on loadingQuestions.
+  // The Submit button must be visible immediately once the session resolves (US-5.1).
+  // Section cards are shown once question data is loaded; the loading indicator
+  // is scoped to the cards area only so the Submit button is always reachable.
 
   const isSubmitDisabled = incompleteSections.length > 0 || submitLoading;
 
@@ -138,7 +135,7 @@ export function ReviewStep({ session, token, sections, onEditSection, onSubmitSu
       </div>
 
       {/* Completeness warning (US-0.3 AC, US-5.1 AC) */}
-      {incompleteSections.length > 0 && (
+      {!loadingQuestions && incompleteSections.length > 0 && (
         <div role="alert" className="bg-amber-50 border border-amber-300 text-amber-800 rounded-lg p-4 text-sm">
           <p className="font-semibold mb-1">⚠ Some required questions are unanswered:</p>
           <ul className="list-disc list-inside space-y-0.5">
@@ -157,8 +154,12 @@ export function ReviewStep({ session, token, sections, onEditSection, onSubmitSu
         </div>
       )}
 
-      {/* Section summary cards (UX Screen 03) */}
-      {sectionData.map(({ section, questions }, sectionIndex) => {
+      {/* Section summary cards — shown once question data has loaded (UX Screen 03) */}
+      {loadingQuestions ? (
+        <div className="flex items-center justify-center py-12 text-gray-400 text-sm">
+          Loading your answers for review…
+        </div>
+      ) : sectionData.map(({ section, questions }, sectionIndex) => {
         const sectionHasGap = questions.some((q) => q.is_required && !hasAnswer(q, answersMap));
         return (
           <div

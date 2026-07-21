@@ -28,8 +28,12 @@ export default function ReviewPage() {
   useEffect(() => {
     if (session && token && !sectionsLoadStarted.current) {
       sectionsLoadStarted.current = true;
-      // Read team type from sessionStorage (written by page.tsx at identity form submit)
-      const storedTeamType = sessionStorage.getItem('af_team_type');
+      // Read team type from sessionStorage first (written by page.tsx at identity form submit),
+      // then fall back to localStorage (persists across full-page navigations like page.goto()).
+      // sessionStorage is cleared on full-page navigation (e.g. direct URL visit), so
+      // localStorage is the reliable fallback for the same value written in page.tsx line 39.
+      const storedTeamType =
+        sessionStorage.getItem('af_team_type') ?? localStorage.getItem('af_team_type');
       if (storedTeamType) {
         loadSections(storedTeamType, token);
       }

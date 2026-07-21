@@ -22,15 +22,17 @@ export default function HomePage() {
     if (session?.is_returning) setShowResume(true);
   }, [session]);
 
-  // If we already have stored credentials on mount, redirect to /assessment immediately.
-  // This satisfies US-1.2 and US-1.3: returning users are taken straight back to /assessment
-  // without waiting for the async getSession call (which may take >2000ms).
+  // If we already have stored credentials (detected synchronously on mount, or set after
+  // session.is_returning resolves), redirect to /assessment.
+  // US-1.2 and US-1.3: returning users go straight back to /assessment.
+  // NOTE: dependency array includes showResume so the effect fires even when the
+  // initial SSR render had showResume=false and the client-side hydration pass
+  // flips it to true (Next.js SSR cannot access localStorage).
   useEffect(() => {
     if (showResume) {
       router.replace('/assessment');
     }
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []); // Only run on mount — showResume initial value is synchronously set
+  }, [showResume, router]);
 
   const handleIdentitySubmit = async ({
     email, name, teamType,
