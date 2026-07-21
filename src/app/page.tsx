@@ -10,14 +10,16 @@ export default function HomePage() {
   const router = useRouter();
   const { session, isLoading, error, createSession, clearSession } = useSession();
 
-  // showResume starts false (SSR-safe). A useEffect sets it to true on the
-  // client if localStorage has stored credentials, so the ResumeBanner renders
-  // as soon as the client hydrates — no async API call required to show it.
+  // showResume starts false (SSR-safe).
+  // hasCheckedStorage tracks whether we've done the client-side localStorage check.
+  // Until we've checked, we show a neutral loading state instead of the IdentityForm
+  // so that a disabled form is never exposed to tests while session restore is in-flight.
   const [showResume, setShowResume] = useState(false);
+  const [hasCheckedStorage, setHasCheckedStorage] = useState(false);
 
-  // On mount (client-only): check localStorage synchronously and show the banner
+  // On mount (client-only): synchronously check localStorage and show the banner
   // immediately if credentials exist. This fires before getSession() completes so
-  // the 2000ms test window is always sufficient.
+  // the 2000ms test window is always sufficient (US-1.2, US-1.3).
   useEffect(() => {
     const hasCredentials = !!(
       localStorage.getItem('af_token') && localStorage.getItem('af_session_id')
@@ -25,6 +27,7 @@ export default function HomePage() {
     if (hasCredentials) {
       setShowResume(true);
     }
+    setHasCheckedStorage(true);
   }, []);
 
   // After session API call resolves: if server says is_returning, keep banner shown
@@ -94,6 +97,20 @@ export default function HomePage() {
           >
             Continue Assessment →
           </button>
+        </div>
+      </div>
+    );
+  }
+
+  // While we haven't yet checked localStorage (SSR / very first render cycle),
+  // show a neutral loading state to avoid flashing a disabled IdentityForm.
+  // This also prevents tests from interacting with a form that's about to be replaced
+  // by the ResumeBanner.
+  if (!hasCheckedStorage) {
+    return (
+      <div className="min-h-screen bg-gray-50 flex items-center justify-center px-4">
+        <div className="bg-white rounded-xl shadow-md w-full max-w-lg p-8 text-center text-gray-400 text-sm">
+          Loading…
         </div>
       </div>
     );
