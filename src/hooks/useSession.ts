@@ -34,11 +34,24 @@ export function useSession() {
           setToken(sess.token); // fresh token from server
           localStorage.setItem(SESSION_TOKEN_KEY, sess.token);
         })
-        .catch(() => {
-          // Stale session — clear and let user re-enter
-          localStorage.removeItem(SESSION_TOKEN_KEY);
-          localStorage.removeItem(SESSION_ID_KEY);
-          setError('Your previous session could not be found. Please re-enter your details.');
+        .catch((err: unknown) => {
+          const e = err as { status?: number; code?: string };
+          // Only clear stored credentials when the server explicitly rejects the token
+          // (401 Unauthorized or known token-expiry codes). For transient network errors
+          // or 5xx failures, keep the token so the user isn't forced to re-authenticate
+          // after a momentary server hiccup (covers US-1.3 page-reload scenario).
+          const isAuthError =
+            e?.status === 401 ||
+            e?.code === 'TOKEN_EXPIRED' ||
+            e?.code === 'TOKEN_INVALID' ||
+            e?.code === 'AUTH_REQUIRED' ||
+            e?.code === 'SESSION_NOT_FOUND';
+          if (isAuthError) {
+            localStorage.removeItem(SESSION_TOKEN_KEY);
+            localStorage.removeItem(SESSION_ID_KEY);
+            setError('Your previous session could not be found. Please re-enter your details.');
+          }
+          // For non-auth errors: leave tokens intact; route guard will wait for next attempt
         })
         .finally(() => setIsLoading(false));
     } else {
