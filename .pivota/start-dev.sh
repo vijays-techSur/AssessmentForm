@@ -125,6 +125,11 @@ done
 # (CREATE TABLE IF NOT EXISTS …), so a repeat when `dev` also runs migrate is
 # safe. No-op on Daytona (no injected DATABASE_URL → compose/DinD owns the DB).
 if [ -n "${PIVOTA_DB_MODE:-}" ] || [ -n "${DATABASE_URL:-}" ]; then
+  if node -e "process.exit(require('./package.json').scripts?.migrate?0:1)" 2>/dev/null; then
+    echo "[pivota] platform DB detected — running 'npm run migrate' (best-effort) before dev server"
+    npm run migrate || echo "[pivota] migrate non-zero (continuing; dev script may re-run it)"
+  fi
+  # Also try db:migrate if present (this project uses drizzle's db:migrate convention)
   if node -e "process.exit(require('./package.json').scripts?.['db:migrate']?0:1)" 2>/dev/null; then
     echo "[pivota] platform DB detected — running 'npm run db:migrate' (best-effort) before dev server"
     npm run db:migrate || echo "[pivota] db:migrate non-zero (continuing; dev script may re-run it)"

@@ -1,6 +1,7 @@
 import { defineConfig } from '@playwright/test';
 export default defineConfig({
   testDir: './e2e/uat',
+  workers: 1,
   use: { baseURL: 'http://localhost:3000', headless: true, screenshot: 'only-on-failure' },
   reporter: [['json', { outputFile: 'playwright-results.json' }], ['list']],
   timeout: 30000,

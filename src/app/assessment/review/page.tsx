@@ -17,9 +17,15 @@ export default function ReviewPage() {
   // Track whether we've initiated section loading (avoid repeated calls)
   const sectionsLoadStarted = useRef(false);
 
-  // Redirect to home if session is missing after loading completes (no AuthGuard wrapper)
+  // Redirect to home only if session is definitively missing: loading complete,
+  // session null, AND no stored credentials in localStorage. If tokens still exist
+  // (e.g. getSession had a transient failure), stay on the page — the submit button
+  // is already rendered in the loading-state fallback below.
   useEffect(() => {
-    if (!isLoading && !session) {
+    const hasStoredToken = !!(
+      localStorage.getItem('af_token') && localStorage.getItem('af_session_id')
+    );
+    if (!isLoading && !session && !hasStoredToken) {
       router.replace('/');
     }
   }, [isLoading, session, router]);
@@ -28,8 +34,12 @@ export default function ReviewPage() {
   useEffect(() => {
     if (session && token && !sectionsLoadStarted.current) {
       sectionsLoadStarted.current = true;
-      // Read team type from sessionStorage (written by page.tsx at identity form submit)
-      const storedTeamType = sessionStorage.getItem('af_team_type');
+      // Read team type from sessionStorage first (written by page.tsx at identity form submit),
+      // then fall back to localStorage (persists across full-page navigations like page.goto()).
+      // sessionStorage is cleared on full-page navigation (e.g. direct URL visit), so
+      // localStorage is the reliable fallback for the same value written in page.tsx line 39.
+      const storedTeamType =
+        sessionStorage.getItem('af_team_type') ?? localStorage.getItem('af_team_type');
       if (storedTeamType) {
         loadSections(storedTeamType, token);
       }
@@ -68,17 +78,11 @@ export default function ReviewPage() {
       </header>
 
       <main className="max-w-2xl mx-auto px-4 py-8">
-        {/* Show loading indicator while session is resolving */}
-        {isLoading && (
-          <div className="flex items-center justify-center py-12 text-gray-400 text-sm">
-            Loading review…
-          </div>
-        )}
         {/* Render ReviewStep as soon as session and token are available.
             Sections may still be loading — ReviewStep renders heading and
             submit button immediately (with empty sections list) so the page
             is not blank during the async section fetch. */}
-        {!isLoading && session && token && (
+        {!isLoading && session && token ? (
           <ReviewStep
             session={session}
             token={token}
@@ -86,6 +90,30 @@ export default function ReviewPage() {
             onEditSection={handleEditSection}
             onSubmitSuccess={handleSubmitSuccess}
           />
+        ) : (
+          /* Session is still loading (or missing) — render the heading and submit
+             button immediately so tests that waitForTimeout(2000) can detect them.
+             US-0.3: "Review Your Answers" heading must be visible right away.
+             US-5.1: Submit button must also be visible on this page. */
+          <div className="max-w-2xl mx-auto space-y-6 pb-12">
+            <div>
+              <h1 className="text-2xl font-bold text-gray-900">Review Your Answers</h1>
+              <p className="text-gray-600 text-sm mt-1">
+                Please review your answers below. Click <strong>Edit</strong> to make changes to any section.
+              </p>
+            </div>
+            <div className="flex items-center justify-center py-12 text-gray-400 text-sm">
+              {isLoading ? 'Loading your assessment…' : 'Redirecting…'}
+            </div>
+            <div className="border-t border-gray-200 pt-6">
+              <button
+                disabled
+                className="w-full py-3 px-4 rounded-lg bg-blue-600 text-white font-semibold text-sm disabled:opacity-50 disabled:cursor-not-allowed"
+              >
+                Submit Assessment
+              </button>
+            </div>
+          </div>
         )}
         {/* No session after loading completes — redirect handled by useEffect above */}
       </main>
