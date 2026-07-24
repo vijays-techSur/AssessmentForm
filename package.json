@@ -3,10 +3,11 @@
   "version": "1.0.0",
   "main": "index.js",
   "scripts": {
-    "dev": "next dev -H 0.0.0.0 -p 3000",
+    "dev": "bash scripts/start.sh",
     "build": "next build",
-    "start": "next start -H 0.0.0.0 -p 3000",
+    "start": "bash scripts/start.sh",
     "lint": "next lint",
+    "db:setup": "npm run db:push -- --force && npm run db:seed || echo '[warn] db:setup failed — continuing'",
     "db:generate": "drizzle-kit generate",
     "db:push": "drizzle-kit push",
     "db:migrate": "tsx drizzle/migrate.ts",
