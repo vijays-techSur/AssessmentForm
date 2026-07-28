@@ -1,0 +1,41 @@
+version: '3.8'
+
+services:
+  db:
+    image: postgres:16
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: assessmentform
+      POSTGRES_PASSWORD: assessmentform_dev_password
+      POSTGRES_DB: assessmentform
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U assessmentform -d assessmentform"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+      start_period: 10s
+    ports:
+      - "5432:5432"
+
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    restart: unless-stopped
+    ports:
+      - "3000:3000"
+    environment:
+      DATABASE_URL: postgres://assessmentform:assessmentform_dev_password@db:5432/assessmentform
+      JWT_SECRET: change-me-to-a-cryptographically-random-256-bit-value
+      AUTO_SAVE_IDLE_SECONDS: "30"
+      NODE_ENV: production
+      PORT: "3000"
+      HOSTNAME: "0.0.0.0"
+    depends_on:
+      db:
+        condition: service_healthy
+
+volumes:
+  pgdata:
