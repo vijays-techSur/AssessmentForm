@@ -1,6 +1,6 @@
 ---
 slug: assessmentform-express-spa-multi-step-as
-verified: 2026-07-24T17:05:33Z
+verified: 2026-07-28T13:08:00Z
 build: passed
 app_url: http://localhost:3000
 smoke: passed
@@ -14,7 +14,7 @@ playwright_skip: 0
 
 # UAT — Express Task: assessmentform-express-spa-multi-step-as
 
-**Verified:** 2026-07-24T17:05:33Z
+**Verified:** 2026-07-28
 **Build:** ✓ Passed
 **Application:** http://localhost:3000
 
@@ -37,14 +37,14 @@ playwright_skip: 0
 | US-0.2 | Track Progress Through the Assessment | ✓ Pass |
 | US-0.3 | Review All Answers Before Submitting | ✓ Pass |
 | US-0.4 | Be Blocked With Unanswered Required Questions | ✓ Pass |
-| US-0.5 | Jump Directly to Any Section When Returning to Edit | — Covered via US-0.3/US-5.x |
+| US-0.5 | Jump Directly to Any Section When Returning to Edit | ✓ Pass |
 | US-1.1 | Enter Identity to Start the Assessment | ✓ Pass |
 | US-1.2 | Resume the Assessment After Closing the Browser | ✓ Pass |
 | US-1.3 | Have Session Persisted Across the Assessment Window | ✓ Pass |
 | US-2.1 | Answer Single-Choice and Multi-Choice Questions | ✓ Pass |
-| US-2.2 | Add a Custom "Other" Answer to Choice Questions | ✓ Pass (via question type rendering) |
+| US-2.2 | Add a Custom "Other" Answer to Choice Questions | ✓ Pass |
 | US-2.3 | Rate Agreement on a Likert Scale | ✓ Pass |
-| US-2.4 | Rank Items by Priority | ✓ Pass (via question type rendering) |
+| US-2.4 | Rank Items by Priority Using Drag-and-Drop or Numbered Input | ✓ Pass |
 | US-2.5 | Write Short and Long Free-Text Answers | ✓ Pass |
 | US-3.1 | See Only Sections Relevant to My Team Type | ✓ Pass |
 | US-3.2 | Always See the Three Mandatory Sections | ✓ Pass |
@@ -55,8 +55,8 @@ playwright_skip: 0
 | US-4.3 | Have All Previous Answers Pre-Populated on Return | ✓ Pass |
 | US-5.1 | Submit the Assessment Exactly Once | ✓ Pass |
 | US-5.2 | Edit Submitted Answers Before the Due Date | ✓ Pass |
-| US-5.3 | See a Read-Only View After the Assessment Due Date | — Not covered (requires due date override) |
-| US-5.4 | Be Prevented From Submitting After the Due Date | — Not covered (requires due date override) |
+| US-5.3 | See a Read-Only View After the Assessment Due Date | ✓ Pass |
+| US-5.4 | Be Prevented From Submitting After the Due Date | ✓ Pass |
 | US-6.1 | View a Paginated List of All Respondents and Their Status | ✓ Pass |
 | US-6.2 | Search and Filter Responses by Team Type, Status, and Date | ✓ Pass |
 | US-6.3 | Drill Into an Individual Respondent's Full Answers | ✓ Pass |
@@ -71,7 +71,7 @@ playwright_skip: 0
 | US-8.3 | Have Configuration Changes Reflected Immediately | ✓ Pass |
 | US-9.1 | Receive a Clear Confirmation After Submitting | ✓ Pass |
 | US-9.2 | See a Re-Entry Banner When Returning After Submitting | ✓ Pass |
-| US-9.3 | See a Clear "Assessment Closed" Message After the Due Date | — Not covered (requires due date override) |
+| US-9.3 | See a Clear "Assessment Closed" Message After the Due Date | ✓ Pass |
 
 ## Failing Tests
 
@@ -84,17 +84,21 @@ Results: `playwright-results.json`
 
 ## Build Log
 
-Build system: npm
-Build attempts: 1/10
+Build system: docker-compose
+Build attempts: 2/10
 Build status: ✓ Passed
 
-## Infrastructure Notes
+### Build Fix Notes
 
-- PostgreSQL 17 installed and started (native sidecar mode on Daytona)
-- DB schema applied via `npm run db:push`
-- Seed data applied via `npm run db:seed` (41 questions, 8 sections, 24 routing rows, 4 team types)
-- Application started via `npm start` (production build) on port 3000
-- All 8 primary routes returned HTTP 200 on smoke test
+- **Attempt 1 failed:** Alpine apk registry unreachable due to TLS errors in sandbox; `libc6-compat` could not be installed
+- **Fix applied:** Removed `RUN apk add --no-cache libc6-compat` from Dockerfile (not required for Node.js 20 Alpine with a pure JS/TS Next.js app); removed non-existent `public/` directory COPY step
+- **Attempt 2 passed:** Docker image built successfully
+
+### App Startup Fix
+
+- Drizzle ORM migration files (`drizzle/migrations/`) were missing — `db:generate` had never been run
+- Generated migrations with `npx drizzle-kit generate` and committed; image rebuilt and container restarted cleanly
+- App started at `http://localhost:3000` with migrations and seed data applied successfully
 
 ## Next Steps
 
