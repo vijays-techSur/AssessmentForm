@@ -1,6 +1,5 @@
 # Stage 1: Install dependencies
 FROM node:20-alpine AS deps
-RUN apk add --no-cache libc6-compat
 WORKDIR /app
 
 COPY package.json package-lock.json ./
@@ -26,7 +25,6 @@ RUN addgroup --system --gid 1001 nodejs && \
 # Copy standalone build artifacts
 COPY --from=builder /app/.next/standalone ./
 COPY --from=builder /app/.next/static ./.next/static
-COPY --from=builder /app/public ./public
 
 # Copy database artifacts for migrations and seeding
 COPY --from=builder /app/drizzle ./drizzle
