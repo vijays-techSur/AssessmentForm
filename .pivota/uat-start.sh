@@ -1,6 +1,4 @@
 #!/usr/bin/env bash
-# Idempotent, detached UAT app launcher (written by verify-express). Re-run after
-# any code fix to (re)start the app — it frees the port first.
 set -u
 PORT="${UAT_PORT:-3000}"
 BS="${BUILD_SYSTEM:-}"
