@@ -108,6 +108,12 @@ fi
 # The db service exposes :5432 on the host, matching DATABASE_URL in .env.
 if docker info >/dev/null 2>&1; then
   echo "[pivota] starting compose db service (postgres:16)"
+  # Stop the compose 'app' service if running — it binds :3000 and would
+  # conflict with `next dev`. We run Next.js natively for dev; compose's app
+  # service is a production image that requires `next build` + .next/standalone
+  # (gitignored and absent after a fresh clone).
+  docker compose stop app 2>/dev/null || true
+  docker compose rm -f app 2>/dev/null || true
   docker compose up -d db 2>&1 || {
     echo "[pivota] WARN: docker compose up -d db failed — will proceed; DB-backed routes may fail" >&2
   }
