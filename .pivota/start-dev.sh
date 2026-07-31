@@ -8,39 +8,44 @@
 #
 # Why these choices (decision-trace; do not delete):
 #   - `set -euo pipefail` not just `-e` — RESEARCH.md Pitfall 4 (silent pipe failures).
-#   - `sha256sum` for lockfile hashing — RESEARCH.md "Don't hand-roll" (universal
-#     coreutils, no extra dep vs blake3 / git hash-object / md5sum).
+#   - `sha256sum` for lockfile hashing — universal coreutils, no extra dep.
 #   - Backoff 1s / 2s / 4s — Claude's Discretion per CONTEXT.md (small base, predictable).
 #   - Log destination `/tmp/pivota-dev.log` — Open Question #4 resolved (always
 #     writable inside Daytona sandboxes; matches existing convention).
-#   - Agent fallback: multi-match (compose + react-next) — project has both
-#     docker-compose.yml (with db+app services) and next.config.ts. The compose
-#     file is the canonical infrastructure spec: db healthcheck → migrate → seed →
-#     serve. `docker compose up --build` is the correct exec so both DB provisioning
-#     and the Next.js app start together.
-#   - EXEC_CMD is `docker compose up --build` (not `npm run dev`) because:
-#     (a) the DB (postgres) is declared in docker-compose.yml and must be started;
-#     (b) the compose app command already runs drizzle migrate → seed → serve;
-#     (c) running native `next dev` would skip DB provisioning.
-#   - No lockfile sentinel / INSTALL_CMD: compose manages its own image layer cache
-#     (`--build` rebuilds only changed layers); no npm install step needed in wrapper.
-#   - Ready ports: 3000 (the app service publishes 3000:3000 per compose file).
+#   - Lockfile-sentinel skip combined with INSTALL_PRESENCE_CHECK — RESEARCH.md
+#     Pitfall 6 (sentinel survives reboots but install output dirs may not on
+#     fresh tmpfs; never skip on a clean directory).
+#   - Agent-fallback path: project matches BOTH `compose` and `react-next` catalogs
+#     (has docker-compose.yml + next.config.ts + next in package.json dependencies).
+#     Multi-match → agent synthesizes a custom wrapper per D-05/D-06.
+#   - Dev strategy: spin up only the compose `db` service (Postgres:16) for
+#     the database, then run `next dev` natively (NOT `docker compose up --build`
+#     which builds a production standalone image — slow and wrong for dev iteration).
+#     The Dockerfile/compose app service uses `next build` → `node server.js` which
+#     fails without a compiled .next/standalone (gitignored). Native `next dev` is
+#     the correct dev-time entry point per the project's own `package.json scripts.dev`.
+#   - DATABASE_URL: .env already sets `localhost:5432`; compose maps db:5432 → host:5432.
+#     Platform-injected DATABASE_URL (if any) wins via injection-safe .env seeding.
+#   - Migrate runs AFTER `npm ci` (node_modules required for tsx/drizzle-kit).
+#     Non-fatal: a transient DB unavailability logs loudly but does not strand boot.
+#   - 0.0.0.0 binding: forced via `npm run dev` which already passes `-H 0.0.0.0`
+#     (package.json scripts.dev = "next dev -H 0.0.0.0 -p 3000"). Also set HOSTNAME.
+#   - allowedDevOrigins: written to .pivota/next.config.pivota.cjs as best-effort
+#     overlay (same as react-next catalog entry; limited applicability for Next 13/14).
+#   - Retry exits with INNER command's last exit code (not a fixed 1).
+#   - run_install has an npm ERESOLVE fallback (--legacy-peer-deps) + a FATAL
+#     marker (D-12.1) — a scaffold with a lagging peer range must not silently
+#     leave node_modules empty and hang the preview on "Waiting to bind".
 
 set -euo pipefail
 
 # === Bash version guard (RESEARCH.md Pitfall 8) ===
-# `wait -n` (used by the multi-process variant) requires bash >= 4.3.
-# Fail fast with a clear message; do not silently degrade.
 if (( BASH_VERSINFO[0] < 4 )) || { (( BASH_VERSINFO[0] == 4 )) && (( BASH_VERSINFO[1] < 3 )); }; then
   echo "[pivota] bash 4.3+ required for 'wait -n'; found ${BASH_VERSION}" >&2
   exit 127
 fi
 
 # === Single-instance guard ===
-# Multiple platform paths can invoke the wrapper concurrently (sandbox setup,
-# preview open, verify pre-flight) — observed as two `docker compose up --build`
-# trees racing in one sandbox. Second invocation exits 0 quietly: the first
-# boot is authoritative and callers poll the port, not this process.
 exec 200>/tmp/pivota-dev.lock
 if ! flock -n 200; then
   echo "[pivota] start-dev.sh already running (lock held) — exiting; poll the ready port instead" >&2
@@ -48,54 +53,43 @@ if ! flock -n 200; then
 fi
 
 # === D-11.4: tee stdout/stderr to /tmp/pivota-dev.log AND pass through ===
-# Researcher resolved log destination: /tmp/pivota-dev.log (always writable,
-# matches existing convention). SSE chat panel sees output live AND a file
-# exists for scrollback / replay.
 mkdir -p /tmp
 exec > >(tee -a /tmp/pivota-dev.log) 2>&1
 echo "[pivota] $(date -Iseconds) start-dev.sh begin (catalog: agent-synthesized)"
 
-# === D-11.1 + D-11.2: per-stack 0.0.0.0 binding + host allowlist relaxation ===
-# Compose services control their own bind addresses via the `ports:` block in
-# the compose file — there is no env-var lever the wrapper can pull to force
-# 0.0.0.0 binding for child containers. The compose file already declares
-# ports: ["3000:3000"] which binds on the sandbox's all-interfaces address.
-# The app service sets HOSTNAME=0.0.0.0 in its environment block.
-# No wrapper-level env preamble needed for compose.
+# === D-11.1 + D-11.2: 0.0.0.0 binding + host allowlist relaxation ===
+# HOSTNAME is honored by Next.js for the dev server bind address since v13.
+# HOST is also exported for any downstream tool that reads it.
+# Explicit -H 0.0.0.0 is already in package.json scripts.dev as well.
+export HOSTNAME=0.0.0.0
+export HOST=0.0.0.0
+# NODE_ENV must be development for next dev to work with devDependencies
+export NODE_ENV=development
 
 # === D-11.3: .env.example -> .env seed (platform-injection-safe) ===
-# Seed .env from .env.example for first boot, but NEVER let an .env.example
-# placeholder shadow a variable the platform already injected into the sandbox
-# environment. The motivating bug: .env.example shipped a dead
-# `DATABASE_URL=postgresql://user:pass@localhost/...` that overrode the injected
-# sidecar DATABASE_URL, so Prisma `db push`/`$connect()` failed. Any KEY already
-# set in the environment (DATABASE_URL, POSTGRES_*/MYSQL_*, REDIS_URL, PIVOTA_*,
-# plus PORT/NODE_ENV from the preamble above) is dropped from the copy so the
-# injected value wins. See references/runtime-environment.md §3.
+# The project uses .env (not .env.local) for drizzle/seed scripts based on
+# the existing .env file. Seed from .env.example if .env is missing, but
+# NEVER shadow platform-injected vars (DATABASE_URL, PIVOTA_*, etc).
 if [[ ! -f .env && -f .env.example ]]; then
   echo "[pivota] seeding .env from .env.example (preserving platform-injected vars)"
   while IFS= read -r line || [[ -n "$line" ]]; do
-    trimmed="${line#"${line%%[![:space:]]*}"}"   # left-trim for the test only
+    trimmed="${line#"${line%%[![:space:]]*}"}"
     if [[ "$trimmed" == \#* || -z "$trimmed" || "$trimmed" != *"="* ]]; then
-      printf '%s\n' "$line"; continue            # keep comments / blanks / non-assignments
+      printf '%s\n' "$line"; continue
     fi
     key="${trimmed#export }"; key="${key%%=*}"; key="${key//[[:space:]]/}"
     if [[ -n "${!key+x}" ]]; then
       printf '# [pivota] %s omitted — provided by platform environment\n' "$key"
       continue
     fi
-    # D-11.5: sanitize the copied assignment. Documented .env.example files
-    # column-align inline `# comments` after values, and docker compose's .env
-    # parser passes those through as part of the value. Strip them from unquoted
-    # values only — a `#` inside quotes is part of the value.
+    # D-11.5: strip unquoted inline # comments
     if [[ "$line" != *\"* && "$line" != *\'* ]]; then
       line="$(printf '%s' "$line" | sed -E 's/[[:space:]]+#.*$//')"
     fi
-    # Replace CHANGE_ME placeholder secrets with generated values. Placeholders
-    # are landmines at runtime: jjwt hard-rejects HMAC keys under 256 bits.
+    # Replace CHANGE_ME placeholders with generated 48-char random secrets
     value="${line#*=}"
     value_lc="$(printf '%s' "$value" | tr '[:upper:]' '[:lower:]')"
-    if [[ "$value_lc" == change_me* || "$value_lc" == changeme* ]]; then
+    if [[ "$value_lc" == change_me* || "$value_lc" == changeme* || "$value_lc" == change-me* ]]; then
       generated="$(head -c 48 /dev/urandom | base64 | tr -dc 'A-Za-z0-9')"
       printf '%s=%s\n' "$key" "${generated:0:48}"
       echo "[pivota] generated random value for placeholder $key" >&2
@@ -105,19 +99,149 @@ if [[ ! -f .env && -f .env.example ]]; then
   done < .env.example > .env
 fi
 
-# === No pre-exec snippet needed for compose ===
-# The compose file owns its own build step (Dockerfile) and DB provisioning.
-# No JDK/rustup/golang one-shot installs required.
+# === Pre-exec snippet: spin up compose db service + allowedDevOrigins overlay ===
 
-# === No lockfile sentinel / install step for compose ===
-# `docker compose up --build` manages its own image layer cache.
-# No LOCK_FILE or INSTALL_CMD substitution needed.
+# -- 1. Start the Postgres DB via compose (db service only) --
+# We run `next dev` natively (not docker compose up for the whole stack),
+# because the compose app service is a production container that builds
+# `next build` → `node server.js` (gitignored .next/standalone absent in dev).
+# The db service exposes :5432 on the host, matching DATABASE_URL in .env.
+if docker info >/dev/null 2>&1; then
+  echo "[pivota] starting compose db service (postgres:16)"
+  docker compose up -d db 2>&1 || {
+    echo "[pivota] WARN: docker compose up -d db failed — will proceed; DB-backed routes may fail" >&2
+  }
+  # Wait for the db healthcheck to pass (up to 60s)
+  echo "[pivota] waiting for db to become healthy..."
+  DB_READY=0
+  for i in $(seq 1 12); do
+    STATUS=$(docker compose ps --format json db 2>/dev/null | python3 -c "import sys,json; data=sys.stdin.read().strip(); rows=data.split('\n') if data else []; print(next((json.loads(r).get('Health','') for r in rows if r.strip()), ''))" 2>/dev/null || echo "")
+    if [[ "$STATUS" == "healthy" ]]; then
+      DB_READY=1
+      echo "[pivota] db is healthy"
+      break
+    fi
+    # Fallback: try TCP connect to 5432
+    if (exec 3<>"/dev/tcp/127.0.0.1/5432") 2>/dev/null; then
+      exec 3>&-
+      DB_READY=1
+      echo "[pivota] db port 5432 is reachable"
+      break
+    fi
+    echo "[pivota] waiting for db... attempt $i/12"
+    sleep 5
+  done
+  if [[ "$DB_READY" == "0" ]]; then
+    echo "[pivota] WARN: db did not become reachable within 60s — migrations may fail" >&2
+  fi
+else
+  echo "[pivota] WARN: docker not available — cannot start compose db service; DB-backed routes will fail" >&2
+fi
+
+# -- 2. allowedDevOrigins overlay (best-effort, same as react-next catalog entry) --
+for CFG in next.config.mjs next.config.js next.config.ts; do
+  if [[ -f "$CFG" ]]; then
+    if ! grep -q "allowedDevOrigins" "$CFG" 2>/dev/null; then
+      mkdir -p .pivota
+      cat > .pivota/next.config.pivota.cjs <<'EOF'
+// Auto-generated by pivota init-dev-server. Extends user's next.config to permit
+// Daytona preview origin embedding in dev.
+module.exports = (phase, { defaultConfig }) => {
+  let user = {};
+  try { user = require('../next.config.js'); }
+  catch { try { user = require('../next.config.mjs').default || {}; } catch {} }
+  if (typeof user === 'function') user = user(phase, { defaultConfig });
+  return {
+    ...user,
+    allowedDevOrigins: [
+      ...(user.allowedDevOrigins || []),
+      '*.preview.daytona.io',
+      '*.daytona.work',
+    ],
+  };
+};
+EOF
+      echo "[pivota] wrote .pivota/next.config.pivota.cjs (allowedDevOrigins overlay)"
+    fi
+    break
+  fi
+done
+
+# === D-12: idempotent install via lockfile hash + presence check ===
+SENTINEL="/tmp/pivota-setup-sentinel"
+LOCK_FILE_PATH="package-lock.json"
+INSTALL_PRESENCE_CHECK="node_modules"
+INSTALL_CMD='npm ci --include=dev || npm install --include=dev'
+
+run_install() {
+  echo "[pivota] running install: $INSTALL_CMD"
+  local rc=0
+  bash -c "$INSTALL_CMD" || rc=$?
+  if (( rc == 0 )); then
+    return 0
+  fi
+  # D-12.1: npm ERESOLVE fallback
+  if [[ "$INSTALL_CMD" == *"npm "* ]]; then
+    echo "[pivota] WARN install failed (exit=$rc) — retrying with --legacy-peer-deps (peer conflict force-resolved; runtime incompatibility possible)"
+    local rc2=0
+    npm install --legacy-peer-deps || rc2=$?
+    if (( rc2 == 0 )); then
+      echo "[pivota] WARN install succeeded via --legacy-peer-deps fallback — a dependency's peer range is unsatisfied; fix package.json (this is a real bug, not just a warning)"
+      return 0
+    fi
+    rc=$rc2
+  fi
+  echo "[pivota] FATAL install failed (exit=$rc) — dev server cannot start; resolve the dependency conflict in the manifest" >&2
+  return "$rc"
+}
+
+if [[ -n "$LOCK_FILE_PATH" && -f "$LOCK_FILE_PATH" ]]; then
+  CURRENT_HASH=$(sha256sum "$LOCK_FILE_PATH" | cut -d' ' -f1)
+  PREVIOUS_HASH=$(cat "$SENTINEL" 2>/dev/null || echo "")
+
+  PRESENCE_OK=1
+  if [[ -n "$INSTALL_PRESENCE_CHECK" && ! -e "$INSTALL_PRESENCE_CHECK" ]]; then
+    PRESENCE_OK=0
+  fi
+
+  if [[ "$CURRENT_HASH" == "$PREVIOUS_HASH" && "$PRESENCE_OK" == "1" ]]; then
+    echo "[pivota] lockfile unchanged AND install output present; skipping install"
+  else
+    if [[ "$PRESENCE_OK" == "0" ]]; then
+      echo "[pivota] install output ($INSTALL_PRESENCE_CHECK) missing; install required"
+    else
+      echo "[pivota] lockfile changed (or first boot); install required"
+    fi
+    run_install
+    echo "$CURRENT_HASH" > "$SENTINEL"
+  fi
+elif [[ -n "$INSTALL_CMD" ]]; then
+  if [[ ! -f "$SENTINEL" ]]; then
+    run_install
+    touch "$SENTINEL"
+  fi
+fi
+
+# === Post-install: run DB migrations (AFTER npm ci — tsx requires node_modules) ===
+# Uses drizzle-kit / tsx which live in devDependencies.
+# Non-fatal: a transient DB hiccup at boot does not strand the dev server.
+# DATABASE_URL must point to a reachable Postgres instance (compose db service above).
+echo "[pivota] running DB migrations (npm run db:migrate)"
+npm run db:migrate 2>&1 || {
+  EXIT_M=$?
+  echo "[pivota] WARN: db:migrate exited $EXIT_M — app may boot onto an empty/stale schema; check DB connectivity and rerun if needed" >&2
+}
+
+# Run seed (idempotent — uses onConflictDoNothing)
+echo "[pivota] running DB seed (npm run db:seed)"
+npm run db:seed 2>&1 || {
+  EXIT_S=$?
+  echo "[pivota] WARN: db:seed exited $EXIT_S — continuing; seed data may be absent" >&2
+}
 
 # === D-14: retry loop (3 attempts, exponential backoff 1s / 2s / 4s) ===
-# Compose is a single foreground process from the wrapper's perspective
-# (multi-process-template.md §6 documents this fast path explicitly).
-# The single-process retry loop applies.
-EXEC_CMD='docker compose up --build'
+# EXEC_CMD: use the project's own dev script which already includes -H 0.0.0.0 -p 3000
+EXEC_CMD='npm run dev'
 ATTEMPT=1
 DELAY=1
 while (( ATTEMPT <= 3 )); do
