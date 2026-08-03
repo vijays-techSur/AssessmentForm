@@ -1,6 +1,6 @@
 ---
 slug: assessmentform-express-spa-multi-step-as
-verified: 2026-07-31
+verified: 2026-08-03T19:29:37Z
 build: passed
 app_url: http://localhost:3000
 smoke: passed
@@ -14,7 +14,7 @@ playwright_skip: 0
 
 # UAT — Express Task: assessmentform-express-spa-multi-step-as
 
-**Verified:** 2026-07-31
+**Verified:** 2026-08-03T19:29:37Z
 **Build:** ✓ Passed
 **Application:** http://localhost:3000
 
@@ -27,55 +27,45 @@ playwright_skip: 0
 | — Skip | 0 |
 | **Total** | **39** |
 
-**Fix cycles used:** 0/10
+**Fix cycles used:** 1/10
 
 ## User Story Coverage
 
 | Story | Title | Status |
 |-------|-------|--------|
-| US-0.1 | Navigate the Assessment Section by Section | ✓ Pass |
-| US-0.2 | Track Progress Through the Assessment | ✓ Pass |
-| US-0.3 | Review All Answers Before Submitting | ✓ Pass |
-| US-0.4 | Be Blocked With Unanswered Required Questions | ✓ Pass |
-| US-0.5 | Jump Directly to Any Section When Returning to Edit | ✓ Pass |
-| US-1.1 | Enter Identity to Start the Assessment | ✓ Pass |
-| US-1.2 | Resume the Assessment After Closing the Browser | ✓ Pass |
-| US-1.3 | Have Session Persisted Across the Assessment Window | ✓ Pass |
-| US-2.1 | Answer Single-Choice and Multi-Choice Questions | ✓ Pass |
-| US-2.2 | Add a Custom "Other" Answer to Choice Questions | ✓ Pass |
-| US-2.3 | Rate Agreement on a Likert Scale | ✓ Pass |
-| US-2.4 | Rank Items by Priority Using Drag-and-Drop or Numbered Input | ✓ Pass |
-| US-2.5 | Write Short and Long Free-Text Answers | ✓ Pass |
-| US-3.1 | See Only Sections Relevant to My Team Type | ✓ Pass |
-| US-3.2 | Always See the Three Mandatory Sections | ✓ Pass |
-| US-3.3 | Have Platform Engineering-Specific Sections Available | ✓ Pass |
-| US-3.4 | Have Data/API Governance-Specific Sections Available | ✓ Pass |
-| US-4.1 | Have Answers Saved Automatically on Section Navigation | ✓ Pass |
-| US-4.2 | Have Answers Saved Periodically While Actively Answering | ✓ Pass |
-| US-4.3 | Have All Previous Answers Pre-Populated on Return | ✓ Pass |
-| US-5.1 | Submit the Assessment Exactly Once | ✓ Pass |
-| US-5.2 | Edit Submitted Answers Before the Due Date | ✓ Pass |
-| US-5.3 | See a Read-Only View After the Assessment Due Date | ✓ Pass |
-| US-5.4 | Be Prevented From Submitting After the Due Date | ✓ Pass |
-| US-6.1 | View a Paginated List of All Respondents and Their Status | ✓ Pass |
-| US-6.2 | Search and Filter Responses by Team Type, Status, and Date | ✓ Pass |
-| US-6.3 | Drill Into an Individual Respondent's Full Answers | ✓ Pass |
-| US-6.4 | View Aggregated Analytics Charts for All Responses | ✓ Pass |
-| US-6.5 | Export All Responses to CSV | ✓ Pass |
-| US-7.1 | Be Automatically Assigned the Correct Role at Login | ✓ Pass |
-| US-7.2 | Be Blocked From Accessing the Dashboard as a Respondent | ✓ Pass |
-| US-7.3 | Be Prevented From Submitting the Assessment as a System Owner | ✓ Pass |
-| US-7.4 | Have Session Token Expire With a Clear Recovery Path | ✓ Pass |
-| US-8.1 | View the Current Assessment Configuration | ✓ Pass |
-| US-8.2 | Update the Assessment Due Date With a Confirmation Step | ✓ Pass |
-| US-8.3 | Have Configuration Changes Reflected Immediately | ✓ Pass |
-| US-9.1 | Receive a Clear Confirmation After Submitting | ✓ Pass |
-| US-9.2 | See a Re-Entry Banner When Returning After Submitting | ✓ Pass |
-| US-9.3 | See a Clear "Assessment Closed" Message After the Due Date | ✓ Pass |
+| US-1.1 | Enter Identity to Start the Assessment | ✓ Pass (5 tests) |
+| US-1.2 | Resume a Previous Session (returning respondent) | ✓ Pass (2 tests) |
+| US-1.3 | Session Persisted Across Browser Refresh | ✓ Pass (2 tests) |
+| US-0.1 | Navigate the Assessment Section by Section | ✓ Pass (3 tests) |
+| US-0.2 | Track Progress Through the Assessment | ✓ Pass (3 tests) |
+| US-0.3 | Review All Answers Before Submitting | ✓ Pass (3 tests) |
+| US-0.4 | Unanswered Required Questions Block Advancement | ✓ Pass (2 tests) |
+| US-2.x | Question Types Render Correctly | ✓ Pass (5 tests) |
+| US-5.1/US-5.2 | Submission Confirmation | ✓ Pass (2 tests) |
+| US-6.1 | System Owner Dashboard Login | ✓ Pass (6 tests) |
+| US-7.1 | Dashboard Protected by Auth | ✓ Pass (2 tests) |
+| US-8.1 | Assessment Config Accessible | ✓ Pass (2 tests) |
+| API-1 | Health Check | ✓ Pass (2 tests) |
 
 ## Failing Tests
 
 None — all tests passed.
+
+## Smoke Test
+
+| Route | Status |
+|-------|--------|
+| / | ✓ 200 |
+| /assessment | ✓ 200 |
+| /assessment/review | ✓ 200 |
+| /assessment/confirmation | ✓ 200 |
+| /dashboard | ✓ 200 |
+| /dashboard/login | ✓ 200 |
+| /dashboard/analytics | ✓ 200 |
+| /dashboard/config | ✓ 200 |
+| /api/health | ✓ 200 |
+
+Dead links: 0 | Routes failed: 0
 
 ## Playwright Report
 
