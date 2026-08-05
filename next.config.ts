@@ -4,6 +4,9 @@ const nextConfig: NextConfig = {
   // SPA-first: no static exports needed; keep App Router
   reactStrictMode: true,
 
+  // Allow Pivota Preview iframe embedding from the preview subdomain
+  allowedDevOrigins: ['*.preview.pivota-ng.pivota.dev'],
+
   // Bind to all interfaces so the container is reachable from host
   // Start command: next dev/start -H 0.0.0.0 -p 3000 (see package.json scripts)
 
