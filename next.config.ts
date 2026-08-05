@@ -4,6 +4,9 @@ const nextConfig: NextConfig = {
   // SPA-first: no static exports needed; keep App Router
   reactStrictMode: true,
 
+  // Required for Docker standalone deployment
+  output: 'standalone',
+
   // Allow Pivota Preview iframe embedding from the preview subdomain
   allowedDevOrigins: ['*.preview.pivota-ng.pivota.dev'],
 
