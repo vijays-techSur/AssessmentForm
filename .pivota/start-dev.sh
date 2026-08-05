@@ -277,7 +277,7 @@ npm run db:seed 2>&1 || {
 # Final-attempt exit code propagates the INNER command's exit code, not a
 # fixed 1, so the caller (platform / Daytona) can distinguish "wrapper bug"
 # from "user command failed with N".
-EXEC_CMD='npm run dev -- --hostname 0.0.0.0 --port 3000'
+EXEC_CMD='npx next dev -H 0.0.0.0 -p 3002'
 ATTEMPT=1
 DELAY=1
 while (( ATTEMPT <= 3 )); do

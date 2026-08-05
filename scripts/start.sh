@@ -17,6 +17,11 @@ fi
 DB_URL="${DB_URL:-${DATABASE_URL:-}}"
 JWT="${JWT:-${JWT_SECRET:-uat-dev-secret-minimum-32-chars-here!!}}"
 
+# If DB_URL still empty, read from existing .env.local rather than overwriting it with a blank value
+if [ -z "$DB_URL" ] && [ -f "$PROJECT_DIR/.env.local" ]; then
+  DB_URL=$(grep '^DATABASE_URL=' "$PROJECT_DIR/.env.local" | cut -d= -f2- | head -1)
+fi
+
 if [ -z "$DB_URL" ]; then
   echo "[warn] DATABASE_URL not found — app will start but DB-backed routes will error"
 fi
@@ -27,6 +32,7 @@ DATABASE_URL=${DB_URL}
 JWT_SECRET=${JWT}
 AUTO_SAVE_IDLE_SECONDS=${AUTO_SAVE_IDLE_SECONDS:-30}
 NODE_ENV=development
+NODE_TLS_REJECT_UNAUTHORIZED=0
 ENVEOF
 
 echo "[start] .env.local written"
@@ -43,5 +49,5 @@ else
 fi
 
 # ── 4. Start Next.js ─────────────────────────────────────────────────────────
-echo "[start] Starting Next.js on 0.0.0.0:3000..."
-exec npx next dev -H 0.0.0.0 -p 3000
+echo "[start] Starting Next.js on 0.0.0.0:3002..."
+exec npx next dev -H 0.0.0.0 -p 3002

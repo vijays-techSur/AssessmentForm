@@ -7,8 +7,9 @@ export default {
   schema: './drizzle/schema.ts',
   out: './drizzle/migrations',
   dialect: 'postgresql',
+  schemaFilter: ['assessmentform'],
   dbCredentials: {
     url: process.env.DATABASE_URL!,
-    ...(isLocal ? {} : { ssl: true }),
+    ...(isLocal ? {} : { ssl: { rejectUnauthorized: false } }),
   },
 } satisfies Config;

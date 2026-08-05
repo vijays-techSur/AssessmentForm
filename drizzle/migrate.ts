@@ -11,10 +11,14 @@ async function runMigrations() {
   }
 
   const pool = new Pool({ connectionString: process.env.DATABASE_URL });
+  // Set search_path so all DDL and queries target the assessmentform schema
+  pool.on('connect', (client) => {
+    client.query("SET search_path TO assessmentform, public");
+  });
   const db = drizzle(pool);
 
   console.log('Running migrations...');
-  await migrate(db, { migrationsFolder: './drizzle/migrations' });
+  await migrate(db, { migrationsFolder: './drizzle/migrations', migrationsSchema: 'assessmentform' });
   console.log('Migrations complete.');
 
   await pool.end();
