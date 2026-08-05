@@ -12,7 +12,14 @@
     "db:push": "drizzle-kit push",
     "db:migrate": "tsx drizzle/migrate.ts",
     "db:seed": "tsx drizzle/seed.ts",
-    "db:studio": "drizzle-kit studio"
+    "db:studio": "drizzle-kit studio",
+    "test:e2e": "playwright test",
+    "test:e2e:chromium": "playwright test --project=chromium",
+    "test:e2e:firefox": "playwright test --project=firefox",
+    "test:e2e:accessibility": "playwright test e2e/accessibility/",
+    "test:e2e:smoke": "playwright test e2e/smoke/",
+    "test:e2e:journeys": "playwright test e2e/journeys/",
+    "test:e2e:report": "playwright show-report"
   },
   "keywords": [],
   "author": "",
@@ -42,6 +49,7 @@
     "zod": "^4.4.3"
   },
   "devDependencies": {
+    "@axe-core/playwright": "^4.12.1",
     "@playwright/test": "^1.62.1",
     "@types/csv-stringify": "^1.4.3",
     "@types/pg": "^8.20.0",
