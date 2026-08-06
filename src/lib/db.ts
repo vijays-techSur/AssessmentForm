@@ -12,5 +12,10 @@ const pool = new Pool({
     : { rejectUnauthorized: false },
 });
 
+// Route all queries to the assessmentform schema on the shared platform DB
+pool.on('connect', (client) => {
+  client.query("SET search_path TO assessmentform, public");
+});
+
 export const db = drizzle(pool, { schema });
 export type DB = typeof db;
