@@ -6,7 +6,8 @@ const pool = new Pool({
   connectionString: process.env.DATABASE_URL,
   max: 20,  // TechArch §1: Connection pool max 20
   // Enable SSL for platform-provisioned sidecars (Kubernetes native-sidecar)
-  ssl: process.env.DATABASE_URL?.includes('localhost') || process.env.DATABASE_URL?.includes('127.0.0.1')
+  // Disable SSL for local docker-compose (localhost, 127.0.0.1, or sslmode=disable)
+  ssl: process.env.DATABASE_URL?.includes('localhost') || process.env.DATABASE_URL?.includes('127.0.0.1') || process.env.DATABASE_URL?.includes('sslmode=disable')
     ? false
     : { rejectUnauthorized: false },
 });

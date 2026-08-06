@@ -27,7 +27,7 @@ services:
     ports:
       - "3000:3000"
     environment:
-      DATABASE_URL: postgres://assessmentform:assessmentform_dev_password@db:5432/assessmentform
+      DATABASE_URL: postgres://assessmentform:assessmentform_dev_password@db:5432/assessmentform?sslmode=disable
       JWT_SECRET: change-me-to-a-cryptographically-random-256-bit-value
       AUTO_SAVE_IDLE_SECONDS: "30"
       NODE_ENV: production

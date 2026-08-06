@@ -1,13 +1,14 @@
 {
   "config": {
     "argv": [
-      "/usr/local/share/nvm/versions/node/v25.9.0/bin/node",
+      "/usr/local/bin/node",
       "/home/daytona/project/node_modules/.bin/playwright",
       "test",
-      "e2e/uat/assessmentform-express-spa-multi-step-as.spec.ts"
+      "e2e/uat/assessmentform-express-spa-multi-step-as.spec.ts",
+      "--project=chromium"
     ],
     "configFile": "/home/daytona/project/playwright.config.ts",
-    "rootDir": "/home/daytona/project/e2e/uat",
+    "rootDir": "/home/daytona/project/e2e",
     "failOnFlakyTests": false,
     "forbidOnly": false,
     "fullyParallel": false,
@@ -29,9 +30,25 @@
         "metadata": {
           "actualWorkers": 1
         },
-        "id": "",
-        "name": "",
-        "testDir": "/home/daytona/project/e2e/uat",
+        "id": "chromium",
+        "name": "chromium",
+        "testDir": "/home/daytona/project/e2e",
+        "testIgnore": [],
+        "testMatch": [
+          "**/*.@(spec|test).?(c|m)[jt]s?(x)"
+        ],
+        "timeout": 30000
+      },
+      {
+        "outputDir": "/home/daytona/project/test-results",
+        "repeatEach": 1,
+        "retries": 0,
+        "metadata": {
+          "actualWorkers": 1
+        },
+        "id": "firefox",
+        "name": "firefox",
+        "testDir": "/home/daytona/project/e2e",
         "testIgnore": [],
         "testMatch": [
           "**/*.@(spec|test).?(c|m)[jt]s?(x)"
@@ -42,14 +59,20 @@
     "quiet": false,
     "reporter": [
       [
-        "json",
+        "html",
         {
-          "outputFile": "playwright-results.json"
+          "outputFolder": "playwright-report"
         }
       ],
       [
         "list",
         null
+      ],
+      [
+        "json",
+        {
+          "outputFile": "playwright-results.json"
+        }
       ]
     ],
     "reportSlowTests": {
@@ -60,21 +83,21 @@
     "tags": [],
     "updateSnapshots": "missing",
     "updateSourceMethod": "patch",
-    "version": "1.61.1",
+    "version": "1.62.1",
     "workers": 1,
     "webServer": null
   },
   "suites": [
     {
-      "title": "assessmentform-express-spa-multi-step-as.spec.ts",
-      "file": "assessmentform-express-spa-multi-step-as.spec.ts",
+      "title": "uat/assessmentform-express-spa-multi-step-as.spec.ts",
+      "file": "uat/assessmentform-express-spa-multi-step-as.spec.ts",
       "column": 0,
       "line": 0,
       "specs": [],
       "suites": [
         {
           "title": "US-1.1: Enter Identity to Start the Assessment",
-          "file": "assessmentform-express-spa-multi-step-as.spec.ts",
+          "file": "uat/assessmentform-express-spa-multi-step-as.spec.ts",
           "line": 74,
           "column": 6,
           "specs": [
@@ -87,19 +110,19 @@
                   "timeout": 15000,
                   "annotations": [],
                   "expectedStatus": "passed",
-                  "projectId": "",
-                  "projectName": "",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
                   "results": [
                     {
                       "workerIndex": 0,
                       "parallelIndex": 0,
                       "status": "passed",
-                      "duration": 454,
+                      "duration": 145,
                       "errors": [],
                       "stdout": [],
                       "stderr": [],
                       "retry": 0,
-                      "startTime": "2026-07-28T12:51:31.086Z",
+                      "startTime": "2026-08-06T17:32:17.671Z",
                       "annotations": [],
                       "attachments": []
                     }
@@ -107,8 +130,8 @@
                   "status": "expected"
                 }
               ],
-              "id": "ac8319e88d7018f426a4-76c0691124afec13b3cd",
-              "file": "assessmentform-express-spa-multi-step-as.spec.ts",
+              "id": "724abdef5c4507a3f8aa-af5b9eb36837e2719d09",
+              "file": "uat/assessmentform-express-spa-multi-step-as.spec.ts",
               "line": 75,
               "column": 7
             },
@@ -121,19 +144,19 @@
                   "timeout": 15000,
                   "annotations": [],
                   "expectedStatus": "passed",
-                  "projectId": "",
-                  "projectName": "",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
                   "results": [
                     {
                       "workerIndex": 0,
                       "parallelIndex": 0,
                       "status": "passed",
-                      "duration": 396,
+                      "duration": 93,
                       "errors": [],
                       "stdout": [],
                       "stderr": [],
                       "retry": 0,
-                      "startTime": "2026-07-28T12:51:31.887Z",
+                      "startTime": "2026-08-06T17:32:17.864Z",
                       "annotations": [],
                       "attachments": []
                     }
@@ -141,8 +164,8 @@
                   "status": "expected"
                 }
               ],
-              "id": "ac8319e88d7018f426a4-3fd1cdc02fdca9f8e0ed",
-              "file": "assessmentform-express-spa-multi-step-as.spec.ts",
+              "id": "724abdef5c4507a3f8aa-13a3460f16aef97766b5",
+              "file": "uat/assessmentform-express-spa-multi-step-as.spec.ts",
               "line": 84,
               "column": 7
             },
@@ -155,19 +178,19 @@
                   "timeout": 15000,
                   "annotations": [],
                   "expectedStatus": "passed",
-                  "projectId": "",
-                  "projectName": "",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
                   "results": [
                     {
                       "workerIndex": 0,
                       "parallelIndex": 0,
                       "status": "passed",
-                      "duration": 396,
+                      "duration": 98,
                       "errors": [],
                       "stdout": [],
                       "stderr": [],
                       "retry": 0,
-                      "startTime": "2026-07-28T12:51:32.295Z",
+                      "startTime": "2026-08-06T17:32:17.961Z",
                       "annotations": [],
                       "attachments": []
                     }
@@ -175,8 +198,8 @@
                   "status": "expected"
                 }
               ],
-              "id": "ac8319e88d7018f426a4-46abc67cfbfaa1fb0597",
-              "file": "assessmentform-express-spa-multi-step-as.spec.ts",
+              "id": "724abdef5c4507a3f8aa-3c14895e4e3d9589d8d9",
+              "file": "uat/assessmentform-express-spa-multi-step-as.spec.ts",
               "line": 98,
               "column": 7
             },
@@ -189,19 +212,19 @@
                   "timeout": 15000,
                   "annotations": [],
                   "expectedStatus": "passed",
-                  "projectId": "",
-                  "projectName": "",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
                   "results": [
                     {
                       "workerIndex": 0,
                       "parallelIndex": 0,
                       "status": "passed",
-                      "duration": 495,
+                      "duration": 167,
                       "errors": [],
                       "stdout": [],
                       "stderr": [],
                       "retry": 0,
-                      "startTime": "2026-07-28T12:51:32.701Z",
+                      "startTime": "2026-08-06T17:32:18.063Z",
                       "annotations": [],
                       "attachments": []
                     }
@@ -209,8 +232,8 @@
                   "status": "expected"
                 }
               ],
-              "id": "ac8319e88d7018f426a4-979c1a7eb54eca995bc5",
-              "file": "assessmentform-express-spa-multi-step-as.spec.ts",
+              "id": "724abdef5c4507a3f8aa-52ac15742d9fd14decc0",
+              "file": "uat/assessmentform-express-spa-multi-step-as.spec.ts",
               "line": 113,
               "column": 7
             },
@@ -223,19 +246,19 @@
                   "timeout": 15000,
                   "annotations": [],
                   "expectedStatus": "passed",
-                  "projectId": "",
-                  "projectName": "",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
                   "results": [
                     {
                       "workerIndex": 0,
                       "parallelIndex": 0,
                       "status": "passed",
-                      "duration": 315,
+                      "duration": 90,
                       "errors": [],
                       "stdout": [],
                       "stderr": [],
                       "retry": 0,
-                      "startTime": "2026-07-28T12:51:33.207Z",
+                      "startTime": "2026-08-06T17:32:18.235Z",
                       "annotations": [],
                       "attachments": []
                     }
@@ -243,8 +266,8 @@
                   "status": "expected"
                 }
               ],
-              "id": "ac8319e88d7018f426a4-6ca985eb94be2e34a9dd",
-              "file": "assessmentform-express-spa-multi-step-as.spec.ts",
+              "id": "724abdef5c4507a3f8aa-cbf417e7de27d29474d7",
+              "file": "uat/assessmentform-express-spa-multi-step-as.spec.ts",
               "line": 124,
               "column": 7
             }
@@ -252,7 +275,7 @@
         },
         {
           "title": "US-1.2: Resume a Previous Session (returning respondent)",
-          "file": "assessmentform-express-spa-multi-step-as.spec.ts",
+          "file": "uat/assessmentform-express-spa-multi-step-as.spec.ts",
           "line": 136,
           "column": 6,
           "specs": [
@@ -265,19 +288,19 @@
                   "timeout": 15000,
                   "annotations": [],
                   "expectedStatus": "passed",
-                  "projectId": "",
-                  "projectName": "",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
                   "results": [
                     {
                       "workerIndex": 0,
                       "parallelIndex": 0,
                       "status": "passed",
-                      "duration": 2608,
+                      "duration": 2178,
                       "errors": [],
                       "stdout": [],
                       "stderr": [],
                       "retry": 0,
-                      "startTime": "2026-07-28T12:51:33.572Z",
+                      "startTime": "2026-08-06T17:32:18.329Z",
                       "annotations": [],
                       "attachments": []
                     }
@@ -285,8 +308,8 @@
                   "status": "expected"
                 }
               ],
-              "id": "ac8319e88d7018f426a4-e7c5baa714d359a14b0f",
-              "file": "assessmentform-express-spa-multi-step-as.spec.ts",
+              "id": "724abdef5c4507a3f8aa-6877b544819978c279e5",
+              "file": "uat/assessmentform-express-spa-multi-step-as.spec.ts",
               "line": 137,
               "column": 7
             },
@@ -299,19 +322,19 @@
                   "timeout": 15000,
                   "annotations": [],
                   "expectedStatus": "passed",
-                  "projectId": "",
-                  "projectName": "",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
                   "results": [
                     {
                       "workerIndex": 0,
                       "parallelIndex": 0,
                       "status": "passed",
-                      "duration": 2547,
+                      "duration": 2179,
                       "errors": [],
                       "stdout": [],
                       "stderr": [],
                       "retry": 0,
-                      "startTime": "2026-07-28T12:51:36.193Z",
+                      "startTime": "2026-08-06T17:32:20.510Z",
                       "annotations": [],
                       "attachments": []
                     }
@@ -319,8 +342,8 @@
                   "status": "expected"
                 }
               ],
-              "id": "ac8319e88d7018f426a4-f6624421350edd8430a8",
-              "file": "assessmentform-express-spa-multi-step-as.spec.ts",
+              "id": "724abdef5c4507a3f8aa-72a046284ed58c15a442",
+              "file": "uat/assessmentform-express-spa-multi-step-as.spec.ts",
               "line": 157,
               "column": 7
             }
@@ -328,7 +351,7 @@
         },
         {
           "title": "US-1.3: Session Persisted Across Browser Refresh",
-          "file": "assessmentform-express-spa-multi-step-as.spec.ts",
+          "file": "uat/assessmentform-express-spa-multi-step-as.spec.ts",
           "line": 178,
           "column": 6,
           "specs": [
@@ -341,19 +364,19 @@
                   "timeout": 15000,
                   "annotations": [],
                   "expectedStatus": "passed",
-                  "projectId": "",
-                  "projectName": "",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
                   "results": [
                     {
                       "workerIndex": 0,
                       "parallelIndex": 0,
                       "status": "passed",
-                      "duration": 338,
+                      "duration": 169,
                       "errors": [],
                       "stdout": [],
                       "stderr": [],
                       "retry": 0,
-                      "startTime": "2026-07-28T12:51:38.751Z",
+                      "startTime": "2026-08-06T17:32:22.693Z",
                       "annotations": [],
                       "attachments": []
                     }
@@ -361,8 +384,8 @@
                   "status": "expected"
                 }
               ],
-              "id": "ac8319e88d7018f426a4-baa6e7df3c15d0d264cb",
-              "file": "assessmentform-express-spa-multi-step-as.spec.ts",
+              "id": "724abdef5c4507a3f8aa-a09066ba51def9868e53",
+              "file": "uat/assessmentform-express-spa-multi-step-as.spec.ts",
               "line": 179,
               "column": 7
             },
@@ -375,19 +398,19 @@
                   "timeout": 15000,
                   "annotations": [],
                   "expectedStatus": "passed",
-                  "projectId": "",
-                  "projectName": "",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
                   "results": [
                     {
                       "workerIndex": 0,
                       "parallelIndex": 0,
                       "status": "passed",
-                      "duration": 2407,
+                      "duration": 2176,
                       "errors": [],
                       "stdout": [],
                       "stderr": [],
                       "retry": 0,
-                      "startTime": "2026-07-28T12:51:39.107Z",
+                      "startTime": "2026-08-06T17:32:22.866Z",
                       "annotations": [],
                       "attachments": []
                     }
@@ -395,8 +418,8 @@
                   "status": "expected"
                 }
               ],
-              "id": "ac8319e88d7018f426a4-77381576c66c0eadfc27",
-              "file": "assessmentform-express-spa-multi-step-as.spec.ts",
+              "id": "724abdef5c4507a3f8aa-eab1980ad6a90bcc5180",
+              "file": "uat/assessmentform-express-spa-multi-step-as.spec.ts",
               "line": 193,
               "column": 7
             }
@@ -404,7 +427,7 @@
         },
         {
           "title": "US-0.1: Navigate the Assessment Section by Section",
-          "file": "assessmentform-express-spa-multi-step-as.spec.ts",
+          "file": "uat/assessmentform-express-spa-multi-step-as.spec.ts",
           "line": 212,
           "column": 6,
           "specs": [
@@ -417,19 +440,19 @@
                   "timeout": 15000,
                   "annotations": [],
                   "expectedStatus": "passed",
-                  "projectId": "",
-                  "projectName": "",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
                   "results": [
                     {
                       "workerIndex": 0,
                       "parallelIndex": 0,
                       "status": "passed",
-                      "duration": 2318,
+                      "duration": 2150,
                       "errors": [],
                       "stdout": [],
                       "stderr": [],
                       "retry": 0,
-                      "startTime": "2026-07-28T12:51:41.594Z",
+                      "startTime": "2026-08-06T17:32:25.046Z",
                       "annotations": [],
                       "attachments": []
                     }
@@ -437,8 +460,8 @@
                   "status": "expected"
                 }
               ],
-              "id": "ac8319e88d7018f426a4-955511a0c70092589b8d",
-              "file": "assessmentform-express-spa-multi-step-as.spec.ts",
+              "id": "724abdef5c4507a3f8aa-6375302f63e2bb278d72",
+              "file": "uat/assessmentform-express-spa-multi-step-as.spec.ts",
               "line": 213,
               "column": 7
             },
@@ -451,19 +474,19 @@
                   "timeout": 15000,
                   "annotations": [],
                   "expectedStatus": "passed",
-                  "projectId": "",
-                  "projectName": "",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
                   "results": [
                     {
                       "workerIndex": 0,
                       "parallelIndex": 0,
                       "status": "passed",
-                      "duration": 2398,
+                      "duration": 2152,
                       "errors": [],
                       "stdout": [],
                       "stderr": [],
                       "retry": 0,
-                      "startTime": "2026-07-28T12:51:43.922Z",
+                      "startTime": "2026-08-06T17:32:27.199Z",
                       "annotations": [],
                       "attachments": []
                     }
@@ -471,8 +494,8 @@
                   "status": "expected"
                 }
               ],
-              "id": "ac8319e88d7018f426a4-ba1672fc970fcaff06c6",
-              "file": "assessmentform-express-spa-multi-step-as.spec.ts",
+              "id": "724abdef5c4507a3f8aa-73061cc7a4a61e7d4b09",
+              "file": "uat/assessmentform-express-spa-multi-step-as.spec.ts",
               "line": 237,
               "column": 7
             },
@@ -485,19 +508,19 @@
                   "timeout": 15000,
                   "annotations": [],
                   "expectedStatus": "passed",
-                  "projectId": "",
-                  "projectName": "",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
                   "results": [
                     {
                       "workerIndex": 0,
                       "parallelIndex": 0,
                       "status": "passed",
-                      "duration": 2503,
+                      "duration": 2141,
                       "errors": [],
                       "stdout": [],
                       "stderr": [],
                       "retry": 0,
-                      "startTime": "2026-07-28T12:51:46.377Z",
+                      "startTime": "2026-08-06T17:32:29.355Z",
                       "annotations": [],
                       "attachments": []
                     }
@@ -505,8 +528,8 @@
                   "status": "expected"
                 }
               ],
-              "id": "ac8319e88d7018f426a4-287dbfb7d32c9e922d25",
-              "file": "assessmentform-express-spa-multi-step-as.spec.ts",
+              "id": "724abdef5c4507a3f8aa-2e6222dae5210aa4e010",
+              "file": "uat/assessmentform-express-spa-multi-step-as.spec.ts",
               "line": 255,
               "column": 7
             }
@@ -514,7 +537,7 @@
         },
         {
           "title": "US-0.2: Track Progress Through the Assessment",
-          "file": "assessmentform-express-spa-multi-step-as.spec.ts",
+          "file": "uat/assessmentform-express-spa-multi-step-as.spec.ts",
           "line": 276,
           "column": 6,
           "specs": [
@@ -527,19 +550,19 @@
                   "timeout": 15000,
                   "annotations": [],
                   "expectedStatus": "passed",
-                  "projectId": "",
-                  "projectName": "",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
                   "results": [
                     {
                       "workerIndex": 0,
                       "parallelIndex": 0,
                       "status": "passed",
-                      "duration": 2479,
+                      "duration": 2145,
                       "errors": [],
                       "stdout": [],
                       "stderr": [],
                       "retry": 0,
-                      "startTime": "2026-07-28T12:51:48.891Z",
+                      "startTime": "2026-08-06T17:32:31.500Z",
                       "annotations": [],
                       "attachments": []
                     }
@@ -547,8 +570,8 @@
                   "status": "expected"
                 }
               ],
-              "id": "ac8319e88d7018f426a4-a5c1646279c2dd8b752f",
-              "file": "assessmentform-express-spa-multi-step-as.spec.ts",
+              "id": "724abdef5c4507a3f8aa-9625329eb2fd66ba59ef",
+              "file": "uat/assessmentform-express-spa-multi-step-as.spec.ts",
               "line": 277,
               "column": 7
             },
@@ -561,19 +584,19 @@
                   "timeout": 15000,
                   "annotations": [],
                   "expectedStatus": "passed",
-                  "projectId": "",
-                  "projectName": "",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
                   "results": [
                     {
                       "workerIndex": 0,
                       "parallelIndex": 0,
                       "status": "passed",
-                      "duration": 2518,
+                      "duration": 2151,
                       "errors": [],
                       "stdout": [],
                       "stderr": [],
                       "retry": 0,
-                      "startTime": "2026-07-28T12:51:51.459Z",
+                      "startTime": "2026-08-06T17:32:33.649Z",
                       "annotations": [],
                       "attachments": []
                     }
@@ -581,8 +604,8 @@
                   "status": "expected"
                 }
               ],
-              "id": "ac8319e88d7018f426a4-7333d83e36da5b6f63d7",
-              "file": "assessmentform-express-spa-multi-step-as.spec.ts",
+              "id": "724abdef5c4507a3f8aa-d66cb51402fe0ea596bb",
+              "file": "uat/assessmentform-express-spa-multi-step-as.spec.ts",
               "line": 296,
               "column": 7
             },
@@ -595,19 +618,19 @@
                   "timeout": 15000,
                   "annotations": [],
                   "expectedStatus": "passed",
-                  "projectId": "",
-                  "projectName": "",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
                   "results": [
                     {
                       "workerIndex": 0,
                       "parallelIndex": 0,
                       "status": "passed",
-                      "duration": 2330,
+                      "duration": 2162,
                       "errors": [],
                       "stdout": [],
                       "stderr": [],
                       "retry": 0,
-                      "startTime": "2026-07-28T12:51:53.993Z",
+                      "startTime": "2026-08-06T17:32:35.803Z",
                       "annotations": [],
                       "attachments": []
                     }
@@ -615,8 +638,8 @@
                   "status": "expected"
                 }
               ],
-              "id": "ac8319e88d7018f426a4-0258d4de5ea53a05650e",
-              "file": "assessmentform-express-spa-multi-step-as.spec.ts",
+              "id": "724abdef5c4507a3f8aa-8d0faeb5187432ab7e57",
+              "file": "uat/assessmentform-express-spa-multi-step-as.spec.ts",
               "line": 316,
               "column": 7
             }
@@ -624,7 +647,7 @@
         },
         {
           "title": "US-0.3: Review All Answers Before Submitting",
-          "file": "assessmentform-express-spa-multi-step-as.spec.ts",
+          "file": "uat/assessmentform-express-spa-multi-step-as.spec.ts",
           "line": 338,
           "column": 6,
           "specs": [
@@ -637,19 +660,19 @@
                   "timeout": 15000,
                   "annotations": [],
                   "expectedStatus": "passed",
-                  "projectId": "",
-                  "projectName": "",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
                   "results": [
                     {
                       "workerIndex": 0,
                       "parallelIndex": 0,
                       "status": "passed",
-                      "duration": 2453,
+                      "duration": 2191,
                       "errors": [],
                       "stdout": [],
                       "stderr": [],
                       "retry": 0,
-                      "startTime": "2026-07-28T12:51:56.336Z",
+                      "startTime": "2026-08-06T17:32:37.969Z",
                       "annotations": [],
                       "attachments": []
                     }
@@ -657,8 +680,8 @@
                   "status": "expected"
                 }
               ],
-              "id": "ac8319e88d7018f426a4-12bc887e3e86f3632ce8",
-              "file": "assessmentform-express-spa-multi-step-as.spec.ts",
+              "id": "724abdef5c4507a3f8aa-5e3fb9589a6074082cc3",
+              "file": "uat/assessmentform-express-spa-multi-step-as.spec.ts",
               "line": 339,
               "column": 7
             },
@@ -671,19 +694,19 @@
                   "timeout": 15000,
                   "annotations": [],
                   "expectedStatus": "passed",
-                  "projectId": "",
-                  "projectName": "",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
                   "results": [
                     {
                       "workerIndex": 0,
                       "parallelIndex": 0,
                       "status": "passed",
-                      "duration": 2493,
+                      "duration": 2198,
                       "errors": [],
                       "stdout": [],
                       "stderr": [],
                       "retry": 0,
-                      "startTime": "2026-07-28T12:51:58.801Z",
+                      "startTime": "2026-08-06T17:32:40.163Z",
                       "annotations": [],
                       "attachments": []
                     }
@@ -691,8 +714,8 @@
                   "status": "expected"
                 }
               ],
-              "id": "ac8319e88d7018f426a4-cfbb74ff775881ad54b2",
-              "file": "assessmentform-express-spa-multi-step-as.spec.ts",
+              "id": "724abdef5c4507a3f8aa-8bd3bcdfb51d0e6ffeb6",
+              "file": "uat/assessmentform-express-spa-multi-step-as.spec.ts",
               "line": 365,
               "column": 7
             },
@@ -705,19 +728,19 @@
                   "timeout": 15000,
                   "annotations": [],
                   "expectedStatus": "passed",
-                  "projectId": "",
-                  "projectName": "",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
                   "results": [
                     {
                       "workerIndex": 0,
                       "parallelIndex": 0,
                       "status": "passed",
-                      "duration": 3480,
+                      "duration": 3194,
                       "errors": [],
                       "stdout": [],
                       "stderr": [],
                       "retry": 0,
-                      "startTime": "2026-07-28T12:52:01.304Z",
+                      "startTime": "2026-08-06T17:32:42.365Z",
                       "annotations": [],
                       "attachments": []
                     }
@@ -725,8 +748,8 @@
                   "status": "expected"
                 }
               ],
-              "id": "ac8319e88d7018f426a4-ed22bd7c2fa8c73f20e7",
-              "file": "assessmentform-express-spa-multi-step-as.spec.ts",
+              "id": "724abdef5c4507a3f8aa-66b17d301c94471b836a",
+              "file": "uat/assessmentform-express-spa-multi-step-as.spec.ts",
               "line": 388,
               "column": 7
             }
@@ -734,7 +757,7 @@
         },
         {
           "title": "US-0.4: Unanswered Required Questions Block Advancement",
-          "file": "assessmentform-express-spa-multi-step-as.spec.ts",
+          "file": "uat/assessmentform-express-spa-multi-step-as.spec.ts",
           "line": 419,
           "column": 6,
           "specs": [
@@ -747,19 +770,19 @@
                   "timeout": 15000,
                   "annotations": [],
                   "expectedStatus": "passed",
-                  "projectId": "",
-                  "projectName": "",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
                   "results": [
                     {
                       "workerIndex": 0,
                       "parallelIndex": 0,
                       "status": "passed",
-                      "duration": 3773,
+                      "duration": 2678,
                       "errors": [],
                       "stdout": [],
                       "stderr": [],
                       "retry": 0,
-                      "startTime": "2026-07-28T12:52:04.794Z",
+                      "startTime": "2026-08-06T17:32:45.564Z",
                       "annotations": [],
                       "attachments": []
                     }
@@ -767,8 +790,8 @@
                   "status": "expected"
                 }
               ],
-              "id": "ac8319e88d7018f426a4-e13985eb90ef8b34adc1",
-              "file": "assessmentform-express-spa-multi-step-as.spec.ts",
+              "id": "724abdef5c4507a3f8aa-47fff5759d0bd18a1753",
+              "file": "uat/assessmentform-express-spa-multi-step-as.spec.ts",
               "line": 420,
               "column": 7
             },
@@ -781,19 +804,19 @@
                   "timeout": 15000,
                   "annotations": [],
                   "expectedStatus": "passed",
-                  "projectId": "",
-                  "projectName": "",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
                   "results": [
                     {
                       "workerIndex": 0,
                       "parallelIndex": 0,
                       "status": "passed",
-                      "duration": 5499,
+                      "duration": 2678,
                       "errors": [],
                       "stdout": [],
                       "stderr": [],
                       "retry": 0,
-                      "startTime": "2026-07-28T12:52:08.580Z",
+                      "startTime": "2026-08-06T17:32:48.248Z",
                       "annotations": [],
                       "attachments": []
                     }
@@ -801,8 +824,8 @@
                   "status": "expected"
                 }
               ],
-              "id": "ac8319e88d7018f426a4-693356f281efec5bf793",
-              "file": "assessmentform-express-spa-multi-step-as.spec.ts",
+              "id": "724abdef5c4507a3f8aa-45da14d0c6926e7d7a35",
+              "file": "uat/assessmentform-express-spa-multi-step-as.spec.ts",
               "line": 452,
               "column": 7
             }
@@ -810,7 +833,7 @@
         },
         {
           "title": "US-2.x: Question Types Render Correctly",
-          "file": "assessmentform-express-spa-multi-step-as.spec.ts",
+          "file": "uat/assessmentform-express-spa-multi-step-as.spec.ts",
           "line": 483,
           "column": 6,
           "specs": [
@@ -823,19 +846,19 @@
                   "timeout": 15000,
                   "annotations": [],
                   "expectedStatus": "passed",
-                  "projectId": "",
-                  "projectName": "",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
                   "results": [
                     {
                       "workerIndex": 0,
                       "parallelIndex": 0,
                       "status": "passed",
-                      "duration": 5295,
+                      "duration": 2652,
                       "errors": [],
                       "stdout": [],
                       "stderr": [],
                       "retry": 0,
-                      "startTime": "2026-07-28T12:52:14.177Z",
+                      "startTime": "2026-08-06T17:32:50.929Z",
                       "annotations": [],
                       "attachments": []
                     }
@@ -843,8 +866,8 @@
                   "status": "expected"
                 }
               ],
-              "id": "ac8319e88d7018f426a4-39e96f47b94939f92034",
-              "file": "assessmentform-express-spa-multi-step-as.spec.ts",
+              "id": "724abdef5c4507a3f8aa-4c023e5603aec5a13ec1",
+              "file": "uat/assessmentform-express-spa-multi-step-as.spec.ts",
               "line": 500,
               "column": 7
             },
@@ -857,19 +880,19 @@
                   "timeout": 15000,
                   "annotations": [],
                   "expectedStatus": "passed",
-                  "projectId": "",
-                  "projectName": "",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
                   "results": [
                     {
                       "workerIndex": 0,
                       "parallelIndex": 0,
                       "status": "passed",
-                      "duration": 3997,
+                      "duration": 2645,
                       "errors": [],
                       "stdout": [],
                       "stderr": [],
                       "retry": 0,
-                      "startTime": "2026-07-28T12:52:19.572Z",
+                      "startTime": "2026-08-06T17:32:53.585Z",
                       "annotations": [],
                       "attachments": []
                     }
@@ -877,8 +900,8 @@
                   "status": "expected"
                 }
               ],
-              "id": "ac8319e88d7018f426a4-5e6b39d425d30e49c9ee",
-              "file": "assessmentform-express-spa-multi-step-as.spec.ts",
+              "id": "724abdef5c4507a3f8aa-aac9da419efade4a1538",
+              "file": "uat/assessmentform-express-spa-multi-step-as.spec.ts",
               "line": 514,
               "column": 7
             },
@@ -891,19 +914,19 @@
                   "timeout": 15000,
                   "annotations": [],
                   "expectedStatus": "passed",
-                  "projectId": "",
-                  "projectName": "",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
                   "results": [
                     {
                       "workerIndex": 0,
                       "parallelIndex": 0,
                       "status": "passed",
-                      "duration": 4393,
+                      "duration": 2646,
                       "errors": [],
                       "stdout": [],
                       "stderr": [],
                       "retry": 0,
-                      "startTime": "2026-07-28T12:52:23.578Z",
+                      "startTime": "2026-08-06T17:32:56.235Z",
                       "annotations": [],
                       "attachments": []
                     }
@@ -911,8 +934,8 @@
                   "status": "expected"
                 }
               ],
-              "id": "ac8319e88d7018f426a4-ca2d47fd8115d36122f4",
-              "file": "assessmentform-express-spa-multi-step-as.spec.ts",
+              "id": "724abdef5c4507a3f8aa-77dbc873f272ca524e87",
+              "file": "uat/assessmentform-express-spa-multi-step-as.spec.ts",
               "line": 532,
               "column": 7
             },
@@ -925,19 +948,19 @@
                   "timeout": 15000,
                   "annotations": [],
                   "expectedStatus": "passed",
-                  "projectId": "",
-                  "projectName": "",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
                   "results": [
                     {
                       "workerIndex": 0,
                       "parallelIndex": 0,
                       "status": "passed",
-                      "duration": 4492,
+                      "duration": 2680,
                       "errors": [],
                       "stdout": [],
                       "stderr": [],
                       "retry": 0,
-                      "startTime": "2026-07-28T12:52:28.073Z",
+                      "startTime": "2026-08-06T17:32:58.886Z",
                       "annotations": [],
                       "attachments": []
                     }
@@ -945,8 +968,8 @@
                   "status": "expected"
                 }
               ],
-              "id": "ac8319e88d7018f426a4-9cf026561c4eafa07a0e",
-              "file": "assessmentform-express-spa-multi-step-as.spec.ts",
+              "id": "724abdef5c4507a3f8aa-cf4429bdcbdb7ac5089e",
+              "file": "uat/assessmentform-express-spa-multi-step-as.spec.ts",
               "line": 547,
               "column": 7
             },
@@ -959,19 +982,19 @@
                   "timeout": 15000,
                   "annotations": [],
                   "expectedStatus": "passed",
-                  "projectId": "",
-                  "projectName": "",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
                   "results": [
                     {
                       "workerIndex": 0,
                       "parallelIndex": 0,
                       "status": "passed",
-                      "duration": 3528,
+                      "duration": 2646,
                       "errors": [],
                       "stdout": [],
                       "stderr": [],
                       "retry": 0,
-                      "startTime": "2026-07-28T12:52:32.673Z",
+                      "startTime": "2026-08-06T17:33:01.570Z",
                       "annotations": [],
                       "attachments": []
                     }
@@ -979,8 +1002,8 @@
                   "status": "expected"
                 }
               ],
-              "id": "ac8319e88d7018f426a4-727c8d4a49d90b047e7c",
-              "file": "assessmentform-express-spa-multi-step-as.spec.ts",
+              "id": "724abdef5c4507a3f8aa-698103c4a66720087d1c",
+              "file": "uat/assessmentform-express-spa-multi-step-as.spec.ts",
               "line": 562,
               "column": 7
             }
@@ -988,7 +1011,7 @@
         },
         {
           "title": "US-5.1/US-5.2: Submission Confirmation",
-          "file": "assessmentform-express-spa-multi-step-as.spec.ts",
+          "file": "uat/assessmentform-express-spa-multi-step-as.spec.ts",
           "line": 584,
           "column": 6,
           "specs": [
@@ -1001,19 +1024,19 @@
                   "timeout": 15000,
                   "annotations": [],
                   "expectedStatus": "passed",
-                  "projectId": "",
-                  "projectName": "",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
                   "results": [
                     {
                       "workerIndex": 0,
                       "parallelIndex": 0,
                       "status": "passed",
-                      "duration": 4276,
+                      "duration": 3670,
                       "errors": [],
                       "stdout": [],
                       "stderr": [],
                       "retry": 0,
-                      "startTime": "2026-07-28T12:52:36.502Z",
+                      "startTime": "2026-08-06T17:33:04.220Z",
                       "annotations": [],
                       "attachments": []
                     }
@@ -1021,8 +1044,8 @@
                   "status": "expected"
                 }
               ],
-              "id": "ac8319e88d7018f426a4-d3dd992b485f30de44d6",
-              "file": "assessmentform-express-spa-multi-step-as.spec.ts",
+              "id": "724abdef5c4507a3f8aa-f4a127e7af3fda31c772",
+              "file": "uat/assessmentform-express-spa-multi-step-as.spec.ts",
               "line": 585,
               "column": 7
             },
@@ -1035,19 +1058,19 @@
                   "timeout": 15000,
                   "annotations": [],
                   "expectedStatus": "passed",
-                  "projectId": "",
-                  "projectName": "",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
                   "results": [
                     {
                       "workerIndex": 0,
                       "parallelIndex": 0,
                       "status": "passed",
-                      "duration": 6677,
+                      "duration": 4699,
                       "errors": [],
                       "stdout": [],
                       "stderr": [],
                       "retry": 0,
-                      "startTime": "2026-07-28T12:52:40.788Z",
+                      "startTime": "2026-08-06T17:33:07.893Z",
                       "annotations": [],
                       "attachments": []
                     }
@@ -1055,8 +1078,8 @@
                   "status": "expected"
                 }
               ],
-              "id": "ac8319e88d7018f426a4-50f6aa68138a91e86e51",
-              "file": "assessmentform-express-spa-multi-step-as.spec.ts",
+              "id": "724abdef5c4507a3f8aa-130e22b4d027864490a6",
+              "file": "uat/assessmentform-express-spa-multi-step-as.spec.ts",
               "line": 621,
               "column": 7
             }
@@ -1064,7 +1087,7 @@
         },
         {
           "title": "US-6.1: System Owner Dashboard Login",
-          "file": "assessmentform-express-spa-multi-step-as.spec.ts",
+          "file": "uat/assessmentform-express-spa-multi-step-as.spec.ts",
           "line": 653,
           "column": 6,
           "specs": [
@@ -1077,19 +1100,19 @@
                   "timeout": 15000,
                   "annotations": [],
                   "expectedStatus": "passed",
-                  "projectId": "",
-                  "projectName": "",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
                   "results": [
                     {
                       "workerIndex": 0,
                       "parallelIndex": 0,
                       "status": "passed",
-                      "duration": 3708,
+                      "duration": 76,
                       "errors": [],
                       "stdout": [],
                       "stderr": [],
                       "retry": 0,
-                      "startTime": "2026-07-28T12:52:47.474Z",
+                      "startTime": "2026-08-06T17:33:12.596Z",
                       "annotations": [],
                       "attachments": []
                     }
@@ -1097,8 +1120,8 @@
                   "status": "expected"
                 }
               ],
-              "id": "ac8319e88d7018f426a4-e31cbbc8d5e539085784",
-              "file": "assessmentform-express-spa-multi-step-as.spec.ts",
+              "id": "724abdef5c4507a3f8aa-0d9c2ec371b3baaa8c6b",
+              "file": "uat/assessmentform-express-spa-multi-step-as.spec.ts",
               "line": 654,
               "column": 7
             },
@@ -1111,19 +1134,19 @@
                   "timeout": 15000,
                   "annotations": [],
                   "expectedStatus": "passed",
-                  "projectId": "",
-                  "projectName": "",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
                   "results": [
                     {
                       "workerIndex": 0,
                       "parallelIndex": 0,
                       "status": "passed",
-                      "duration": 808,
+                      "duration": 79,
                       "errors": [],
                       "stdout": [],
                       "stderr": [],
                       "retry": 0,
-                      "startTime": "2026-07-28T12:52:51.573Z",
+                      "startTime": "2026-08-06T17:33:12.676Z",
                       "annotations": [],
                       "attachments": []
                     }
@@ -1131,8 +1154,8 @@
                   "status": "expected"
                 }
               ],
-              "id": "ac8319e88d7018f426a4-49d5dc00ad5f35026d11",
-              "file": "assessmentform-express-spa-multi-step-as.spec.ts",
+              "id": "724abdef5c4507a3f8aa-3848a0152be1a053dcf1",
+              "file": "uat/assessmentform-express-spa-multi-step-as.spec.ts",
               "line": 661,
               "column": 7
             },
@@ -1145,19 +1168,19 @@
                   "timeout": 15000,
                   "annotations": [],
                   "expectedStatus": "passed",
-                  "projectId": "",
-                  "projectName": "",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
                   "results": [
                     {
                       "workerIndex": 0,
                       "parallelIndex": 0,
                       "status": "passed",
-                      "duration": 244,
+                      "duration": 80,
                       "errors": [],
                       "stdout": [],
                       "stderr": [],
                       "retry": 0,
-                      "startTime": "2026-07-28T12:52:52.489Z",
+                      "startTime": "2026-08-06T17:33:12.758Z",
                       "annotations": [],
                       "attachments": []
                     }
@@ -1165,8 +1188,8 @@
                   "status": "expected"
                 }
               ],
-              "id": "ac8319e88d7018f426a4-389d6cbae685d3a4b477",
-              "file": "assessmentform-express-spa-multi-step-as.spec.ts",
+              "id": "724abdef5c4507a3f8aa-abdf4ccf95c7504bb640",
+              "file": "uat/assessmentform-express-spa-multi-step-as.spec.ts",
               "line": 668,
               "column": 7
             },
@@ -1179,19 +1202,19 @@
                   "timeout": 15000,
                   "annotations": [],
                   "expectedStatus": "passed",
-                  "projectId": "",
-                  "projectName": "",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
                   "results": [
                     {
                       "workerIndex": 0,
                       "parallelIndex": 0,
                       "status": "passed",
-                      "duration": 316,
+                      "duration": 80,
                       "errors": [],
                       "stdout": [],
                       "stderr": [],
                       "retry": 0,
-                      "startTime": "2026-07-28T12:52:52.770Z",
+                      "startTime": "2026-08-06T17:33:12.842Z",
                       "annotations": [],
                       "attachments": []
                     }
@@ -1199,8 +1222,8 @@
                   "status": "expected"
                 }
               ],
-              "id": "ac8319e88d7018f426a4-e3bec22f0f3d107a89ee",
-              "file": "assessmentform-express-spa-multi-step-as.spec.ts",
+              "id": "724abdef5c4507a3f8aa-2760d0d4dde84d4d95c7",
+              "file": "uat/assessmentform-express-spa-multi-step-as.spec.ts",
               "line": 675,
               "column": 7
             },
@@ -1213,19 +1236,19 @@
                   "timeout": 15000,
                   "annotations": [],
                   "expectedStatus": "passed",
-                  "projectId": "",
-                  "projectName": "",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
                   "results": [
                     {
                       "workerIndex": 0,
                       "parallelIndex": 0,
                       "status": "passed",
-                      "duration": 396,
+                      "duration": 114,
                       "errors": [],
                       "stdout": [],
                       "stderr": [],
                       "retry": 0,
-                      "startTime": "2026-07-28T12:52:53.095Z",
+                      "startTime": "2026-08-06T17:33:12.926Z",
                       "annotations": [],
                       "attachments": []
                     }
@@ -1233,8 +1256,8 @@
                   "status": "expected"
                 }
               ],
-              "id": "ac8319e88d7018f426a4-60ecc11505a6dde31b67",
-              "file": "assessmentform-express-spa-multi-step-as.spec.ts",
+              "id": "724abdef5c4507a3f8aa-cbf273bee3ef049274d0",
+              "file": "uat/assessmentform-express-spa-multi-step-as.spec.ts",
               "line": 683,
               "column": 7
             },
@@ -1247,19 +1270,19 @@
                   "timeout": 15000,
                   "annotations": [],
                   "expectedStatus": "passed",
-                  "projectId": "",
-                  "projectName": "",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
                   "results": [
                     {
                       "workerIndex": 0,
                       "parallelIndex": 0,
                       "status": "passed",
-                      "duration": 3337,
+                      "duration": 3097,
                       "errors": [],
                       "stdout": [],
                       "stderr": [],
                       "retry": 0,
-                      "startTime": "2026-07-28T12:52:53.500Z",
+                      "startTime": "2026-08-06T17:33:13.043Z",
                       "annotations": [],
                       "attachments": []
                     }
@@ -1267,8 +1290,8 @@
                   "status": "expected"
                 }
               ],
-              "id": "ac8319e88d7018f426a4-1ef19d220e523eafc5d4",
-              "file": "assessmentform-express-spa-multi-step-as.spec.ts",
+              "id": "724abdef5c4507a3f8aa-4853f3402ca99f6137ba",
+              "file": "uat/assessmentform-express-spa-multi-step-as.spec.ts",
               "line": 696,
               "column": 7
             }
@@ -1276,7 +1299,7 @@
         },
         {
           "title": "US-7.1: Dashboard Protected by Auth",
-          "file": "assessmentform-express-spa-multi-step-as.spec.ts",
+          "file": "uat/assessmentform-express-spa-multi-step-as.spec.ts",
           "line": 735,
           "column": 6,
           "specs": [
@@ -1289,19 +1312,19 @@
                   "timeout": 15000,
                   "annotations": [],
                   "expectedStatus": "passed",
-                  "projectId": "",
-                  "projectName": "",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
                   "results": [
                     {
                       "workerIndex": 0,
                       "parallelIndex": 0,
                       "status": "passed",
-                      "duration": 354,
+                      "duration": 95,
                       "errors": [],
                       "stdout": [],
                       "stderr": [],
                       "retry": 0,
-                      "startTime": "2026-07-28T12:52:56.845Z",
+                      "startTime": "2026-08-06T17:33:16.144Z",
                       "annotations": [],
                       "attachments": []
                     }
@@ -1309,8 +1332,8 @@
                   "status": "expected"
                 }
               ],
-              "id": "ac8319e88d7018f426a4-ed94fcaa8fbbc4d51181",
-              "file": "assessmentform-express-spa-multi-step-as.spec.ts",
+              "id": "724abdef5c4507a3f8aa-e3ef77b0f71f9b8c4557",
+              "file": "uat/assessmentform-express-spa-multi-step-as.spec.ts",
               "line": 736,
               "column": 7
             },
@@ -1323,19 +1346,19 @@
                   "timeout": 15000,
                   "annotations": [],
                   "expectedStatus": "passed",
-                  "projectId": "",
-                  "projectName": "",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
                   "results": [
                     {
                       "workerIndex": 0,
                       "parallelIndex": 0,
                       "status": "passed",
-                      "duration": 507,
+                      "duration": 113,
                       "errors": [],
                       "stdout": [],
                       "stderr": [],
                       "retry": 0,
-                      "startTime": "2026-07-28T12:52:57.209Z",
+                      "startTime": "2026-08-06T17:33:16.242Z",
                       "annotations": [],
                       "attachments": []
                     }
@@ -1343,8 +1366,8 @@
                   "status": "expected"
                 }
               ],
-              "id": "ac8319e88d7018f426a4-8b379b077bb767882afb",
-              "file": "assessmentform-express-spa-multi-step-as.spec.ts",
+              "id": "724abdef5c4507a3f8aa-f6ffc8a45dae4b00571b",
+              "file": "uat/assessmentform-express-spa-multi-step-as.spec.ts",
               "line": 756,
               "column": 7
             }
@@ -1352,7 +1375,7 @@
         },
         {
           "title": "US-8.1: Assessment Config Accessible",
-          "file": "assessmentform-express-spa-multi-step-as.spec.ts",
+          "file": "uat/assessmentform-express-spa-multi-step-as.spec.ts",
           "line": 775,
           "column": 6,
           "specs": [
@@ -1365,19 +1388,19 @@
                   "timeout": 15000,
                   "annotations": [],
                   "expectedStatus": "passed",
-                  "projectId": "",
-                  "projectName": "",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
                   "results": [
                     {
                       "workerIndex": 0,
                       "parallelIndex": 0,
                       "status": "passed",
-                      "duration": 3235,
+                      "duration": 3096,
                       "errors": [],
                       "stdout": [],
                       "stderr": [],
                       "retry": 0,
-                      "startTime": "2026-07-28T12:52:57.729Z",
+                      "startTime": "2026-08-06T17:33:16.360Z",
                       "annotations": [],
                       "attachments": []
                     }
@@ -1385,8 +1408,8 @@
                   "status": "expected"
                 }
               ],
-              "id": "ac8319e88d7018f426a4-92cc40101dadae9e522b",
-              "file": "assessmentform-express-spa-multi-step-as.spec.ts",
+              "id": "724abdef5c4507a3f8aa-172eab58e50d676c7215",
+              "file": "uat/assessmentform-express-spa-multi-step-as.spec.ts",
               "line": 776,
               "column": 7
             },
@@ -1399,19 +1422,19 @@
                   "timeout": 15000,
                   "annotations": [],
                   "expectedStatus": "passed",
-                  "projectId": "",
-                  "projectName": "",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
                   "results": [
                     {
                       "workerIndex": 0,
                       "parallelIndex": 0,
                       "status": "passed",
-                      "duration": 3284,
+                      "duration": 3108,
                       "errors": [],
                       "stdout": [],
                       "stderr": [],
                       "retry": 0,
-                      "startTime": "2026-07-28T12:53:01.010Z",
+                      "startTime": "2026-08-06T17:33:19.462Z",
                       "annotations": [],
                       "attachments": []
                     }
@@ -1419,8 +1442,8 @@
                   "status": "expected"
                 }
               ],
-              "id": "ac8319e88d7018f426a4-870e0a3e87391558a6db",
-              "file": "assessmentform-express-spa-multi-step-as.spec.ts",
+              "id": "724abdef5c4507a3f8aa-40749fc1626bafd3ec71",
+              "file": "uat/assessmentform-express-spa-multi-step-as.spec.ts",
               "line": 803,
               "column": 7
             }
@@ -1428,7 +1451,7 @@
         },
         {
           "title": "API-1: Health Check",
-          "file": "assessmentform-express-spa-multi-step-as.spec.ts",
+          "file": "uat/assessmentform-express-spa-multi-step-as.spec.ts",
           "line": 829,
           "column": 6,
           "specs": [
@@ -1441,19 +1464,19 @@
                   "timeout": 15000,
                   "annotations": [],
                   "expectedStatus": "passed",
-                  "projectId": "",
-                  "projectName": "",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
                   "results": [
                     {
                       "workerIndex": 0,
                       "parallelIndex": 0,
                       "status": "passed",
-                      "duration": 329,
+                      "duration": 11,
                       "errors": [],
                       "stdout": [],
                       "stderr": [],
                       "retry": 0,
-                      "startTime": "2026-07-28T12:53:04.305Z",
+                      "startTime": "2026-08-06T17:33:22.575Z",
                       "annotations": [],
                       "attachments": []
                     }
@@ -1461,8 +1484,8 @@
                   "status": "expected"
                 }
               ],
-              "id": "ac8319e88d7018f426a4-f5118bca57ee246b3573",
-              "file": "assessmentform-express-spa-multi-step-as.spec.ts",
+              "id": "724abdef5c4507a3f8aa-a29f611588ef1aa274f5",
+              "file": "uat/assessmentform-express-spa-multi-step-as.spec.ts",
               "line": 830,
               "column": 7
             },
@@ -1475,19 +1498,19 @@
                   "timeout": 15000,
                   "annotations": [],
                   "expectedStatus": "passed",
-                  "projectId": "",
-                  "projectName": "",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
                   "results": [
                     {
                       "workerIndex": 0,
                       "parallelIndex": 0,
                       "status": "passed",
-                      "duration": 6,
+                      "duration": 3,
                       "errors": [],
                       "stdout": [],
                       "stderr": [],
                       "retry": 0,
-                      "startTime": "2026-07-28T12:53:04.644Z",
+                      "startTime": "2026-08-06T17:33:22.589Z",
                       "annotations": [],
                       "attachments": []
                     }
@@ -1495,8 +1518,8 @@
                   "status": "expected"
                 }
               ],
-              "id": "ac8319e88d7018f426a4-8306df1650f3d05cfaf1",
-              "file": "assessmentform-express-spa-multi-step-as.spec.ts",
+              "id": "724abdef5c4507a3f8aa-9ae94de893c2490d410c",
+              "file": "uat/assessmentform-express-spa-multi-step-as.spec.ts",
               "line": 837,
               "column": 7
             }
@@ -1507,8 +1530,8 @@
   ],
   "errors": [],
   "stats": {
-    "startTime": "2026-07-28T12:51:30.297Z",
-    "duration": 94432.451,
+    "startTime": "2026-08-06T17:32:17.443Z",
+    "duration": 65171.631,
     "expected": 39,
     "skipped": 0,
     "unexpected": 0,

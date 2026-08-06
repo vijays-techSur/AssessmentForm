@@ -165,6 +165,17 @@ done
 # (the gitignored .next/standalone is absent after a fresh clone, so
 # `node server.js` would fail). We only need the `db` service for DATABASE_URL.
 if docker info >/dev/null 2>&1; then
+  # Stop the compose app service if it is running — it binds :3000 and would
+  # block native next dev. We run next dev natively (not via docker compose up)
+  # because the production image uses `next build` + `node server.js` which
+  # requires a prebuilt .next/standalone that is gitignored and absent after a
+  # fresh clone. We only need the compose db service.
+  if docker compose ps --services --filter status=running 2>/dev/null | grep -q '^app$'; then
+    echo "[pivota] stopping compose app service (we run next dev natively; compose app would bind :3000)"
+    docker compose stop app 2>/dev/null || true
+    docker compose rm -f app 2>/dev/null || true
+  fi
+
   echo "[pivota] starting compose db service (postgres:16)"
   docker compose up -d db 2>&1 || {
     echo "[pivota] WARN: docker compose up -d db failed — will proceed; DB-backed routes may fail" >&2
@@ -185,9 +196,34 @@ if docker info >/dev/null 2>&1; then
   if [[ "$DB_READY" == "0" ]]; then
     echo "[pivota] WARN: db did not become reachable within 60s — migrations may fail" >&2
   fi
+
+  # Write .env.local for Next.js so it has DATABASE_URL even when the platform
+  # has not injected it into the sandbox environment (e.g. dev / smoke boot).
+  # Platform-injected DATABASE_URL takes precedence; the compose-credentials
+  # fallback only fires when the var is absent from the current environment.
+  if [[ -z "${DATABASE_URL:-}" ]]; then
+    export DATABASE_URL="postgres://assessmentform:assessmentform_dev_password@localhost:5432/assessmentform"
+    echo "[pivota] DATABASE_URL not in environment — using compose db credentials for local dev"
+  fi
+  if [[ -z "${JWT_SECRET:-}" ]]; then
+    export JWT_SECRET="${JWT_SECRET:-pivota-dev-jwt-secret-minimum-32-chars-here}"
+  fi
 else
   echo "[pivota] WARN: docker not available — cannot start compose db service; DB-backed routes will fail" >&2
 fi
+
+# Write .env.local for Next.js (injection-safe: only written if missing or empty DATABASE_URL).
+# scripts/start.sh also writes this file; writing it here first avoids the race where
+# scripts/start.sh overwrites it with an empty DATABASE_URL (it reads from PID1 env,
+# which does not carry DATABASE_URL in a dev sandbox). We call next dev directly
+# below to bypass scripts/start.sh entirely.
+cat > .env.local <<ENVLOCAL
+DATABASE_URL=${DATABASE_URL:-}
+JWT_SECRET=${JWT_SECRET:-pivota-dev-jwt-secret-minimum-32-chars-here}
+AUTO_SAVE_IDLE_SECONDS=${AUTO_SAVE_IDLE_SECONDS:-30}
+NODE_ENV=development
+ENVLOCAL
+echo "[pivota] .env.local written (DATABASE_URL=${DATABASE_URL:0:30}...)"
 
 # === D-12: idempotent install via lockfile hash + presence check ===
 SENTINEL="/tmp/pivota-setup-sentinel"
@@ -277,7 +313,11 @@ npm run db:seed 2>&1 || {
 # Final-attempt exit code propagates the INNER command's exit code, not a
 # fixed 1, so the caller (platform / Daytona) can distinguish "wrapper bug"
 # from "user command failed with N".
-EXEC_CMD='npx next dev -H 0.0.0.0 -p 3002'
+# Invoke next dev directly (not via `npm run dev` / scripts/start.sh) to avoid
+# scripts/start.sh overwriting .env.local with an empty DATABASE_URL. The wrapper
+# has already handled all setup: compose db started, .env.local written, migrations
+# run, seed complete. The --hostname / --port flags match the catalog entry.
+EXEC_CMD='npx next dev --hostname 0.0.0.0 --port 3000'
 ATTEMPT=1
 DELAY=1
 while (( ATTEMPT <= 3 )); do
