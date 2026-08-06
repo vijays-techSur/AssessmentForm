@@ -49,5 +49,5 @@ else
 fi
 
 # ── 4. Start Next.js ─────────────────────────────────────────────────────────
-echo "[start] Starting Next.js on 0.0.0.0:3002..."
-exec npx next dev -H 0.0.0.0 -p 3002
+echo "[start] Starting Next.js on 0.0.0.0:3000..."
+exec npx next dev -H 0.0.0.0 -p 3000

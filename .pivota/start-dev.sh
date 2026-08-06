@@ -134,7 +134,7 @@ INSTALL_CMD=''
 # Final-attempt exit code propagates the INNER command's exit code, not a
 # fixed 1, so the caller (platform / Daytona) can distinguish "wrapper bug"
 # from "user command failed with N".
-EXEC_CMD='docker compose up --build'
+EXEC_CMD='npx next dev -H 0.0.0.0 -p 3000'
 ATTEMPT=1
 DELAY=1
 while (( ATTEMPT <= 3 )); do
