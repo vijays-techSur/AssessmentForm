@@ -1,8 +1,8 @@
 {
   "generator_version": "init-dev-server@1",
-  "catalog_entry": "react-next",
-  "generated_at": "2026-08-05T20:27:13Z",
-  "inspection_inputs_hash": "8c32029c4fea4495a9995a4accfe3c04655207d885bc4682d8b29e5e7658d0eb",
+  "catalog_entry": null,
+  "generated_at": "2026-08-06T17:54:12Z",
+  "inspection_inputs_hash": "8fa65316975f7493348d89dff917fd1cc5ae3e857c99fa097eb8cfbd1a0f12c4",
   "inspection_inputs": {
     "matched_globs": [
       "docker-compose.yml",
@@ -11,9 +11,7 @@
     ],
     "manifest_signatures": [
       "docker-compose.yml:services:app,db",
-      "package.json:dep:drizzle-orm@^0.45.2",
       "package.json:dep:next@^16.2.10",
-      "package.json:dep:react@^19.2.7",
       "package.json:dev-script:bash scripts/start.sh"
     ],
     "existing_scripts": [
