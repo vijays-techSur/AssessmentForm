@@ -6,7 +6,7 @@ export default defineConfig({
   forbidOnly: !!process.env.CI,
   retries: process.env.CI ? 1 : 0,
   workers: 1, // Shared Docker DB — run sequentially to avoid state conflicts
-  reporter: [['html', { outputFolder: 'playwright-report' }], ['list']],
+  reporter: [['html', { outputFolder: 'playwright-report' }], ['list'], ['json', { outputFile: 'playwright-results.json' }]],
   timeout: 30_000,
   expect: { timeout: 10_000 },
   use: {
