@@ -123,18 +123,58 @@ fi
 # exec command itself rebuilds stale locally-built images on every run, which
 # is load-bearing for actively-modified projects (see compose.md Notes).
 SENTINEL="/tmp/pivota-setup-sentinel"
-LOCK_FILE_PATH=""
-INSTALL_PRESENCE_CHECK=""
-INSTALL_CMD=''
+LOCK_FILE_PATH="package-lock.json"
+INSTALL_PRESENCE_CHECK="node_modules"
+INSTALL_CMD='npm ci || npm install'
 
-# No lockfile → honor sentinel (skip install section entirely for compose).
-# The docker layer cache is the effective install sentinel.
+run_install() {
+  echo "[pivota] running install: $INSTALL_CMD"
+  local rc=0
+  bash -c "$INSTALL_CMD" || rc=$?
+  if (( rc == 0 )); then return 0; fi
+  if [[ "$INSTALL_CMD" == *"npm "* ]]; then
+    echo "[pivota] WARN install failed (exit=$rc) — retrying with --legacy-peer-deps"
+    npm install --legacy-peer-deps || rc=$?
+    if (( rc == 0 )); then return 0; fi
+  fi
+  echo "[pivota] FATAL install failed (exit=$rc)" >&2
+  return "$rc"
+}
+
+if [[ -n "$LOCK_FILE_PATH" && -f "$LOCK_FILE_PATH" ]]; then
+  CURRENT_HASH=$(sha256sum "$LOCK_FILE_PATH" | cut -d' ' -f1)
+  PREVIOUS_HASH=$(cat "$SENTINEL" 2>/dev/null || echo "")
+  PRESENCE_OK=1
+  if [[ -n "$INSTALL_PRESENCE_CHECK" && ! -e "$INSTALL_PRESENCE_CHECK" ]]; then
+    PRESENCE_OK=0
+  fi
+  if [[ "$CURRENT_HASH" == "$PREVIOUS_HASH" && "$PRESENCE_OK" == "1" ]]; then
+    echo "[pivota] lockfile unchanged AND node_modules present; skipping install"
+  else
+    run_install
+    echo "$CURRENT_HASH" > "$SENTINEL"
+  fi
+elif [[ -n "$INSTALL_CMD" ]]; then
+  if [[ ! -f "$SENTINEL" ]]; then
+    run_install
+    touch "$SENTINEL"
+  fi
+fi
+
+# === DB migrate + seed (after npm install — tsx/drizzle-kit require node_modules) ===
+echo "[pivota] running DB migrations"
+NODE_TLS_REJECT_UNAUTHORIZED=0 npm run db:migrate 2>&1 || \
+  echo "[pivota] WARN: db:migrate failed — continuing" >&2
+
+echo "[pivota] running DB seed"
+NODE_TLS_REJECT_UNAUTHORIZED=0 npm run db:seed 2>&1 || \
+  echo "[pivota] WARN: db:seed failed — continuing" >&2
 
 # === D-14: retry loop (3 attempts, exponential backoff 1s / 2s / 4s) ===
 # Final-attempt exit code propagates the INNER command's exit code, not a
 # fixed 1, so the caller (platform / Daytona) can distinguish "wrapper bug"
 # from "user command failed with N".
-EXEC_CMD='npx next dev -H 0.0.0.0 -p 3000'
+EXEC_CMD='NODE_TLS_REJECT_UNAUTHORIZED=0 ./node_modules/.bin/next dev -H 0.0.0.0 -p 3000'
 ATTEMPT=1
 DELAY=1
 while (( ATTEMPT <= 3 )); do

@@ -37,17 +37,23 @@ ENVEOF
 
 echo "[start] .env.local written"
 
-# ── 3. Run db:setup (schema push + seed) ────────────────────────────────────
+# ── 3. Install dependencies if needed ───────────────────────────────────────
 cd "$PROJECT_DIR"
+if [ ! -d node_modules ] || [ ! -f node_modules/.bin/next ]; then
+  echo "[start] Installing dependencies..."
+  npm ci || npm install --legacy-peer-deps
+fi
+
+# ── 4. Run db migrate + seed ─────────────────────────────────────────────────
 if [ -n "$DB_URL" ]; then
-  echo "[start] Pushing DB schema..."
-  DATABASE_URL="$DB_URL" npx drizzle-kit push --force 2>&1 || echo "[warn] db:push failed — continuing"
-  echo "[start] Seeding DB..."
-  DATABASE_URL="$DB_URL" npx tsx drizzle/seed.ts 2>&1 || echo "[warn] db:seed failed — continuing"
+  echo "[start] Running DB migrations..."
+  NODE_TLS_REJECT_UNAUTHORIZED=0 DATABASE_URL="$DB_URL" node_modules/.bin/tsx drizzle/migrate.ts 2>&1 || echo "[warn] db:migrate failed — continuing"
+  echo "[start] Running DB seed..."
+  NODE_TLS_REJECT_UNAUTHORIZED=0 DATABASE_URL="$DB_URL" node_modules/.bin/tsx drizzle/seed.ts 2>&1 || echo "[warn] db:seed failed — continuing"
 else
   echo "[warn] Skipping db:setup — no DATABASE_URL"
 fi
 
-# ── 4. Start Next.js ─────────────────────────────────────────────────────────
+# ── 5. Start Next.js ─────────────────────────────────────────────────────────
 echo "[start] Starting Next.js on 0.0.0.0:3000..."
-exec npx next dev -H 0.0.0.0 -p 3000
+exec NODE_TLS_REJECT_UNAUTHORIZED=0 ./node_modules/.bin/next dev -H 0.0.0.0 -p 3000
