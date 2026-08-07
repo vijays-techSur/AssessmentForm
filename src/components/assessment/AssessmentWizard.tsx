@@ -85,8 +85,15 @@ export function AssessmentWizard({ session, token }: Props) {
     markDirty();
   }, [markDirty]);
 
+  const [saveError, setSaveError] = useState<string | null>(null);
+
   const handleNext = useCallback(async () => {
-    await triggerSave(); // US-4.1: auto-save on navigation
+    setSaveError(null);
+    const saved = await triggerSave(); // US-4.1: auto-save on navigation
+    if (!saved) {
+      setSaveError('Your answers could not be saved. Please check your connection and try again.');
+      return;
+    }
     if (fromReview) {
       // US-0.3 AC: After editing from Review Step, Next returns to Review Step (not next sequential section)
       router.push('/assessment/review');
@@ -100,13 +107,23 @@ export function AssessmentWizard({ session, token }: Props) {
   }, [currentIndex, sections.length, triggerSave, router, fromReview]);
 
   const handlePrevious = useCallback(async () => {
-    await triggerSave(); // US-4.1: auto-save on Previous too
+    setSaveError(null);
+    const saved = await triggerSave(); // US-4.1: auto-save on Previous too
+    if (!saved) {
+      setSaveError('Your answers could not be saved. Please check your connection and try again.');
+      return;
+    }
     setCurrentIndex((i) => Math.max(0, i - 1));
   }, [triggerSave]);
 
   const handleJump = useCallback(async (index: number) => {
     if (!canJump) return;
-    await triggerSave();
+    setSaveError(null);
+    const saved = await triggerSave();
+    if (!saved) {
+      setSaveError('Your answers could not be saved. Please check your connection and try again.');
+      return;
+    }
     setCurrentIndex(index);
   }, [canJump, triggerSave]);
 
@@ -133,6 +150,12 @@ export function AssessmentWizard({ session, token }: Props) {
         <p className="text-sm text-gray-500">
           Section {currentIndex + 1} of {sections.length} — {currentSection.title}
         </p>
+
+        {saveError && (
+          <div role="alert" className="bg-red-50 border border-red-300 text-red-700 rounded-lg p-4 text-sm">
+            ⚠ {saveError}
+          </div>
+        )}
 
         {isLoadingQuestions ? (
           <div className="text-gray-400 py-8 text-center">Loading questions…</div>

@@ -43,6 +43,22 @@ export function useAutoSave({
   const [lastSavedAt, setLastSavedAt] = useState<Date | null>(null);
   const idleTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
+  // Use refs for all save parameters so performSave always reads the latest
+  // values without needing to be recreated (fixes stale closure bug where
+  // getResponses captured an empty currentQuestions on first render).
+  const sessionIdRef = useRef(sessionId);
+  const tokenRef = useRef(token);
+  const sectionIdRef = useRef(sectionId);
+  const sectionIndexRef = useRef(currentSectionIndex);
+  const getResponsesRef = useRef(getResponses);
+
+  // Keep refs in sync on every render
+  useEffect(() => { sessionIdRef.current = sessionId; }, [sessionId]);
+  useEffect(() => { tokenRef.current = token; }, [token]);
+  useEffect(() => { sectionIdRef.current = sectionId; }, [sectionId]);
+  useEffect(() => { sectionIndexRef.current = currentSectionIndex; }, [currentSectionIndex]);
+  useEffect(() => { getResponsesRef.current = getResponses; }, [getResponses]);
+
   // Clear idle timer on unmount
   useEffect(() => {
     return () => {
@@ -50,24 +66,26 @@ export function useAutoSave({
     };
   }, []);
 
-  const performSave = useCallback(async () => {
+  // performSave reads from refs — always gets the latest values, never stale
+  const performSave = useCallback(async (): Promise<boolean> => {
     setSaveState('saving');
-    const items = getResponses();
+    const items = getResponsesRef.current();
     try {
       await saveWithRetry(() =>
-        putResponses(sessionId, {
-          section_id: sectionId,
-          current_section_index: currentSectionIndex,
+        putResponses(sessionIdRef.current, {
+          section_id: sectionIdRef.current,
+          current_section_index: sectionIndexRef.current,
           responses: items,
-        }, token).then(() => undefined)
+        }, tokenRef.current).then(() => undefined)
       );
-      const now = new Date();
-      setLastSavedAt(now);
+      setLastSavedAt(new Date());
       setSaveState('saved');
+      return true;
     } catch {
       setSaveState('error');
+      return false;
     }
-  }, [sessionId, token, sectionId, currentSectionIndex, getResponses]);
+  }, []); // stable — no deps needed since we read from refs
 
   // Called on any user interaction to reset idle timer (US-4.2 AC)
   const markDirty = useCallback(() => {
@@ -79,9 +97,10 @@ export function useAutoSave({
   }, [performSave]);
 
   // Called explicitly on Next/Previous navigation (US-4.1 AC)
-  const triggerSave = useCallback(async () => {
+  // Returns true if save succeeded, false if it failed — caller can block navigation
+  const triggerSave = useCallback(async (): Promise<boolean> => {
     if (idleTimerRef.current) clearTimeout(idleTimerRef.current);
-    await performSave();
+    return performSave();
   }, [performSave]);
 
   return { saveState, lastSavedAt, triggerSave, markDirty };
