@@ -2,7 +2,7 @@ import { test, expect } from '@playwright/test';
 import { loginAsRespondent } from './helpers/auth';
 import { createRespondentSession, setAssessmentClosed, setAssessmentOpen, createSystemOwnerToken } from './helpers/setup';
 
-const BASE = process.env.BASE_URL || 'http://localhost:3000';
+const BASE = process.env.BASE_URL || 'http://localhost:4000';
 
 test.describe('F5: Duplicate Submission Prevention & Edit Window', () => {
 

@@ -2,7 +2,7 @@ import { test, expect } from '@playwright/test';
 import { loginAsRespondent } from './helpers/auth';
 import { createRespondentSession } from './helpers/setup';
 
-const BASE = process.env.BASE_URL || 'http://localhost:3000';
+const BASE = process.env.BASE_URL || 'http://localhost:4000';
 
 const RESPONDENT = {
   email: `f4-test-${Date.now()}@example.com`,

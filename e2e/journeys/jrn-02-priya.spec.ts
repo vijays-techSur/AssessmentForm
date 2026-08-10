@@ -77,12 +77,12 @@ test.describe('JRN-02.2: Priya — Revising After Team Discussion', () => {
   test('JRN-02.2 Stage 4: Re-submit shows exactly one record (deduplication confirmed)', async ({ page, request }) => {
     await loginAsRespondent(page, { email: EMAIL, name: NAME, teamType: TEAM_TYPE });
     // Check that only one session exists for this email via the dashboard API
-    const ownerRes = await request.post('http://localhost:3000/api/auth/login', {
+    const ownerRes = await request.post('http://localhost:4000/api/auth/login', {
       data: { email: 'admin@assessmentform.internal' },
     });
     if (ownerRes.ok()) {
       const { token } = await ownerRes.json();
-      const dashRes = await request.get(`http://localhost:3000/api/dashboard/responses?search=${encodeURIComponent(EMAIL)}`, {
+      const dashRes = await request.get(`http://localhost:4000/api/dashboard/responses?search=${encodeURIComponent(EMAIL)}`, {
         headers: { Authorization: `Bearer ${token}` },
       });
       if (dashRes.ok()) {

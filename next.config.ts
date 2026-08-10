@@ -11,7 +11,7 @@ const nextConfig: NextConfig = {
   allowedDevOrigins: ['*.preview.pivota-ng.pivota.dev'],
 
   // Bind to all interfaces so the container is reachable from host
-  // Start command: next dev/start -H 0.0.0.0 -p 3000 (see package.json scripts)
+  // Start command: next dev/start -H 0.0.0.0 -p 4000 (see package.json scripts)
 
   async headers() {
     return [

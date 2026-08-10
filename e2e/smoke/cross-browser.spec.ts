@@ -23,7 +23,7 @@ test.describe('Cross-Browser Smoke Tests', () => {
   });
 
   test('SMOKE-03: API health endpoint returns 200 (stack is running)', async ({ request }) => {
-    const res = await request.get('http://localhost:3000/api/health');
+    const res = await request.get('http://localhost:4000/api/health');
     expect(res.status()).toBe(200);
     const body = await res.json();
     expect(body.status).toBe('ok');

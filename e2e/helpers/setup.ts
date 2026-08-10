@@ -1,6 +1,6 @@
 import { APIRequestContext } from '@playwright/test';
 
-const BASE = process.env.BASE_URL || 'http://localhost:3000';
+const BASE = process.env.BASE_URL || 'http://localhost:4000';
 
 export interface RespondentSession {
   sessionId: string;

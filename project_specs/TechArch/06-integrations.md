@@ -59,7 +59,7 @@ Failure: LOG only — does not block submission response to respondent
 **Runtime requirements:**
 - Node.js 20 LTS (provided by base image `node:20-alpine`).
 - PostgreSQL 15+ reachable at `DATABASE_URL`.
-- Port 3000 exposed internally; TLS termination handled by enterprise reverse proxy.
+- Port 4000 exposed internally; TLS termination handled by enterprise reverse proxy.
 
 **Network requirements:**
 - All traffic is internal; no public internet exposure required.

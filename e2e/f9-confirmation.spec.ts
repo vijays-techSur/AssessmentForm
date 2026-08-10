@@ -2,7 +2,7 @@ import { test, expect } from '@playwright/test';
 import { loginAsRespondent } from './helpers/auth';
 import { createSystemOwnerToken, setAssessmentClosed, setAssessmentOpen } from './helpers/setup';
 
-const BASE = process.env.BASE_URL || 'http://localhost:3000';
+const BASE = process.env.BASE_URL || 'http://localhost:4000';
 
 async function submitViaUI(page: import('@playwright/test').Page, email: string) {
   await loginAsRespondent(page, { email, name: 'F9 Test User', teamType: 'program_project' });

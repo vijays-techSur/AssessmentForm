@@ -49,7 +49,7 @@ test.describe('JRN-03.1: Dana — Launching Assessment and Monitoring Participat
 test.describe('JRN-03.2: Dana — Closing Window, Exporting Data, Presenting Charts', () => {
 
   test('JRN-03.2 Stage 1: Dashboard shows Closed status after due date passes', async ({ page, request }) => {
-    const token = await request.post('http://localhost:3000/api/auth/login', {
+    const token = await request.post('http://localhost:4000/api/auth/login', {
       data: { email: 'admin@assessmentform.internal' },
     }).then(r => r.json()).then(b => b.token).catch(() => null);
     if (token) {

@@ -104,7 +104,7 @@ This pattern was chosen over a microservices approach because:
 │  │          Docker Container (single)           │  │
 │  │                                              │  │
 │  │  Node.js 20 LTS  (Next.js 14+ App Router)   │  │
-│  │  Port 3000 (HTTP — internal only)            │  │
+│  │  Port 4000 (HTTP — internal only)            │  │
 │  │                                              │  │
 │  │  ENV:                                        │  │
 │  │    DATABASE_URL=postgres://...               │  │

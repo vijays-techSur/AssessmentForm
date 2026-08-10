@@ -104,7 +104,7 @@ This pattern was chosen over a microservices approach because:
 │  │          Docker Container (single)           │  │
 │  │                                              │  │
 │  │  Node.js 20 LTS  (Next.js 14+ App Router)   │  │
-│  │  Port 3000 (HTTP — internal only)            │  │
+│  │  Port 4000 (HTTP — internal only)            │  │
 │  │                                              │  │
 │  │  ENV:                                        │  │
 │  │    DATABASE_URL=postgres://...               │  │
@@ -1303,7 +1303,7 @@ Failure: LOG only — does not block submission response to respondent
 **Runtime requirements:**
 - Node.js 20 LTS (provided by base image `node:20-alpine`).
 - PostgreSQL 15+ reachable at `DATABASE_URL`.
-- Port 3000 exposed internally; TLS termination handled by enterprise reverse proxy.
+- Port 4000 exposed internally; TLS termination handled by enterprise reverse proxy.
 
 **Network requirements:**
 - All traffic is internal; no public internet exposure required.
