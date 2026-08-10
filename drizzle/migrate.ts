@@ -10,11 +10,10 @@ async function runMigrations() {
     throw new Error('DATABASE_URL environment variable is required');
   }
 
-  const pool = new Pool({ connectionString: process.env.DATABASE_URL });
-  // Set search_path so all DDL and queries target the assessmentform schema
-  pool.on('connect', (client) => {
-    client.query("SET search_path TO assessmentform, public");
-  });
+  const rawUrl = process.env.DATABASE_URL!;
+  const separator = rawUrl.includes('?') ? '&' : '?';
+  const connStr = rawUrl.includes('options=') ? rawUrl : `${rawUrl}${separator}options=-csearch_path%3Dassessmentform%2Cpublic`;
+  const pool = new Pool({ connectionString: connStr });
   const db = drizzle(pool);
 
   console.log('Running migrations...');

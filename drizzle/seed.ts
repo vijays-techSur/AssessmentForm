@@ -10,10 +10,10 @@ export async function seedDatabase() {
     throw new Error('DATABASE_URL environment variable is required');
   }
 
-  const pool = new Pool({ connectionString: process.env.DATABASE_URL });
-  pool.on('connect', (client) => {
-    client.query("SET search_path TO assessmentform, public");
-  });
+  const rawUrl = process.env.DATABASE_URL!;
+  const separator = rawUrl.includes('?') ? '&' : '?';
+  const connStr = rawUrl.includes('options=') ? rawUrl : `${rawUrl}${separator}options=-csearch_path%3Dassessmentform%2Cpublic`;
+  const pool = new Pool({ connectionString: connStr });
   const db = drizzle(pool);
 
   console.log('Seeding sections...');
