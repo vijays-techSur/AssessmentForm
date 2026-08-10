@@ -1,5 +1,6 @@
 'use client';
 import { useState } from 'react';
+import Link from 'next/link';
 import type { TeamType } from '@/lib/api/types';
 
 const TEAM_TYPE_OPTIONS: { value: TeamType; label: string; description: string }[] = [
@@ -50,7 +51,19 @@ export function IdentityForm({ onSuccess, isLoading, serverError, dueDate }: Pro
     : null;
 
   return (
-    <div className="min-h-screen bg-gray-50 flex items-center justify-center px-4">
+    <div className="min-h-screen bg-gray-50 flex flex-col">
+      {/* Top nav bar */}
+      <nav className="bg-white border-b border-gray-200 px-6 py-3 flex justify-between items-center">
+        <span className="font-semibold text-gray-800">Developer Platform Assessment</span>
+        <Link
+          href="/dashboard/login"
+          className="text-sm text-blue-600 hover:text-blue-800 font-medium transition-colors"
+        >
+          System Owner Dashboard →
+        </Link>
+      </nav>
+
+      <div className="flex-1 flex items-center justify-center px-4 py-8">
       <div className="bg-white rounded-xl shadow-md w-full max-w-lg p-8 space-y-6">
         {/* Header */}
         <div>
@@ -148,6 +161,7 @@ export function IdentityForm({ onSuccess, isLoading, serverError, dueDate }: Pro
             <p className="text-center text-xs text-gray-400">Assessment closes: {formattedDue}</p>
           )}
         </form>
+      </div>
       </div>
     </div>
   );

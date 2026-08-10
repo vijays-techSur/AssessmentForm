@@ -1,6 +1,6 @@
 import { drizzle } from 'drizzle-orm/node-postgres';
 import { Pool } from 'pg';
-import { sections, sectionRouting, assessmentConfig, questions as questionsTable, questionOptions } from './schema';
+import { sections, sectionRouting, assessmentConfig, questions as questionsTable, questionOptions, systemOwnerEmails } from './schema';
 import * as dotenv from 'dotenv';
 
 dotenv.config({ path: '.env.local' });
@@ -354,6 +354,15 @@ export async function seedDatabase() {
   ]).onConflictDoNothing();
 
   console.log('Questions seeded (41 questions, 8 sections, all 6 question types represented).');
+
+  // ── System Owner emails ──────────────────────────────────────────────────────
+  // Default system owner for dashboard access. Can be updated via the DB directly.
+  await db.insert(systemOwnerEmails).values([
+    { email: 'admin@assessmentform.dev', added_by: 'seed', is_active: true },
+    { email: 'vijay@gmail.com', added_by: 'seed', is_active: true },
+  ]).onConflictDoNothing();
+
+  console.log('System owner emails seeded (admin@assessmentform.dev, vijay@gmail.com).');
 
   await pool.end();
   console.log('Seed complete.');
