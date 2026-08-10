@@ -57,6 +57,8 @@ echo "[pivota] $(date -Iseconds) start-dev.sh begin (catalog: react-next)"
 # EXEC_CMD or PRE_EXEC_SNIPPET below, not here.
 export HOSTNAME=0.0.0.0
 export HOST=0.0.0.0
+# Must be set in process env BEFORE Node.js TLS stack initialises (not via .env.local)
+export NODE_TLS_REJECT_UNAUTHORIZED=0
 # HOSTNAME is honored by Next.js for the dev server bind address since v13.
 # CITED: nextjs.org/docs/app/api-reference/config/next-config-js — output.
 #

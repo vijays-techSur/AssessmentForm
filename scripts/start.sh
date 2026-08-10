@@ -3,6 +3,9 @@
 
 set -e
 
+# Must be set in process env BEFORE Node.js TLS stack initialises (not via .env.local)
+export NODE_TLS_REJECT_UNAUTHORIZED=0
+
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 PROJECT_DIR="$(cd "$SCRIPT_DIR/.." && pwd)"
 
@@ -32,7 +35,6 @@ DATABASE_URL=${DB_URL}
 JWT_SECRET=${JWT}
 AUTO_SAVE_IDLE_SECONDS=${AUTO_SAVE_IDLE_SECONDS:-30}
 NODE_ENV=development
-NODE_TLS_REJECT_UNAUTHORIZED=0
 ENVEOF
 
 echo "[start] .env.local written"
