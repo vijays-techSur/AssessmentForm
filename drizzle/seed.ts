@@ -359,10 +359,9 @@ export async function seedDatabase() {
   // Default system owner for dashboard access. Can be updated via the DB directly.
   await db.insert(systemOwnerEmails).values([
     { email: 'admin@assessmentform.dev', added_by: 'seed', is_active: true },
-    { email: 'vijay@gmail.com', added_by: 'seed', is_active: true },
   ]).onConflictDoNothing();
 
-  console.log('System owner emails seeded (admin@assessmentform.dev, vijay@gmail.com).');
+  console.log('System owner emails seeded (admin@assessmentform.dev).');
 
   await pool.end();
   console.log('Seed complete.');
