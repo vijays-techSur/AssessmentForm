@@ -59,7 +59,7 @@ export type AnswerPayload = z.infer<typeof AnswerPayloadSchema>;
 // From TechArch §4.3 PUT /api/responses/:sessionId
 
 export const ResponseItemSchema = z.object({
-  question_id: z.string().uuid(),
+  question_id: z.string().min(1),  // validated as FK in DB; not restricted to RFC UUID format
   answer_payload: AnswerPayloadSchema,
 });
 
