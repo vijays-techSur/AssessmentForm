@@ -55,5 +55,5 @@ else
 fi
 
 # ── 5. Start Next.js ─────────────────────────────────────────────────────────
-echo "[start] Starting Next.js on 0.0.0.0:3000..."
-exec NODE_TLS_REJECT_UNAUTHORIZED=0 ./node_modules/.bin/next dev -H 0.0.0.0 -p 3000
+echo "[start] Starting Next.js on 0.0.0.0:4000..."
+exec NODE_TLS_REJECT_UNAUTHORIZED=0 ./node_modules/.bin/next dev -H 0.0.0.0 -p 4000
