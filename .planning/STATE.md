@@ -3,7 +3,7 @@
 **Workflow Mode:** spec-express
 **Current Milestone:** v1
 **Status:** initialized
-**Last activity:** 2026-08-10 - UAT verified express task assessmentform-express-spa-multi-step-as (39/39 passed, 1 fix cycle, re-run 2026-08-10: 39/39 passed 1 fix cycle)
+**Last activity:** 2026-08-10 - UAT verified express task assessmentform-express-spa-multi-step-as (39/39 passed, 1 fix cycle); fixed docker-compose port 4000→3000; recreated SUMMARY.md + UAT.md
 
 ---
 
@@ -33,7 +33,7 @@ Spec documents were generated in `project_specs/` during initialization. Use `/p
 
 | # | Description | Date | Commit | UAT | Directory |
 |---|-------------|------|--------|-----|-----------|
-| assessmentform-express-spa-multi-step-as | Multi-Step Assessment Form SPA (Next.js + PostgreSQL + Drizzle ORM) | 2026-08-05 | 382d771 | ✓ 39/39 (2026-08-10, re-run 2026-08-10) | [assessmentform-express-spa-multi-step-as](./express/assessmentform-express-spa-multi-step-as/) |
+| assessmentform-express-spa-multi-step-as | Multi-Step Assessment Form SPA (Next.js + PostgreSQL + Drizzle ORM) | 2026-08-05 | 382d771 | ✓ 39/39 (2026-08-10) | [assessmentform-express-spa-multi-step-as](./express/assessmentform-express-spa-multi-step-as/) |
 
 ## Blockers/Concerns
 
