@@ -18,6 +18,7 @@ export interface SessionResponse {
   token: string;
   role: 'respondent' | 'system_owner';
   is_returning: boolean;
+  team_type: string;         // respondent's team type — used when localStorage is unavailable
   submission_status: SubmissionStatus;
   current_section_index: number;
   section_ids_ordered: string[];

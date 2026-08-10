@@ -27,6 +27,7 @@ export interface SessionResponse {
   token: string;
   role: UserRole;
   is_returning: boolean;
+  team_type: string;
   submission_status: SubmissionStatus;
   current_section_index: number;
   section_ids_ordered: string[];
@@ -92,10 +93,12 @@ export async function createOrResumeSession(input: {
 
   let respondentId: string;
   let isReturning: boolean;
+  let resolvedTeamType: string = team_type;
 
   if (existingRespondent.length > 0) {
     // Returning respondent — team_type is LOCKED (FRD F03 constraint: server ignores submitted team_type)
     respondentId = existingRespondent[0].id;
+    resolvedTeamType = existingRespondent[0].team_type;
     isReturning = true;
   } else {
     // New respondent — insert into respondents
@@ -154,6 +157,7 @@ export async function createOrResumeSession(input: {
     token,
     role: 'respondent',
     is_returning: isReturning,
+    team_type: resolvedTeamType,
     submission_status,
     current_section_index,
     section_ids_ordered,
@@ -171,7 +175,7 @@ export async function getSessionById(
 ): Promise<SessionResponse> {
   const { due_date, is_closed } = await getAssessmentStatus();
 
-  // Join sessions → respondents
+  // Join sessions → respondents (include team_type for client fallback)
   const result = await db
     .select({
       session_id: sessions.id,
@@ -179,6 +183,7 @@ export async function getSessionById(
       current_section_index: sessions.current_section_index,
       section_ids_ordered: sessions.section_ids_ordered,
       respondent_email: respondents.email,
+      team_type: respondents.team_type,
     })
     .from(sessions)
     .innerJoin(respondents, eq(sessions.respondent_id, respondents.id))
@@ -210,6 +215,7 @@ export async function getSessionById(
     token,
     role: 'respondent',
     is_returning: true,
+    team_type: row.team_type,
     submission_status: row.submission_status as SubmissionStatus,
     current_section_index: row.current_section_index,
     section_ids_ordered: (row.section_ids_ordered as string[]) ?? [],

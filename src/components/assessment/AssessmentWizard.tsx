@@ -44,14 +44,16 @@ export function AssessmentWizard({ session, token }: Props) {
 
   // Load section list on mount
   useEffect(() => {
-    // Store teamType in localStorage at session creation (see page.tsx)
-    // then read it back here to fetch the correct section list
-    const storedTeamType = localStorage.getItem('af_team_type') ?? '';
+    // Prefer localStorage (set at identity form), fall back to session.team_type
+    // (always available from server) so sections load even in a fresh iframe/browser.
+    const storedTeamType = localStorage.getItem('af_team_type') || session.team_type;
     teamType.current = storedTeamType;
     if (storedTeamType) {
+      // Keep localStorage in sync for subsequent renders
+      localStorage.setItem('af_team_type', storedTeamType);
       loadSections(storedTeamType, token);
     }
-  }, [token, loadSections]);
+  }, [token, session.team_type, loadSections]);
 
   // Load questions for current section
   const currentSection: SectionSummary | null = sections[currentIndex] ?? null;
