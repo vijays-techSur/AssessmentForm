@@ -3,7 +3,7 @@
 **Workflow Mode:** spec-express
 **Current Milestone:** v1
 **Status:** initialized
-**Last activity:** 2026-08-11 - UAT re-verified express task assessmentform-express-spa-multi-step-as (39/39 passed, 1 fix cycle); security re-audit: OPEN_THREATS (4 open findings, enforcement=warn)
+**Last activity:** 2026-08-11 - Re-executed express task assessmentform-express-spa-multi-step-as; created aggregated SUMMARY.md; UAT 39/39 passed
 
 ---
 
