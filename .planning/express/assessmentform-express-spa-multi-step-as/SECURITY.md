@@ -3,12 +3,28 @@
 | Field | Value |
 |-------|-------|
 | **Phase** | assessmentform-express-spa-multi-step-as (Full codebase — Waves 1–11) |
-| **Mode** | Retroactive |
+| **Mode** | Retroactive (re-audit — state A) |
 | **Audited** | 2026-08-11 |
 | **Auditor** | claude-sonnet-4-6 (automated STRIDE audit) |
 | **Verdict** | **OPEN_THREATS** |
 | **threats_open** | 4 (2 CRITICAL, 1 HIGH, 1 MEDIUM) |
 | **threats_lower** | 4 (LOW/INFO) |
+
+---
+
+## Re-audit Note (2026-08-11)
+
+**No implementation source code (`src/`) changed since the prior audit (commit `17af0de`).** All findings FIND-01 through FIND-08 are carried forward without modification — none have been mitigated.
+
+**New surface reviewed:** The `.pivota/` directory was added since the prior audit, containing three files:
+
+| File | Type | Verdict |
+|------|------|---------|
+| `.pivota/start-dev.sh` | Bash dev-server launcher | **SAFE** — all shell variables are hardcoded or derived from the local filesystem; no external user input flows into shell execution; `.env.example` seeding uses `printf`/parameter expansion only (no `eval`); `CHANGE_ME` replacement uses `/dev/urandom | base64` (safe CSPRNG). |
+| `.pivota/uat-start.sh` | Bash UAT launcher | **SAFE** — `PORT` and `COMPOSE` env vars are operator-controlled sandbox environment, not external user input; `RUN_CMD` is set to one of two hardcoded strings before `bash -c`; no injection path from outside the sandbox operator. |
+| `.pivota/dev-script.meta.json` | Generated metadata (JSON) | **SAFE** — static metadata only; never executed. |
+
+**Verdict unchanged: OPEN_THREATS (4 open findings: 2 CRITICAL, 1 HIGH, 1 MEDIUM).**
 
 ---
 
@@ -37,6 +53,9 @@
 | E1 | System Owner role check on all /api/dashboard/* | All dashboard routes | Elevation | SAFE — `requireSystemOwner` (direct-await) applied on every handler |
 | E2 | System Owner bypass in HOF requireSessionOwner | `src/lib/auth/requireSessionOwner.ts:18` | Elevation | SAFE — service-level email match blocks cross-session read even after middleware bypass |
 | E3 | `assessmentOpenGuard` failure treated as open | `src/lib/middleware/assessmentOpenGuard.ts:48-51` | Elevation | LOW — DB error during guard → assessment treated as open, allowing saves/submissions |
+| P1 | `.pivota/start-dev.sh` — shell variable injection | `.pivota/start-dev.sh` | Tampering | SAFE — all variables hardcoded or filesystem-derived; no external user input in shell expansions |
+| P2 | `.pivota/uat-start.sh` — `$COMPOSE` env var in shell | `.pivota/uat-start.sh:19` | Tampering | SAFE — `$COMPOSE` is operator-controlled sandbox env; not externally user-controlled |
+| P3 | `.pivota/dev-script.meta.json` | `.pivota/dev-script.meta.json` | — | SAFE — static metadata only; never executed |
 
 ---
 
@@ -50,6 +69,7 @@
 | **STRIDE** | Information Disclosure |
 | **Location** | `.env.local` committed in `a343e60`; `.env.local.QUARANTINED-INCIDENT-20260722` committed in same commit |
 | **CWE** | CWE-312 (Cleartext Storage of Sensitive Information) |
+| **Status** | UNMITIGATED (confirmed on re-audit 2026-08-11) |
 
 **Description:**  
 Commit `a343e60` includes `.env.local` containing the **production** `DATABASE_URL` with embedded credentials for `pivota-spec-driven-primary.prod.svc` and the production `JWT_SECRET`. A second file `.env.local.QUARANTINED-INCIDENT-20260722` (renamed copy) carries the same data. Both are tracked in git history permanently.
@@ -80,6 +100,7 @@ Anyone with read access to the git repository (including CI/CD tokens, forks, or
 | **STRIDE** | Information Disclosure |
 | **Location** | `.env` committed in `a343e60` |
 | **CWE** | CWE-312 |
+| **Status** | UNMITIGATED (confirmed on re-audit 2026-08-11) |
 
 **Description:**  
 The `.env` file (containing a UAT/dev `JWT_SECRET` and localhost DB credentials) was committed to git history in the same commit. Although lower-risk than production credentials, this secret is in public git history and could be used to forge JWTs in any environment that shares this secret, or to reconstruct dev DB access patterns.
@@ -109,6 +130,7 @@ Anyone with repo access can forge JWT tokens for any role using the `uat-test-se
 | **STRIDE** | Information Disclosure / Tampering |
 | **Location** | `src/lib/db.ts:24`; `src/lib/db.ts:16-18` (isLocal detection); `.env.local:5` (`NODE_TLS_REJECT_UNAUTHORIZED=0`) |
 | **CWE** | CWE-295 (Improper Certificate Validation) |
+| **Status** | UNMITIGATED (confirmed on re-audit 2026-08-11 — `ssl: { rejectUnauthorized: false }` at db.ts:24) |
 
 **Description:**  
 The database connection pool sets `ssl: { rejectUnauthorized: false }` for all non-localhost connections (line 24 of `db.ts`). This means the application connects to the production PostgreSQL sidecar without verifying the server certificate, making it vulnerable to TLS MITM attacks. Additionally, `.env.local` sets `NODE_TLS_REJECT_UNAUTHORIZED=0`, which disables Node.js's TLS verification globally for the process, affecting all outbound HTTPS connections (including email relay calls via `fetch()`).
@@ -141,6 +163,7 @@ A network-level attacker between the app container and the database sidecar can 
 | **STRIDE** | Elevation of Privilege / Denial of Service |
 | **Location** | `src/app/api/notifications/email/route.ts` |
 | **CWE** | CWE-306 (Missing Authentication for Critical Function) |
+| **Status** | UNMITIGATED (confirmed on re-audit 2026-08-11 — no auth import or guard present in route.ts) |
 
 **Description:**  
 `POST /api/notifications/email` is publicly accessible with no authentication guard. Although documented as "internal server-to-server only," it is a standard HTTP endpoint reachable from the internet. It accepts a Zod-validated schema `{ session_id: UUID, email: string, name: string, due_date: string }` and forwards the call to `sendSubmissionConfirmation()`, which POSTs to the configured `EMAIL_RELAY_URL`. Any unauthenticated attacker can:
@@ -212,3 +235,14 @@ export async function POST(request: NextRequest) {
 | Content-Disposition injection | — | Filename uses server-generated date `new Date().toISOString()` | SAFE |
 | SSRF via email relay | — | `EMAIL_RELAY_URL` set by operator env, not user-supplied | Accepted risk |
 | `system_owner` bypass in HOF | — | `sessionService.getSessionById` re-checks `callerEmail !== respondent_email` | SAFE |
+| Re-audit: `.pivota/start-dev.sh` | P1 | All shell variables hardcoded or filesystem-derived; no external user input in expansions; no `eval`; CSPRNG for secret generation | SAFE |
+| Re-audit: `.pivota/uat-start.sh` | P2 | `$COMPOSE` is operator env (not external user input); `RUN_CMD` set to one of two hardcoded strings; `$PORT` only used in `fuser` within operator-controlled sandbox | SAFE |
+| Re-audit: `.pivota/dev-script.meta.json` | P3 | Static JSON metadata; never executed | SAFE |
+| Re-audit: FIND-01 mitigation check | FIND-01 | `.gitignore` still has no `.env.local*` pattern; secrets remain in git history | UNMITIGATED |
+| Re-audit: FIND-02 mitigation check | FIND-02 | `.gitignore` still has no `.env` pattern; dev secrets remain in git history | UNMITIGATED |
+| Re-audit: FIND-03 mitigation check | FIND-03 | `src/lib/db.ts:24` still reads `ssl: { rejectUnauthorized: false }` | UNMITIGATED |
+| Re-audit: FIND-04 mitigation check | FIND-04 | `src/app/api/notifications/email/route.ts` — no auth guard added | UNMITIGATED |
+| Re-audit: FIND-05 mitigation check | FIND-05 | No rate-limiting middleware found | UNMITIGATED |
+| Re-audit: FIND-06 mitigation check | FIND-06 | `assessmentOpenGuard.ts:48-51` catch still returns `{ ok: true }` | UNMITIGATED |
+| Re-audit: FIND-07 mitigation check | FIND-07 | `requireSessionOwner.ts:54` — `jwtVerify` still lacks `{ algorithms: ['HS256'] }` | UNMITIGATED |
+| Re-audit: FIND-08 mitigation check | FIND-08 | `.gitignore` still contains no `.env*` exclusion patterns | UNMITIGATED |

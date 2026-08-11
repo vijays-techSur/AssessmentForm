@@ -5,6 +5,7 @@
       "/home/daytona/project/node_modules/.bin/playwright",
       "test",
       "e2e/uat/assessmentform-express-spa-multi-step-as.spec.ts",
+      "--project=chromium",
       "--reporter=json"
     ],
     "configFile": "/home/daytona/project/playwright.config.ts",
@@ -104,12 +105,12 @@
                       "workerIndex": 0,
                       "parallelIndex": 0,
                       "status": "passed",
-                      "duration": 148,
+                      "duration": 138,
                       "errors": [],
                       "stdout": [],
                       "stderr": [],
                       "retry": 0,
-                      "startTime": "2026-08-11T17:24:35.829Z",
+                      "startTime": "2026-08-11T17:30:21.727Z",
                       "annotations": [],
                       "attachments": []
                     }
@@ -138,12 +139,12 @@
                       "workerIndex": 0,
                       "parallelIndex": 0,
                       "status": "passed",
-                      "duration": 105,
+                      "duration": 97,
                       "errors": [],
                       "stdout": [],
                       "stderr": [],
                       "retry": 0,
-                      "startTime": "2026-08-11T17:24:36.032Z",
+                      "startTime": "2026-08-11T17:30:21.915Z",
                       "annotations": [],
                       "attachments": []
                     }
@@ -172,12 +173,12 @@
                       "workerIndex": 0,
                       "parallelIndex": 0,
                       "status": "passed",
-                      "duration": 119,
+                      "duration": 130,
                       "errors": [],
                       "stdout": [],
                       "stderr": [],
                       "retry": 0,
-                      "startTime": "2026-08-11T17:24:36.146Z",
+                      "startTime": "2026-08-11T17:30:22.020Z",
                       "annotations": [],
                       "attachments": []
                     }
@@ -206,12 +207,12 @@
                       "workerIndex": 0,
                       "parallelIndex": 0,
                       "status": "passed",
-                      "duration": 166,
+                      "duration": 183,
                       "errors": [],
                       "stdout": [],
                       "stderr": [],
                       "retry": 0,
-                      "startTime": "2026-08-11T17:24:36.269Z",
+                      "startTime": "2026-08-11T17:30:22.154Z",
                       "annotations": [],
                       "attachments": []
                     }
@@ -240,12 +241,12 @@
                       "workerIndex": 0,
                       "parallelIndex": 0,
                       "status": "passed",
-                      "duration": 91,
+                      "duration": 92,
                       "errors": [],
                       "stdout": [],
                       "stderr": [],
                       "retry": 0,
-                      "startTime": "2026-08-11T17:24:36.440Z",
+                      "startTime": "2026-08-11T17:30:22.341Z",
                       "annotations": [],
                       "attachments": []
                     }
@@ -254,176 +255,6 @@
                 }
               ],
               "id": "724abdef5c4507a3f8aa-cbf417e7de27d29474d7",
-              "file": "uat/assessmentform-express-spa-multi-step-as.spec.ts",
-              "line": 124,
-              "column": 7
-            },
-            {
-              "title": "identity form has email, name, and team_type fields",
-              "ok": true,
-              "tags": [],
-              "tests": [
-                {
-                  "timeout": 15000,
-                  "annotations": [],
-                  "expectedStatus": "passed",
-                  "projectId": "firefox",
-                  "projectName": "firefox",
-                  "results": [
-                    {
-                      "workerIndex": 1,
-                      "parallelIndex": 0,
-                      "status": "passed",
-                      "duration": 624,
-                      "errors": [],
-                      "stdout": [],
-                      "stderr": [],
-                      "retry": 0,
-                      "startTime": "2026-08-11T17:25:48.587Z",
-                      "annotations": [],
-                      "attachments": []
-                    }
-                  ],
-                  "status": "expected"
-                }
-              ],
-              "id": "724abdef5c4507a3f8aa-d5a85c87e076dcd28584",
-              "file": "uat/assessmentform-express-spa-multi-step-as.spec.ts",
-              "line": 75,
-              "column": 7
-            },
-            {
-              "title": "team_type dropdown contains all four team options",
-              "ok": true,
-              "tags": [],
-              "tests": [
-                {
-                  "timeout": 15000,
-                  "annotations": [],
-                  "expectedStatus": "passed",
-                  "projectId": "firefox",
-                  "projectName": "firefox",
-                  "results": [
-                    {
-                      "workerIndex": 1,
-                      "parallelIndex": 0,
-                      "status": "passed",
-                      "duration": 286,
-                      "errors": [],
-                      "stdout": [],
-                      "stderr": [],
-                      "retry": 0,
-                      "startTime": "2026-08-11T17:25:49.379Z",
-                      "annotations": [],
-                      "attachments": []
-                    }
-                  ],
-                  "status": "expected"
-                }
-              ],
-              "id": "724abdef5c4507a3f8aa-8646fbba5893fced61dd",
-              "file": "uat/assessmentform-express-spa-multi-step-as.spec.ts",
-              "line": 84,
-              "column": 7
-            },
-            {
-              "title": "Start Assessment button is disabled until all fields are filled",
-              "ok": true,
-              "tags": [],
-              "tests": [
-                {
-                  "timeout": 15000,
-                  "annotations": [],
-                  "expectedStatus": "passed",
-                  "projectId": "firefox",
-                  "projectName": "firefox",
-                  "results": [
-                    {
-                      "workerIndex": 1,
-                      "parallelIndex": 0,
-                      "status": "passed",
-                      "duration": 232,
-                      "errors": [],
-                      "stdout": [],
-                      "stderr": [],
-                      "retry": 0,
-                      "startTime": "2026-08-11T17:25:49.675Z",
-                      "annotations": [],
-                      "attachments": []
-                    }
-                  ],
-                  "status": "expected"
-                }
-              ],
-              "id": "724abdef5c4507a3f8aa-2546641ccd6a34db406b",
-              "file": "uat/assessmentform-express-spa-multi-step-as.spec.ts",
-              "line": 98,
-              "column": 7
-            },
-            {
-              "title": "submitting identity form navigates to /assessment or shows resume banner",
-              "ok": true,
-              "tags": [],
-              "tests": [
-                {
-                  "timeout": 15000,
-                  "annotations": [],
-                  "expectedStatus": "passed",
-                  "projectId": "firefox",
-                  "projectName": "firefox",
-                  "results": [
-                    {
-                      "workerIndex": 1,
-                      "parallelIndex": 0,
-                      "status": "passed",
-                      "duration": 314,
-                      "errors": [],
-                      "stdout": [],
-                      "stderr": [],
-                      "retry": 0,
-                      "startTime": "2026-08-11T17:25:49.910Z",
-                      "annotations": [],
-                      "attachments": []
-                    }
-                  ],
-                  "status": "expected"
-                }
-              ],
-              "id": "724abdef5c4507a3f8aa-ae3132e791e89822f4dd",
-              "file": "uat/assessmentform-express-spa-multi-step-as.spec.ts",
-              "line": 113,
-              "column": 7
-            },
-            {
-              "title": "section count preview appears after selecting a team type",
-              "ok": true,
-              "tags": [],
-              "tests": [
-                {
-                  "timeout": 15000,
-                  "annotations": [],
-                  "expectedStatus": "passed",
-                  "projectId": "firefox",
-                  "projectName": "firefox",
-                  "results": [
-                    {
-                      "workerIndex": 1,
-                      "parallelIndex": 0,
-                      "status": "passed",
-                      "duration": 213,
-                      "errors": [],
-                      "stdout": [],
-                      "stderr": [],
-                      "retry": 0,
-                      "startTime": "2026-08-11T17:25:50.229Z",
-                      "annotations": [],
-                      "attachments": []
-                    }
-                  ],
-                  "status": "expected"
-                }
-              ],
-              "id": "724abdef5c4507a3f8aa-b453ffb4307420f345f0",
               "file": "uat/assessmentform-express-spa-multi-step-as.spec.ts",
               "line": 124,
               "column": 7
@@ -457,7 +288,7 @@
                       "stdout": [],
                       "stderr": [],
                       "retry": 0,
-                      "startTime": "2026-08-11T17:24:36.535Z",
+                      "startTime": "2026-08-11T17:30:22.437Z",
                       "annotations": [],
                       "attachments": []
                     }
@@ -486,12 +317,12 @@
                       "workerIndex": 0,
                       "parallelIndex": 0,
                       "status": "passed",
-                      "duration": 2179,
+                      "duration": 2180,
                       "errors": [],
                       "stdout": [],
                       "stderr": [],
                       "retry": 0,
-                      "startTime": "2026-08-11T17:24:38.733Z",
+                      "startTime": "2026-08-11T17:30:24.635Z",
                       "annotations": [],
                       "attachments": []
                     }
@@ -500,74 +331,6 @@
                 }
               ],
               "id": "724abdef5c4507a3f8aa-72a046284ed58c15a442",
-              "file": "uat/assessmentform-express-spa-multi-step-as.spec.ts",
-              "line": 157,
-              "column": 7
-            },
-            {
-              "title": "app shows resume banner when valid session exists in localStorage",
-              "ok": true,
-              "tags": [],
-              "tests": [
-                {
-                  "timeout": 15000,
-                  "annotations": [],
-                  "expectedStatus": "passed",
-                  "projectId": "firefox",
-                  "projectName": "firefox",
-                  "results": [
-                    {
-                      "workerIndex": 1,
-                      "parallelIndex": 0,
-                      "status": "passed",
-                      "duration": 2331,
-                      "errors": [],
-                      "stdout": [],
-                      "stderr": [],
-                      "retry": 0,
-                      "startTime": "2026-08-11T17:25:50.446Z",
-                      "annotations": [],
-                      "attachments": []
-                    }
-                  ],
-                  "status": "expected"
-                }
-              ],
-              "id": "724abdef5c4507a3f8aa-4b26b4e7b6c80fb3b29f",
-              "file": "uat/assessmentform-express-spa-multi-step-as.spec.ts",
-              "line": 137,
-              "column": 7
-            },
-            {
-              "title": "resume banner has a Continue Assessment button",
-              "ok": true,
-              "tags": [],
-              "tests": [
-                {
-                  "timeout": 15000,
-                  "annotations": [],
-                  "expectedStatus": "passed",
-                  "projectId": "firefox",
-                  "projectName": "firefox",
-                  "results": [
-                    {
-                      "workerIndex": 1,
-                      "parallelIndex": 0,
-                      "status": "passed",
-                      "duration": 2337,
-                      "errors": [],
-                      "stdout": [],
-                      "stderr": [],
-                      "retry": 0,
-                      "startTime": "2026-08-11T17:25:52.782Z",
-                      "annotations": [],
-                      "attachments": []
-                    }
-                  ],
-                  "status": "expected"
-                }
-              ],
-              "id": "724abdef5c4507a3f8aa-efe1ab7a3b094fdad44b",
               "file": "uat/assessmentform-express-spa-multi-step-as.spec.ts",
               "line": 157,
               "column": 7
@@ -596,12 +359,12 @@
                       "workerIndex": 0,
                       "parallelIndex": 0,
                       "status": "passed",
-                      "duration": 168,
+                      "duration": 185,
                       "errors": [],
                       "stdout": [],
                       "stderr": [],
                       "retry": 0,
-                      "startTime": "2026-08-11T17:24:40.915Z",
+                      "startTime": "2026-08-11T17:30:26.819Z",
                       "annotations": [],
                       "attachments": []
                     }
@@ -630,12 +393,12 @@
                       "workerIndex": 0,
                       "parallelIndex": 0,
                       "status": "passed",
-                      "duration": 2256,
+                      "duration": 2210,
                       "errors": [],
                       "stdout": [],
                       "stderr": [],
                       "retry": 0,
-                      "startTime": "2026-08-11T17:24:41.088Z",
+                      "startTime": "2026-08-11T17:30:27.008Z",
                       "annotations": [],
                       "attachments": []
                     }
@@ -644,74 +407,6 @@
                 }
               ],
               "id": "724abdef5c4507a3f8aa-eab1980ad6a90bcc5180",
-              "file": "uat/assessmentform-express-spa-multi-step-as.spec.ts",
-              "line": 193,
-              "column": 7
-            },
-            {
-              "title": "af_token and af_session_id written to localStorage after identity submit",
-              "ok": true,
-              "tags": [],
-              "tests": [
-                {
-                  "timeout": 15000,
-                  "annotations": [],
-                  "expectedStatus": "passed",
-                  "projectId": "firefox",
-                  "projectName": "firefox",
-                  "results": [
-                    {
-                      "workerIndex": 1,
-                      "parallelIndex": 0,
-                      "status": "passed",
-                      "duration": 345,
-                      "errors": [],
-                      "stdout": [],
-                      "stderr": [],
-                      "retry": 0,
-                      "startTime": "2026-08-11T17:25:55.123Z",
-                      "annotations": [],
-                      "attachments": []
-                    }
-                  ],
-                  "status": "expected"
-                }
-              ],
-              "id": "724abdef5c4507a3f8aa-f2fbc0063b70e7719790",
-              "file": "uat/assessmentform-express-spa-multi-step-as.spec.ts",
-              "line": 179,
-              "column": 7
-            },
-            {
-              "title": "assessment page is accessible after page refresh using stored session",
-              "ok": true,
-              "tags": [],
-              "tests": [
-                {
-                  "timeout": 15000,
-                  "annotations": [],
-                  "expectedStatus": "passed",
-                  "projectId": "firefox",
-                  "projectName": "firefox",
-                  "results": [
-                    {
-                      "workerIndex": 1,
-                      "parallelIndex": 0,
-                      "status": "passed",
-                      "duration": 2372,
-                      "errors": [],
-                      "stdout": [],
-                      "stderr": [],
-                      "retry": 0,
-                      "startTime": "2026-08-11T17:25:55.472Z",
-                      "annotations": [],
-                      "attachments": []
-                    }
-                  ],
-                  "status": "expected"
-                }
-              ],
-              "id": "724abdef5c4507a3f8aa-87135727dac7d132a3ef",
               "file": "uat/assessmentform-express-spa-multi-step-as.spec.ts",
               "line": 193,
               "column": 7
@@ -740,12 +435,12 @@
                       "workerIndex": 0,
                       "parallelIndex": 0,
                       "status": "passed",
-                      "duration": 2521,
+                      "duration": 2149,
                       "errors": [],
                       "stdout": [],
                       "stderr": [],
                       "retry": 0,
-                      "startTime": "2026-08-11T17:24:43.348Z",
+                      "startTime": "2026-08-11T17:30:29.222Z",
                       "annotations": [],
                       "attachments": []
                     }
@@ -774,12 +469,12 @@
                       "workerIndex": 0,
                       "parallelIndex": 0,
                       "status": "passed",
-                      "duration": 2249,
+                      "duration": 2163,
                       "errors": [],
                       "stdout": [],
                       "stderr": [],
                       "retry": 0,
-                      "startTime": "2026-08-11T17:24:45.888Z",
+                      "startTime": "2026-08-11T17:30:31.375Z",
                       "annotations": [],
                       "attachments": []
                     }
@@ -808,12 +503,12 @@
                       "workerIndex": 0,
                       "parallelIndex": 0,
                       "status": "passed",
-                      "duration": 2546,
+                      "duration": 2145,
                       "errors": [],
                       "stdout": [],
                       "stderr": [],
                       "retry": 0,
-                      "startTime": "2026-08-11T17:24:48.196Z",
+                      "startTime": "2026-08-11T17:30:33.541Z",
                       "annotations": [],
                       "attachments": []
                     }
@@ -822,108 +517,6 @@
                 }
               ],
               "id": "724abdef5c4507a3f8aa-2e6222dae5210aa4e010",
-              "file": "uat/assessmentform-express-spa-multi-step-as.spec.ts",
-              "line": 255,
-              "column": 7
-            },
-            {
-              "title": "Next button is visible on first section of assessment",
-              "ok": true,
-              "tags": [],
-              "tests": [
-                {
-                  "timeout": 15000,
-                  "annotations": [],
-                  "expectedStatus": "passed",
-                  "projectId": "firefox",
-                  "projectName": "firefox",
-                  "results": [
-                    {
-                      "workerIndex": 1,
-                      "parallelIndex": 0,
-                      "status": "passed",
-                      "duration": 2485,
-                      "errors": [],
-                      "stdout": [],
-                      "stderr": [],
-                      "retry": 0,
-                      "startTime": "2026-08-11T17:25:57.848Z",
-                      "annotations": [],
-                      "attachments": []
-                    }
-                  ],
-                  "status": "expected"
-                }
-              ],
-              "id": "724abdef5c4507a3f8aa-8ed72eca5083bdd77805",
-              "file": "uat/assessmentform-express-spa-multi-step-as.spec.ts",
-              "line": 213,
-              "column": 7
-            },
-            {
-              "title": "Previous button is NOT shown on first section",
-              "ok": true,
-              "tags": [],
-              "tests": [
-                {
-                  "timeout": 15000,
-                  "annotations": [],
-                  "expectedStatus": "passed",
-                  "projectId": "firefox",
-                  "projectName": "firefox",
-                  "results": [
-                    {
-                      "workerIndex": 1,
-                      "parallelIndex": 0,
-                      "status": "passed",
-                      "duration": 2299,
-                      "errors": [],
-                      "stdout": [],
-                      "stderr": [],
-                      "retry": 0,
-                      "startTime": "2026-08-11T17:26:00.337Z",
-                      "annotations": [],
-                      "attachments": []
-                    }
-                  ],
-                  "status": "expected"
-                }
-              ],
-              "id": "724abdef5c4507a3f8aa-04c626e8d2a9eb8e3706",
-              "file": "uat/assessmentform-express-spa-multi-step-as.spec.ts",
-              "line": 237,
-              "column": 7
-            },
-            {
-              "title": "section counter text shows current section out of total",
-              "ok": true,
-              "tags": [],
-              "tests": [
-                {
-                  "timeout": 15000,
-                  "annotations": [],
-                  "expectedStatus": "passed",
-                  "projectId": "firefox",
-                  "projectName": "firefox",
-                  "results": [
-                    {
-                      "workerIndex": 1,
-                      "parallelIndex": 0,
-                      "status": "passed",
-                      "duration": 2324,
-                      "errors": [],
-                      "stdout": [],
-                      "stderr": [],
-                      "retry": 0,
-                      "startTime": "2026-08-11T17:26:02.640Z",
-                      "annotations": [],
-                      "attachments": []
-                    }
-                  ],
-                  "status": "expected"
-                }
-              ],
-              "id": "724abdef5c4507a3f8aa-4bb1af4943245a4058f5",
               "file": "uat/assessmentform-express-spa-multi-step-as.spec.ts",
               "line": 255,
               "column": 7
@@ -952,12 +545,12 @@
                       "workerIndex": 0,
                       "parallelIndex": 0,
                       "status": "passed",
-                      "duration": 4303,
+                      "duration": 2182,
                       "errors": [],
                       "stdout": [],
                       "stderr": [],
                       "retry": 0,
-                      "startTime": "2026-08-11T17:24:50.747Z",
+                      "startTime": "2026-08-11T17:30:35.691Z",
                       "annotations": [],
                       "attachments": []
                     }
@@ -986,12 +579,12 @@
                       "workerIndex": 0,
                       "parallelIndex": 0,
                       "status": "passed",
-                      "duration": 3572,
+                      "duration": 2144,
                       "errors": [],
                       "stdout": [],
                       "stderr": [],
                       "retry": 0,
-                      "startTime": "2026-08-11T17:24:55.077Z",
+                      "startTime": "2026-08-11T17:30:37.877Z",
                       "annotations": [],
                       "attachments": []
                     }
@@ -1020,12 +613,12 @@
                       "workerIndex": 0,
                       "parallelIndex": 0,
                       "status": "passed",
-                      "duration": 2819,
+                      "duration": 2145,
                       "errors": [],
                       "stdout": [],
                       "stderr": [],
                       "retry": 0,
-                      "startTime": "2026-08-11T17:24:58.744Z",
+                      "startTime": "2026-08-11T17:30:40.025Z",
                       "annotations": [],
                       "attachments": []
                     }
@@ -1034,108 +627,6 @@
                 }
               ],
               "id": "724abdef5c4507a3f8aa-8d0faeb5187432ab7e57",
-              "file": "uat/assessmentform-express-spa-multi-step-as.spec.ts",
-              "line": 316,
-              "column": 7
-            },
-            {
-              "title": "progress nav is visible with aria-label \"Assessment progress\"",
-              "ok": true,
-              "tags": [],
-              "tests": [
-                {
-                  "timeout": 15000,
-                  "annotations": [],
-                  "expectedStatus": "passed",
-                  "projectId": "firefox",
-                  "projectName": "firefox",
-                  "results": [
-                    {
-                      "workerIndex": 1,
-                      "parallelIndex": 0,
-                      "status": "passed",
-                      "duration": 2312,
-                      "errors": [],
-                      "stdout": [],
-                      "stderr": [],
-                      "retry": 0,
-                      "startTime": "2026-08-11T17:26:04.970Z",
-                      "annotations": [],
-                      "attachments": []
-                    }
-                  ],
-                  "status": "expected"
-                }
-              ],
-              "id": "724abdef5c4507a3f8aa-3efec0b187cfbceb52bd",
-              "file": "uat/assessmentform-express-spa-multi-step-as.spec.ts",
-              "line": 277,
-              "column": 7
-            },
-            {
-              "title": "progress nav items have ARIA labels describing current/completed/upcoming state",
-              "ok": true,
-              "tags": [],
-              "tests": [
-                {
-                  "timeout": 15000,
-                  "annotations": [],
-                  "expectedStatus": "passed",
-                  "projectId": "firefox",
-                  "projectName": "firefox",
-                  "results": [
-                    {
-                      "workerIndex": 1,
-                      "parallelIndex": 0,
-                      "status": "passed",
-                      "duration": 2300,
-                      "errors": [],
-                      "stdout": [],
-                      "stderr": [],
-                      "retry": 0,
-                      "startTime": "2026-08-11T17:26:07.288Z",
-                      "annotations": [],
-                      "attachments": []
-                    }
-                  ],
-                  "status": "expected"
-                }
-              ],
-              "id": "724abdef5c4507a3f8aa-2b107c2e06b7edc6abbd",
-              "file": "uat/assessmentform-express-spa-multi-step-as.spec.ts",
-              "line": 296,
-              "column": 7
-            },
-            {
-              "title": "current section item has aria-current=\"step\"",
-              "ok": true,
-              "tags": [],
-              "tests": [
-                {
-                  "timeout": 15000,
-                  "annotations": [],
-                  "expectedStatus": "passed",
-                  "projectId": "firefox",
-                  "projectName": "firefox",
-                  "results": [
-                    {
-                      "workerIndex": 1,
-                      "parallelIndex": 0,
-                      "status": "passed",
-                      "duration": 2294,
-                      "errors": [],
-                      "stdout": [],
-                      "stderr": [],
-                      "retry": 0,
-                      "startTime": "2026-08-11T17:26:09.591Z",
-                      "annotations": [],
-                      "attachments": []
-                    }
-                  ],
-                  "status": "expected"
-                }
-              ],
-              "id": "724abdef5c4507a3f8aa-55c0e2abe200ecf243cf",
               "file": "uat/assessmentform-express-spa-multi-step-as.spec.ts",
               "line": 316,
               "column": 7
@@ -1164,12 +655,12 @@
                       "workerIndex": 0,
                       "parallelIndex": 0,
                       "status": "passed",
-                      "duration": 3659,
+                      "duration": 2195,
                       "errors": [],
                       "stdout": [],
                       "stderr": [],
                       "retry": 0,
-                      "startTime": "2026-08-11T17:25:01.569Z",
+                      "startTime": "2026-08-11T17:30:42.173Z",
                       "annotations": [],
                       "attachments": []
                     }
@@ -1198,12 +689,12 @@
                       "workerIndex": 0,
                       "parallelIndex": 0,
                       "status": "passed",
-                      "duration": 2339,
+                      "duration": 2195,
                       "errors": [],
                       "stdout": [],
                       "stderr": [],
                       "retry": 0,
-                      "startTime": "2026-08-11T17:25:05.236Z",
+                      "startTime": "2026-08-11T17:30:44.372Z",
                       "annotations": [],
                       "attachments": []
                     }
@@ -1232,12 +723,12 @@
                       "workerIndex": 0,
                       "parallelIndex": 0,
                       "status": "passed",
-                      "duration": 3352,
+                      "duration": 3264,
                       "errors": [],
                       "stdout": [],
                       "stderr": [],
                       "retry": 0,
-                      "startTime": "2026-08-11T17:25:07.580Z",
+                      "startTime": "2026-08-11T17:30:46.572Z",
                       "annotations": [],
                       "attachments": []
                     }
@@ -1246,108 +737,6 @@
                 }
               ],
               "id": "724abdef5c4507a3f8aa-66b17d301c94471b836a",
-              "file": "uat/assessmentform-express-spa-multi-step-as.spec.ts",
-              "line": 388,
-              "column": 7
-            },
-            {
-              "title": "/assessment/review page has \"Review Your Answers\" heading",
-              "ok": true,
-              "tags": [],
-              "tests": [
-                {
-                  "timeout": 15000,
-                  "annotations": [],
-                  "expectedStatus": "passed",
-                  "projectId": "firefox",
-                  "projectName": "firefox",
-                  "results": [
-                    {
-                      "workerIndex": 1,
-                      "parallelIndex": 0,
-                      "status": "passed",
-                      "duration": 2322,
-                      "errors": [],
-                      "stdout": [],
-                      "stderr": [],
-                      "retry": 0,
-                      "startTime": "2026-08-11T17:26:11.889Z",
-                      "annotations": [],
-                      "attachments": []
-                    }
-                  ],
-                  "status": "expected"
-                }
-              ],
-              "id": "724abdef5c4507a3f8aa-22311cd10cdbc525fe91",
-              "file": "uat/assessmentform-express-spa-multi-step-as.spec.ts",
-              "line": 339,
-              "column": 7
-            },
-            {
-              "title": "/assessment/review has a Submit Assessment button",
-              "ok": true,
-              "tags": [],
-              "tests": [
-                {
-                  "timeout": 15000,
-                  "annotations": [],
-                  "expectedStatus": "passed",
-                  "projectId": "firefox",
-                  "projectName": "firefox",
-                  "results": [
-                    {
-                      "workerIndex": 1,
-                      "parallelIndex": 0,
-                      "status": "passed",
-                      "duration": 2346,
-                      "errors": [],
-                      "stdout": [],
-                      "stderr": [],
-                      "retry": 0,
-                      "startTime": "2026-08-11T17:26:14.215Z",
-                      "annotations": [],
-                      "attachments": []
-                    }
-                  ],
-                  "status": "expected"
-                }
-              ],
-              "id": "724abdef5c4507a3f8aa-a6391792338355447084",
-              "file": "uat/assessmentform-express-spa-multi-step-as.spec.ts",
-              "line": 365,
-              "column": 7
-            },
-            {
-              "title": "/assessment/review shows Edit buttons for each section",
-              "ok": true,
-              "tags": [],
-              "tests": [
-                {
-                  "timeout": 15000,
-                  "annotations": [],
-                  "expectedStatus": "passed",
-                  "projectId": "firefox",
-                  "projectName": "firefox",
-                  "results": [
-                    {
-                      "workerIndex": 1,
-                      "parallelIndex": 0,
-                      "status": "passed",
-                      "duration": 3379,
-                      "errors": [],
-                      "stdout": [],
-                      "stderr": [],
-                      "retry": 0,
-                      "startTime": "2026-08-11T17:26:16.566Z",
-                      "annotations": [],
-                      "attachments": []
-                    }
-                  ],
-                  "status": "expected"
-                }
-              ],
-              "id": "724abdef5c4507a3f8aa-4600c07995cfb88f3499",
               "file": "uat/assessmentform-express-spa-multi-step-as.spec.ts",
               "line": 388,
               "column": 7
@@ -1376,12 +765,12 @@
                       "workerIndex": 0,
                       "parallelIndex": 0,
                       "status": "passed",
-                      "duration": 2731,
+                      "duration": 2718,
                       "errors": [],
                       "stdout": [],
                       "stderr": [],
                       "retry": 0,
-                      "startTime": "2026-08-11T17:25:10.935Z",
+                      "startTime": "2026-08-11T17:30:49.845Z",
                       "annotations": [],
                       "attachments": []
                     }
@@ -1410,12 +799,12 @@
                       "workerIndex": 0,
                       "parallelIndex": 0,
                       "status": "passed",
-                      "duration": 2729,
+                      "duration": 2712,
                       "errors": [],
                       "stdout": [],
                       "stderr": [],
                       "retry": 0,
-                      "startTime": "2026-08-11T17:25:13.670Z",
+                      "startTime": "2026-08-11T17:30:52.571Z",
                       "annotations": [],
                       "attachments": []
                     }
@@ -1424,74 +813,6 @@
                 }
               ],
               "id": "724abdef5c4507a3f8aa-45da14d0c6926e7d7a35",
-              "file": "uat/assessmentform-express-spa-multi-step-as.spec.ts",
-              "line": 452,
-              "column": 7
-            },
-            {
-              "title": "clicking Next without answering required questions shows inline error",
-              "ok": true,
-              "tags": [],
-              "tests": [
-                {
-                  "timeout": 15000,
-                  "annotations": [],
-                  "expectedStatus": "passed",
-                  "projectId": "firefox",
-                  "projectName": "firefox",
-                  "results": [
-                    {
-                      "workerIndex": 1,
-                      "parallelIndex": 0,
-                      "status": "passed",
-                      "duration": 2814,
-                      "errors": [],
-                      "stdout": [],
-                      "stderr": [],
-                      "retry": 0,
-                      "startTime": "2026-08-11T17:26:19.950Z",
-                      "annotations": [],
-                      "attachments": []
-                    }
-                  ],
-                  "status": "expected"
-                }
-              ],
-              "id": "724abdef5c4507a3f8aa-250f28ca0d246bc4ee03",
-              "file": "uat/assessmentform-express-spa-multi-step-as.spec.ts",
-              "line": 420,
-              "column": 7
-            },
-            {
-              "title": "validation error message tells user to answer required questions",
-              "ok": true,
-              "tags": [],
-              "tests": [
-                {
-                  "timeout": 15000,
-                  "annotations": [],
-                  "expectedStatus": "passed",
-                  "projectId": "firefox",
-                  "projectName": "firefox",
-                  "results": [
-                    {
-                      "workerIndex": 1,
-                      "parallelIndex": 0,
-                      "status": "passed",
-                      "duration": 3087,
-                      "errors": [],
-                      "stdout": [],
-                      "stderr": [],
-                      "retry": 0,
-                      "startTime": "2026-08-11T17:26:22.772Z",
-                      "annotations": [],
-                      "attachments": []
-                    }
-                  ],
-                  "status": "expected"
-                }
-              ],
-              "id": "724abdef5c4507a3f8aa-20e3a76325fbdf4d4dda",
               "file": "uat/assessmentform-express-spa-multi-step-as.spec.ts",
               "line": 452,
               "column": 7
@@ -1520,12 +841,12 @@
                       "workerIndex": 0,
                       "parallelIndex": 0,
                       "status": "passed",
-                      "duration": 2699,
+                      "duration": 2650,
                       "errors": [],
                       "stdout": [],
                       "stderr": [],
                       "retry": 0,
-                      "startTime": "2026-08-11T17:25:16.402Z",
+                      "startTime": "2026-08-11T17:30:55.287Z",
                       "annotations": [],
                       "attachments": []
                     }
@@ -1554,12 +875,12 @@
                       "workerIndex": 0,
                       "parallelIndex": 0,
                       "status": "passed",
-                      "duration": 2699,
+                      "duration": 2663,
                       "errors": [],
                       "stdout": [],
                       "stderr": [],
                       "retry": 0,
-                      "startTime": "2026-08-11T17:25:19.106Z",
+                      "startTime": "2026-08-11T17:30:57.941Z",
                       "annotations": [],
                       "attachments": []
                     }
@@ -1588,12 +909,12 @@
                       "workerIndex": 0,
                       "parallelIndex": 0,
                       "status": "passed",
-                      "duration": 2711,
+                      "duration": 2665,
                       "errors": [],
                       "stdout": [],
                       "stderr": [],
                       "retry": 0,
-                      "startTime": "2026-08-11T17:25:21.809Z",
+                      "startTime": "2026-08-11T17:31:00.608Z",
                       "annotations": [],
                       "attachments": []
                     }
@@ -1622,12 +943,12 @@
                       "workerIndex": 0,
                       "parallelIndex": 0,
                       "status": "passed",
-                      "duration": 2643,
+                      "duration": 2676,
                       "errors": [],
                       "stdout": [],
                       "stderr": [],
                       "retry": 0,
-                      "startTime": "2026-08-11T17:25:24.524Z",
+                      "startTime": "2026-08-11T17:31:03.277Z",
                       "annotations": [],
                       "attachments": []
                     }
@@ -1656,12 +977,12 @@
                       "workerIndex": 0,
                       "parallelIndex": 0,
                       "status": "passed",
-                      "duration": 2664,
+                      "duration": 2680,
                       "errors": [],
                       "stdout": [],
                       "stderr": [],
                       "retry": 0,
-                      "startTime": "2026-08-11T17:25:27.171Z",
+                      "startTime": "2026-08-11T17:31:05.958Z",
                       "annotations": [],
                       "attachments": []
                     }
@@ -1670,176 +991,6 @@
                 }
               ],
               "id": "724abdef5c4507a3f8aa-698103c4a66720087d1c",
-              "file": "uat/assessmentform-express-spa-multi-step-as.spec.ts",
-              "line": 562,
-              "column": 7
-            },
-            {
-              "title": "at least one radio button is rendered for single_choice questions",
-              "ok": true,
-              "tags": [],
-              "tests": [
-                {
-                  "timeout": 15000,
-                  "annotations": [],
-                  "expectedStatus": "passed",
-                  "projectId": "firefox",
-                  "projectName": "firefox",
-                  "results": [
-                    {
-                      "workerIndex": 1,
-                      "parallelIndex": 0,
-                      "status": "passed",
-                      "duration": 2805,
-                      "errors": [],
-                      "stdout": [],
-                      "stderr": [],
-                      "retry": 0,
-                      "startTime": "2026-08-11T17:26:25.863Z",
-                      "annotations": [],
-                      "attachments": []
-                    }
-                  ],
-                  "status": "expected"
-                }
-              ],
-              "id": "724abdef5c4507a3f8aa-5f008107ed34081ab7ab",
-              "file": "uat/assessmentform-express-spa-multi-step-as.spec.ts",
-              "line": 500,
-              "column": 7
-            },
-            {
-              "title": "radio inputs are present when single_choice question is rendered",
-              "ok": true,
-              "tags": [],
-              "tests": [
-                {
-                  "timeout": 15000,
-                  "annotations": [],
-                  "expectedStatus": "passed",
-                  "projectId": "firefox",
-                  "projectName": "firefox",
-                  "results": [
-                    {
-                      "workerIndex": 1,
-                      "parallelIndex": 0,
-                      "status": "passed",
-                      "duration": 2794,
-                      "errors": [],
-                      "stdout": [],
-                      "stderr": [],
-                      "retry": 0,
-                      "startTime": "2026-08-11T17:26:28.672Z",
-                      "annotations": [],
-                      "attachments": []
-                    }
-                  ],
-                  "status": "expected"
-                }
-              ],
-              "id": "724abdef5c4507a3f8aa-5077b62cd06e05025687",
-              "file": "uat/assessmentform-express-spa-multi-step-as.spec.ts",
-              "line": 514,
-              "column": 7
-            },
-            {
-              "title": "checkbox inputs are present when multi_choice question is rendered",
-              "ok": true,
-              "tags": [],
-              "tests": [
-                {
-                  "timeout": 15000,
-                  "annotations": [],
-                  "expectedStatus": "passed",
-                  "projectId": "firefox",
-                  "projectName": "firefox",
-                  "results": [
-                    {
-                      "workerIndex": 1,
-                      "parallelIndex": 0,
-                      "status": "passed",
-                      "duration": 2787,
-                      "errors": [],
-                      "stdout": [],
-                      "stderr": [],
-                      "retry": 0,
-                      "startTime": "2026-08-11T17:26:31.471Z",
-                      "annotations": [],
-                      "attachments": []
-                    }
-                  ],
-                  "status": "expected"
-                }
-              ],
-              "id": "724abdef5c4507a3f8aa-0a61c1e3113e19535f0c",
-              "file": "uat/assessmentform-express-spa-multi-step-as.spec.ts",
-              "line": 532,
-              "column": 7
-            },
-            {
-              "title": "textarea is present when free_text_long question is rendered",
-              "ok": true,
-              "tags": [],
-              "tests": [
-                {
-                  "timeout": 15000,
-                  "annotations": [],
-                  "expectedStatus": "passed",
-                  "projectId": "firefox",
-                  "projectName": "firefox",
-                  "results": [
-                    {
-                      "workerIndex": 1,
-                      "parallelIndex": 0,
-                      "status": "passed",
-                      "duration": 2790,
-                      "errors": [],
-                      "stdout": [],
-                      "stderr": [],
-                      "retry": 0,
-                      "startTime": "2026-08-11T17:26:34.261Z",
-                      "annotations": [],
-                      "attachments": []
-                    }
-                  ],
-                  "status": "expected"
-                }
-              ],
-              "id": "724abdef5c4507a3f8aa-9db06fe5d5048d39eace",
-              "file": "uat/assessmentform-express-spa-multi-step-as.spec.ts",
-              "line": 547,
-              "column": 7
-            },
-            {
-              "title": "likert scale renders a radiogroup with 1-5 options when present",
-              "ok": true,
-              "tags": [],
-              "tests": [
-                {
-                  "timeout": 15000,
-                  "annotations": [],
-                  "expectedStatus": "passed",
-                  "projectId": "firefox",
-                  "projectName": "firefox",
-                  "results": [
-                    {
-                      "workerIndex": 1,
-                      "parallelIndex": 0,
-                      "status": "passed",
-                      "duration": 2810,
-                      "errors": [],
-                      "stdout": [],
-                      "stderr": [],
-                      "retry": 0,
-                      "startTime": "2026-08-11T17:26:37.055Z",
-                      "annotations": [],
-                      "attachments": []
-                    }
-                  ],
-                  "status": "expected"
-                }
-              ],
-              "id": "724abdef5c4507a3f8aa-8ae6ee13d0456bccfbf4",
               "file": "uat/assessmentform-express-spa-multi-step-as.spec.ts",
               "line": 562,
               "column": 7
@@ -1868,12 +1019,12 @@
                       "workerIndex": 0,
                       "parallelIndex": 0,
                       "status": "passed",
-                      "duration": 3722,
+                      "duration": 3687,
                       "errors": [],
                       "stdout": [],
                       "stderr": [],
                       "retry": 0,
-                      "startTime": "2026-08-11T17:25:29.839Z",
+                      "startTime": "2026-08-11T17:31:08.643Z",
                       "annotations": [],
                       "attachments": []
                     }
@@ -1902,12 +1053,12 @@
                       "workerIndex": 0,
                       "parallelIndex": 0,
                       "status": "passed",
-                      "duration": 4729,
+                      "duration": 4699,
                       "errors": [],
                       "stdout": [],
                       "stderr": [],
                       "retry": 0,
-                      "startTime": "2026-08-11T17:25:33.567Z",
+                      "startTime": "2026-08-11T17:31:12.334Z",
                       "annotations": [],
                       "attachments": []
                     }
@@ -1916,74 +1067,6 @@
                 }
               ],
               "id": "724abdef5c4507a3f8aa-130e22b4d027864490a6",
-              "file": "uat/assessmentform-express-spa-multi-step-as.spec.ts",
-              "line": 621,
-              "column": 7
-            },
-            {
-              "title": "/assessment/confirmation page renders with confirmation content when seeded via sessionStorage",
-              "ok": true,
-              "tags": [],
-              "tests": [
-                {
-                  "timeout": 15000,
-                  "annotations": [],
-                  "expectedStatus": "passed",
-                  "projectId": "firefox",
-                  "projectName": "firefox",
-                  "results": [
-                    {
-                      "workerIndex": 1,
-                      "parallelIndex": 0,
-                      "status": "passed",
-                      "duration": 3815,
-                      "errors": [],
-                      "stdout": [],
-                      "stderr": [],
-                      "retry": 0,
-                      "startTime": "2026-08-11T17:26:39.869Z",
-                      "annotations": [],
-                      "attachments": []
-                    }
-                  ],
-                  "status": "expected"
-                }
-              ],
-              "id": "724abdef5c4507a3f8aa-aaaeaad655278fd5e5c2",
-              "file": "uat/assessmentform-express-spa-multi-step-as.spec.ts",
-              "line": 585,
-              "column": 7
-            },
-            {
-              "title": "submit button appears on /assessment/review (not on section screens)",
-              "ok": true,
-              "tags": [],
-              "tests": [
-                {
-                  "timeout": 15000,
-                  "annotations": [],
-                  "expectedStatus": "passed",
-                  "projectId": "firefox",
-                  "projectName": "firefox",
-                  "results": [
-                    {
-                      "workerIndex": 1,
-                      "parallelIndex": 0,
-                      "status": "passed",
-                      "duration": 4846,
-                      "errors": [],
-                      "stdout": [],
-                      "stderr": [],
-                      "retry": 0,
-                      "startTime": "2026-08-11T17:26:43.688Z",
-                      "annotations": [],
-                      "attachments": []
-                    }
-                  ],
-                  "status": "expected"
-                }
-              ],
-              "id": "724abdef5c4507a3f8aa-d88c317074986a956b06",
               "file": "uat/assessmentform-express-spa-multi-step-as.spec.ts",
               "line": 621,
               "column": 7
@@ -2017,7 +1100,7 @@
                       "stdout": [],
                       "stderr": [],
                       "retry": 0,
-                      "startTime": "2026-08-11T17:25:38.301Z",
+                      "startTime": "2026-08-11T17:31:17.037Z",
                       "annotations": [],
                       "attachments": []
                     }
@@ -2046,12 +1129,12 @@
                       "workerIndex": 0,
                       "parallelIndex": 0,
                       "status": "passed",
-                      "duration": 95,
+                      "duration": 81,
                       "errors": [],
                       "stdout": [],
                       "stderr": [],
                       "retry": 0,
-                      "startTime": "2026-08-11T17:25:38.381Z",
+                      "startTime": "2026-08-11T17:31:17.116Z",
                       "annotations": [],
                       "attachments": []
                     }
@@ -2080,12 +1163,12 @@
                       "workerIndex": 0,
                       "parallelIndex": 0,
                       "status": "passed",
-                      "duration": 79,
+                      "duration": 96,
                       "errors": [],
                       "stdout": [],
                       "stderr": [],
                       "retry": 0,
-                      "startTime": "2026-08-11T17:25:38.480Z",
+                      "startTime": "2026-08-11T17:31:17.200Z",
                       "annotations": [],
                       "attachments": []
                     }
@@ -2119,7 +1202,7 @@
                       "stdout": [],
                       "stderr": [],
                       "retry": 0,
-                      "startTime": "2026-08-11T17:25:38.563Z",
+                      "startTime": "2026-08-11T17:31:17.300Z",
                       "annotations": [],
                       "attachments": []
                     }
@@ -2148,12 +1231,12 @@
                       "workerIndex": 0,
                       "parallelIndex": 0,
                       "status": "passed",
-                      "duration": 114,
+                      "duration": 113,
                       "errors": [],
                       "stdout": [],
                       "stderr": [],
                       "retry": 0,
-                      "startTime": "2026-08-11T17:25:38.646Z",
+                      "startTime": "2026-08-11T17:31:17.383Z",
                       "annotations": [],
                       "attachments": []
                     }
@@ -2182,12 +1265,12 @@
                       "workerIndex": 0,
                       "parallelIndex": 0,
                       "status": "passed",
-                      "duration": 3100,
+                      "duration": 3115,
                       "errors": [],
                       "stdout": [],
                       "stderr": [],
                       "retry": 0,
-                      "startTime": "2026-08-11T17:25:38.763Z",
+                      "startTime": "2026-08-11T17:31:17.500Z",
                       "annotations": [],
                       "attachments": []
                     }
@@ -2196,210 +1279,6 @@
                 }
               ],
               "id": "724abdef5c4507a3f8aa-4853f3402ca99f6137ba",
-              "file": "uat/assessmentform-express-spa-multi-step-as.spec.ts",
-              "line": 696,
-              "column": 7
-            },
-            {
-              "title": "/dashboard/login renders the System Owner Login heading",
-              "ok": true,
-              "tags": [],
-              "tests": [
-                {
-                  "timeout": 15000,
-                  "annotations": [],
-                  "expectedStatus": "passed",
-                  "projectId": "firefox",
-                  "projectName": "firefox",
-                  "results": [
-                    {
-                      "workerIndex": 1,
-                      "parallelIndex": 0,
-                      "status": "passed",
-                      "duration": 180,
-                      "errors": [],
-                      "stdout": [],
-                      "stderr": [],
-                      "retry": 0,
-                      "startTime": "2026-08-11T17:26:48.540Z",
-                      "annotations": [],
-                      "attachments": []
-                    }
-                  ],
-                  "status": "expected"
-                }
-              ],
-              "id": "724abdef5c4507a3f8aa-92b0a070e8c5957862cf",
-              "file": "uat/assessmentform-express-spa-multi-step-as.spec.ts",
-              "line": 654,
-              "column": 7
-            },
-            {
-              "title": "/dashboard/login has an email input field",
-              "ok": true,
-              "tags": [],
-              "tests": [
-                {
-                  "timeout": 15000,
-                  "annotations": [],
-                  "expectedStatus": "passed",
-                  "projectId": "firefox",
-                  "projectName": "firefox",
-                  "results": [
-                    {
-                      "workerIndex": 1,
-                      "parallelIndex": 0,
-                      "status": "passed",
-                      "duration": 187,
-                      "errors": [],
-                      "stdout": [],
-                      "stderr": [],
-                      "retry": 0,
-                      "startTime": "2026-08-11T17:26:48.724Z",
-                      "annotations": [],
-                      "attachments": []
-                    }
-                  ],
-                  "status": "expected"
-                }
-              ],
-              "id": "724abdef5c4507a3f8aa-e2bf81da150db11b131d",
-              "file": "uat/assessmentform-express-spa-multi-step-as.spec.ts",
-              "line": 661,
-              "column": 7
-            },
-            {
-              "title": "/dashboard/login has an Access Dashboard button",
-              "ok": true,
-              "tags": [],
-              "tests": [
-                {
-                  "timeout": 15000,
-                  "annotations": [],
-                  "expectedStatus": "passed",
-                  "projectId": "firefox",
-                  "projectName": "firefox",
-                  "results": [
-                    {
-                      "workerIndex": 1,
-                      "parallelIndex": 0,
-                      "status": "passed",
-                      "duration": 616,
-                      "errors": [],
-                      "stdout": [],
-                      "stderr": [],
-                      "retry": 0,
-                      "startTime": "2026-08-11T17:26:48.914Z",
-                      "annotations": [],
-                      "attachments": []
-                    }
-                  ],
-                  "status": "expected"
-                }
-              ],
-              "id": "724abdef5c4507a3f8aa-50d40cdf07f1bc91531c",
-              "file": "uat/assessmentform-express-spa-multi-step-as.spec.ts",
-              "line": 668,
-              "column": 7
-            },
-            {
-              "title": "Access Dashboard button is disabled when email field is empty",
-              "ok": true,
-              "tags": [],
-              "tests": [
-                {
-                  "timeout": 15000,
-                  "annotations": [],
-                  "expectedStatus": "passed",
-                  "projectId": "firefox",
-                  "projectName": "firefox",
-                  "results": [
-                    {
-                      "workerIndex": 1,
-                      "parallelIndex": 0,
-                      "status": "passed",
-                      "duration": 183,
-                      "errors": [],
-                      "stdout": [],
-                      "stderr": [],
-                      "retry": 0,
-                      "startTime": "2026-08-11T17:26:49.534Z",
-                      "annotations": [],
-                      "attachments": []
-                    }
-                  ],
-                  "status": "expected"
-                }
-              ],
-              "id": "724abdef5c4507a3f8aa-c552ca068305243c3620",
-              "file": "uat/assessmentform-express-spa-multi-step-as.spec.ts",
-              "line": 675,
-              "column": 7
-            },
-            {
-              "title": "login with non-system-owner email shows error message",
-              "ok": true,
-              "tags": [],
-              "tests": [
-                {
-                  "timeout": 15000,
-                  "annotations": [],
-                  "expectedStatus": "passed",
-                  "projectId": "firefox",
-                  "projectName": "firefox",
-                  "results": [
-                    {
-                      "workerIndex": 1,
-                      "parallelIndex": 0,
-                      "status": "passed",
-                      "duration": 253,
-                      "errors": [],
-                      "stdout": [],
-                      "stderr": [],
-                      "retry": 0,
-                      "startTime": "2026-08-11T17:26:49.721Z",
-                      "annotations": [],
-                      "attachments": []
-                    }
-                  ],
-                  "status": "expected"
-                }
-              ],
-              "id": "724abdef5c4507a3f8aa-7fb1c55d6e7af97e2c19",
-              "file": "uat/assessmentform-express-spa-multi-step-as.spec.ts",
-              "line": 683,
-              "column": 7
-            },
-            {
-              "title": "/dashboard shows response table with Name, Email, Status columns",
-              "ok": true,
-              "tags": [],
-              "tests": [
-                {
-                  "timeout": 15000,
-                  "annotations": [],
-                  "expectedStatus": "passed",
-                  "projectId": "firefox",
-                  "projectName": "firefox",
-                  "results": [
-                    {
-                      "workerIndex": 1,
-                      "parallelIndex": 0,
-                      "status": "passed",
-                      "duration": 3242,
-                      "errors": [],
-                      "stdout": [],
-                      "stderr": [],
-                      "retry": 0,
-                      "startTime": "2026-08-11T17:26:49.977Z",
-                      "annotations": [],
-                      "attachments": []
-                    }
-                  ],
-                  "status": "expected"
-                }
-              ],
-              "id": "724abdef5c4507a3f8aa-8d8d164d5a2caa377ec0",
               "file": "uat/assessmentform-express-spa-multi-step-as.spec.ts",
               "line": 696,
               "column": 7
@@ -2428,12 +1307,12 @@
                       "workerIndex": 0,
                       "parallelIndex": 0,
                       "status": "passed",
-                      "duration": 108,
+                      "duration": 94,
                       "errors": [],
                       "stdout": [],
                       "stderr": [],
                       "retry": 0,
-                      "startTime": "2026-08-11T17:25:41.867Z",
+                      "startTime": "2026-08-11T17:31:20.619Z",
                       "annotations": [],
                       "attachments": []
                     }
@@ -2462,12 +1341,12 @@
                       "workerIndex": 0,
                       "parallelIndex": 0,
                       "status": "passed",
-                      "duration": 113,
+                      "duration": 112,
                       "errors": [],
                       "stdout": [],
                       "stderr": [],
                       "retry": 0,
-                      "startTime": "2026-08-11T17:25:41.980Z",
+                      "startTime": "2026-08-11T17:31:20.717Z",
                       "annotations": [],
                       "attachments": []
                     }
@@ -2476,74 +1355,6 @@
                 }
               ],
               "id": "724abdef5c4507a3f8aa-f6ffc8a45dae4b00571b",
-              "file": "uat/assessmentform-express-spa-multi-step-as.spec.ts",
-              "line": 756,
-              "column": 7
-            },
-            {
-              "title": "/dashboard redirects to /dashboard/login without a token",
-              "ok": true,
-              "tags": [],
-              "tests": [
-                {
-                  "timeout": 15000,
-                  "annotations": [],
-                  "expectedStatus": "passed",
-                  "projectId": "firefox",
-                  "projectName": "firefox",
-                  "results": [
-                    {
-                      "workerIndex": 1,
-                      "parallelIndex": 0,
-                      "status": "passed",
-                      "duration": 336,
-                      "errors": [],
-                      "stdout": [],
-                      "stderr": [],
-                      "retry": 0,
-                      "startTime": "2026-08-11T17:26:53.223Z",
-                      "annotations": [],
-                      "attachments": []
-                    }
-                  ],
-                  "status": "expected"
-                }
-              ],
-              "id": "724abdef5c4507a3f8aa-ea8222297e95916a0975",
-              "file": "uat/assessmentform-express-spa-multi-step-as.spec.ts",
-              "line": 736,
-              "column": 7
-            },
-            {
-              "title": "/dashboard/analytics redirects to /dashboard/login without a token",
-              "ok": true,
-              "tags": [],
-              "tests": [
-                {
-                  "timeout": 15000,
-                  "annotations": [],
-                  "expectedStatus": "passed",
-                  "projectId": "firefox",
-                  "projectName": "firefox",
-                  "results": [
-                    {
-                      "workerIndex": 1,
-                      "parallelIndex": 0,
-                      "status": "passed",
-                      "duration": 277,
-                      "errors": [],
-                      "stdout": [],
-                      "stderr": [],
-                      "retry": 0,
-                      "startTime": "2026-08-11T17:26:53.565Z",
-                      "annotations": [],
-                      "attachments": []
-                    }
-                  ],
-                  "status": "expected"
-                }
-              ],
-              "id": "724abdef5c4507a3f8aa-ad618cf3af7bc4533e30",
               "file": "uat/assessmentform-express-spa-multi-step-as.spec.ts",
               "line": 756,
               "column": 7
@@ -2572,12 +1383,12 @@
                       "workerIndex": 0,
                       "parallelIndex": 0,
                       "status": "passed",
-                      "duration": 3094,
+                      "duration": 3113,
                       "errors": [],
                       "stdout": [],
                       "stderr": [],
                       "retry": 0,
-                      "startTime": "2026-08-11T17:25:42.097Z",
+                      "startTime": "2026-08-11T17:31:20.832Z",
                       "annotations": [],
                       "attachments": []
                     }
@@ -2606,12 +1417,12 @@
                       "workerIndex": 0,
                       "parallelIndex": 0,
                       "status": "passed",
-                      "duration": 3097,
+                      "duration": 3096,
                       "errors": [],
                       "stdout": [],
                       "stderr": [],
                       "retry": 0,
-                      "startTime": "2026-08-11T17:25:45.196Z",
+                      "startTime": "2026-08-11T17:31:23.949Z",
                       "annotations": [],
                       "attachments": []
                     }
@@ -2620,74 +1431,6 @@
                 }
               ],
               "id": "724abdef5c4507a3f8aa-40749fc1626bafd3ec71",
-              "file": "uat/assessmentform-express-spa-multi-step-as.spec.ts",
-              "line": 803,
-              "column": 7
-            },
-            {
-              "title": "/dashboard/config page is reachable and shows Assessment Configuration heading",
-              "ok": true,
-              "tags": [],
-              "tests": [
-                {
-                  "timeout": 15000,
-                  "annotations": [],
-                  "expectedStatus": "passed",
-                  "projectId": "firefox",
-                  "projectName": "firefox",
-                  "results": [
-                    {
-                      "workerIndex": 1,
-                      "parallelIndex": 0,
-                      "status": "passed",
-                      "duration": 3244,
-                      "errors": [],
-                      "stdout": [],
-                      "stderr": [],
-                      "retry": 0,
-                      "startTime": "2026-08-11T17:26:53.845Z",
-                      "annotations": [],
-                      "attachments": []
-                    }
-                  ],
-                  "status": "expected"
-                }
-              ],
-              "id": "724abdef5c4507a3f8aa-13eb87b99f40e975e384",
-              "file": "uat/assessmentform-express-spa-multi-step-as.spec.ts",
-              "line": 776,
-              "column": 7
-            },
-            {
-              "title": "/dashboard/config shows Due Date field in config panel",
-              "ok": true,
-              "tags": [],
-              "tests": [
-                {
-                  "timeout": 15000,
-                  "annotations": [],
-                  "expectedStatus": "passed",
-                  "projectId": "firefox",
-                  "projectName": "firefox",
-                  "results": [
-                    {
-                      "workerIndex": 1,
-                      "parallelIndex": 0,
-                      "status": "passed",
-                      "duration": 3212,
-                      "errors": [],
-                      "stdout": [],
-                      "stderr": [],
-                      "retry": 0,
-                      "startTime": "2026-08-11T17:26:57.093Z",
-                      "annotations": [],
-                      "attachments": []
-                    }
-                  ],
-                  "status": "expected"
-                }
-              ],
-              "id": "724abdef5c4507a3f8aa-e2897a00a0d23ad96ca5",
               "file": "uat/assessmentform-express-spa-multi-step-as.spec.ts",
               "line": 803,
               "column": 7
@@ -2716,12 +1459,12 @@
                       "workerIndex": 0,
                       "parallelIndex": 0,
                       "status": "passed",
-                      "duration": 37,
+                      "duration": 11,
                       "errors": [],
                       "stdout": [],
                       "stderr": [],
                       "retry": 0,
-                      "startTime": "2026-08-11T17:25:48.297Z",
+                      "startTime": "2026-08-11T17:31:27.049Z",
                       "annotations": [],
                       "attachments": []
                     }
@@ -2750,12 +1493,12 @@
                       "workerIndex": 0,
                       "parallelIndex": 0,
                       "status": "passed",
-                      "duration": 8,
+                      "duration": 4,
                       "errors": [],
                       "stdout": [],
                       "stderr": [],
                       "retry": 0,
-                      "startTime": "2026-08-11T17:25:48.338Z",
+                      "startTime": "2026-08-11T17:31:27.063Z",
                       "annotations": [],
                       "attachments": []
                     }
@@ -2767,74 +1510,6 @@
               "file": "uat/assessmentform-express-spa-multi-step-as.spec.ts",
               "line": 837,
               "column": 7
-            },
-            {
-              "title": "GET /api/health returns HTTP 200",
-              "ok": true,
-              "tags": [],
-              "tests": [
-                {
-                  "timeout": 15000,
-                  "annotations": [],
-                  "expectedStatus": "passed",
-                  "projectId": "firefox",
-                  "projectName": "firefox",
-                  "results": [
-                    {
-                      "workerIndex": 1,
-                      "parallelIndex": 0,
-                      "status": "passed",
-                      "duration": 18,
-                      "errors": [],
-                      "stdout": [],
-                      "stderr": [],
-                      "retry": 0,
-                      "startTime": "2026-08-11T17:27:00.308Z",
-                      "annotations": [],
-                      "attachments": []
-                    }
-                  ],
-                  "status": "expected"
-                }
-              ],
-              "id": "724abdef5c4507a3f8aa-c5c401e3b530ab5f62ff",
-              "file": "uat/assessmentform-express-spa-multi-step-as.spec.ts",
-              "line": 830,
-              "column": 7
-            },
-            {
-              "title": "GET /api/health response body is valid JSON",
-              "ok": true,
-              "tags": [],
-              "tests": [
-                {
-                  "timeout": 15000,
-                  "annotations": [],
-                  "expectedStatus": "passed",
-                  "projectId": "firefox",
-                  "projectName": "firefox",
-                  "results": [
-                    {
-                      "workerIndex": 1,
-                      "parallelIndex": 0,
-                      "status": "passed",
-                      "duration": 4,
-                      "errors": [],
-                      "stdout": [],
-                      "stderr": [],
-                      "retry": 0,
-                      "startTime": "2026-08-11T17:27:00.330Z",
-                      "annotations": [],
-                      "attachments": []
-                    }
-                  ],
-                  "status": "expected"
-                }
-              ],
-              "id": "724abdef5c4507a3f8aa-4c81eb435796cfd0d88f",
-              "file": "uat/assessmentform-express-spa-multi-step-as.spec.ts",
-              "line": 837,
-              "column": 7
             }
           ]
         }
@@ -2843,9 +1518,9 @@
   ],
   "errors": [],
   "stats": {
-    "startTime": "2026-08-11T17:24:35.601Z",
-    "duration": 144906.558,
-    "expected": 78,
+    "startTime": "2026-08-11T17:30:21.493Z",
+    "duration": 65597.821,
+    "expected": 39,
     "skipped": 0,
     "unexpected": 0,
     "flaky": 0

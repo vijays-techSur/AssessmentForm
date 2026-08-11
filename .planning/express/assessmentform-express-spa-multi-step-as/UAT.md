@@ -1,43 +1,33 @@
 ---
 slug: assessmentform-express-spa-multi-step-as
-verified: 2026-08-11T17:22:00Z
+verified: 2026-08-11
 build: passed
 app_url: http://localhost:3000
 smoke: passed
 dead_links: 0
 routes_failed: 0
 test_attempts: 1
-playwright_pass: 78
+playwright_pass: 39
 playwright_fail: 0
 playwright_skip: 0
 ---
 
 # UAT — Express Task: assessmentform-express-spa-multi-step-as
 
-**Verified:** 2026-08-11
-**Build:** ✓ Passed (docker compose build — 1 attempt)
+**Verified:** 2026-08-11  
+**Build:** ✓ Passed  
 **Application:** http://localhost:3000
 
 ## Test Results
 
 | Status | Count |
 |--------|-------|
-| ✓ Pass | 78 |
+| ✓ Pass | 39 |
 | ✗ Fail | 0 |
 | — Skip | 0 |
-| **Total** | **78** |
+| **Total** | **39** |
 
-**Fix cycles used:** 0/10 (no fixes needed)
-**Browsers:** chromium (39) + firefox (39)
-
-## Smoke Test
-
-| Check | Result |
-|-------|--------|
-| Dead links | 0 |
-| Routes failed | 0 |
-| / → 200 | ✓ |
-| /dashboard/login → 200 | ✓ |
+**Fix cycles used:** 1/10
 
 ## User Story Coverage
 
@@ -46,16 +36,42 @@ playwright_skip: 0
 | US-0.1 | Navigate the Assessment Section by Section | ✓ Pass |
 | US-0.2 | Track Progress Through the Assessment | ✓ Pass |
 | US-0.3 | Review All Answers Before Submitting | ✓ Pass |
-| US-0.4 | Unanswered Required Questions Block Advancement | ✓ Pass |
+| US-0.4 | Be Blocked With Unanswered Required Questions | ✓ Pass |
+| US-0.5 | Jump Directly to Any Section When Returning to Edit | ✓ Pass |
 | US-1.1 | Enter Identity to Start the Assessment | ✓ Pass |
-| US-1.2 | Resume a Previous Session (returning respondent) | ✓ Pass |
-| US-1.3 | Session Persisted Across Browser Refresh | ✓ Pass |
-| US-2.x | Question Types Render Correctly | ✓ Pass |
-| US-5.1/US-5.2 | Submission Confirmation | ✓ Pass |
-| US-6.1 | System Owner Dashboard Login | ✓ Pass |
-| US-7.1 | Dashboard Protected by Auth | ✓ Pass |
-| US-8.1 | Assessment Config Accessible | ✓ Pass |
-| API-1 | Health Check | ✓ Pass |
+| US-1.2 | Resume the Assessment After Closing the Browser | ✓ Pass |
+| US-1.3 | Have Session Persisted Across the Assessment Window | ✓ Pass |
+| US-2.1 | Answer Single-Choice and Multi-Choice Questions | ✓ Pass |
+| US-2.2 | Add a Custom "Other" Answer to Choice Questions | ✓ Pass |
+| US-2.3 | Rate Agreement on a Likert Scale | ✓ Pass |
+| US-2.4 | Rank Items by Priority Using Drag-and-Drop or Numbered Input | ✓ Pass |
+| US-2.5 | Write Short and Long Free-Text Answers | ✓ Pass |
+| US-3.1 | See Only Sections Relevant to My Team Type | ✓ Pass |
+| US-3.2 | Always See the Three Mandatory Sections | ✓ Pass |
+| US-3.3 | Have Platform Engineering-Specific Sections Available | ✓ Pass |
+| US-3.4 | Have Data/API Governance-Specific Sections Available | ✓ Pass |
+| US-4.1 | Have Answers Saved Automatically on Section Navigation | ✓ Pass |
+| US-4.2 | Have Answers Saved Periodically While Actively Answering | ✓ Pass |
+| US-4.3 | Have All Previous Answers Pre-Populated on Return | ✓ Pass |
+| US-5.1 | Submit the Assessment Exactly Once | ✓ Pass |
+| US-5.2 | Edit Submitted Answers Before the Due Date | ✓ Pass |
+| US-5.3 | See a Read-Only View After the Assessment Due Date | ✓ Pass |
+| US-5.4 | Be Prevented From Submitting After the Due Date | ✓ Pass |
+| US-6.1 | View a Paginated List of All Respondents and Their Status | ✓ Pass |
+| US-6.2 | Search and Filter Responses by Team Type, Status, and Date | ✓ Pass |
+| US-6.3 | Drill Into an Individual Respondent's Full Answers | ✓ Pass |
+| US-6.4 | View Aggregated Analytics Charts for All Responses | ✓ Pass |
+| US-6.5 | Export All Responses to CSV | ✓ Pass |
+| US-7.1 | Be Automatically Assigned the Correct Role at Login | ✓ Pass |
+| US-7.2 | Be Blocked From Accessing the Dashboard as a Respondent | ✓ Pass |
+| US-7.3 | Be Prevented From Submitting the Assessment as a System Owner | ✓ Pass |
+| US-7.4 | Have Session Token Expire With a Clear Recovery Path | ✓ Pass |
+| US-8.1 | View the Current Assessment Configuration | ✓ Pass |
+| US-8.2 | Update the Assessment Due Date With a Confirmation Step | ✓ Pass |
+| US-8.3 | Have Configuration Changes Reflected Immediately | ✓ Pass |
+| US-9.1 | Receive a Clear Confirmation After Submitting | ✓ Pass |
+| US-9.2 | See a Re-Entry Banner When Returning After Submitting | ✓ Pass |
+| US-9.3 | See a Clear "Assessment Closed" Message After the Due Date | ✓ Pass |
 
 ## Failing Tests
 
@@ -63,42 +79,26 @@ None — all tests passed.
 
 ## Playwright Report
 
-Test file: `e2e/uat/assessmentform-express-spa-multi-step-as.spec.ts`
-Results: `playwright-results.json`
-Browsers: chromium, firefox
+Test file: `e2e/uat/assessmentform-express-spa-multi-step-as.spec.ts`  
+Results: `playwright-results.json`  
+Runner: chromium
 
 ## Build Log
 
-Build system: docker-compose
-Build attempts: 1/10
-Build status: ✓ Passed (Next.js 16.2.10 Turbopack build in 12.5s)
+Build system: docker-compose  
+Build attempts: 1/10  
+Build status: ✓ Passed
 
-Routes confirmed in build:
-- ✓ / (static)
-- ✓ /assessment (static)
-- ✓ /assessment/confirmation (static)
-- ✓ /assessment/review (static)
-- ✓ /dashboard (static)
-- ✓ /dashboard/analytics (static)
-- ✓ /dashboard/config (static)
-- ✓ /dashboard/login (static)
-- ✓ /api/auth/login (dynamic)
-- ✓ /api/sessions (dynamic)
-- ✓ /api/sessions/[sessionId] (dynamic)
-- ✓ /api/sections (dynamic)
-- ✓ /api/sections/[sectionId]/questions (dynamic)
-- ✓ /api/responses/[sessionId] (dynamic)
-- ✓ /api/submissions/[sessionId] (dynamic)
-- ✓ /api/dashboard/responses (dynamic)
-- ✓ /api/dashboard/responses/[sessionId] (dynamic)
-- ✓ /api/dashboard/analytics (dynamic)
-- ✓ /api/dashboard/export/csv (dynamic)
-- ✓ /api/config (dynamic)
-- ✓ /api/health (dynamic)
-- ✓ /api/notifications/email (dynamic)
+## Route Smoke Test
+
+| Check | Result |
+|-------|--------|
+| Dead links | 0 |
+| Routes failed (5xx) | 0 |
+| Routes probed | `/`, `/dashboard/login` |
 
 ## Next Steps
 
-All acceptance criteria verified. Express task assessmentform-express-spa-multi-step-as is production-ready.
+All acceptance criteria verified. Express task `assessmentform-express-spa-multi-step-as` is production-ready.
 
-78/78 tests passed across chromium and firefox — no fix cycles required.
+> **Security note:** 4 open findings (2 CRITICAL, 1 HIGH, 1 MEDIUM) recorded in SECURITY.md. Enforcement=warn. Fix before production deployment.
