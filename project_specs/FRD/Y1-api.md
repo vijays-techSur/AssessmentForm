@@ -12,22 +12,22 @@
 ### §Auth — Authentication
 
 #### `POST /api/auth/login`
-System Owner dedicated login. Returns JWT with `role: "system_owner"` if email is in `system_owner_emails`.
+Dashboard login. Returns JWT with `role: "system_owner"` for any valid email address. No allowlist check is performed.
 
 **Request:**
 ```json
-{ "email": "owner@example.com", "name": "Jane Smith" }
+{ "email": "user@example.com", "name": "Jane Smith" }
 ```
 **Response 200:**
 ```json
 {
   "token": "eyJ...",
   "role": "system_owner",
-  "email": "owner@example.com",
+  "email": "user@example.com",
   "expires_at": "2026-07-18T10:00:00Z"
 }
 ```
-**Errors:** `400 INVALID_EMAIL_FORMAT`, `403 NOT_A_SYSTEM_OWNER`
+**Errors:** `400 INVALID_EMAIL_FORMAT`
 
 ---
 
@@ -185,7 +185,7 @@ Finalize a submission. Transitions `submission_status` from `draft` to `submitte
 ### §Dashboard — System Owner Dashboard
 
 #### `GET /api/dashboard/responses`
-Paginated list of all respondent sessions. System Owner only.
+Paginated list of all respondent sessions. Dashboard JWT required (any authenticated user).
 
 **Query params:**
 | Param | Type | Default | Description |
@@ -224,7 +224,7 @@ Paginated list of all respondent sessions. System Owner only.
 ---
 
 #### `GET /api/dashboard/responses/:sessionId`
-Full response detail for a single respondent. System Owner only.
+Full response detail for a single respondent. Dashboard JWT required (any authenticated user).
 
 **Response 200:**
 ```json
@@ -251,7 +251,7 @@ Full response detail for a single respondent. System Owner only.
 ---
 
 #### `GET /api/dashboard/analytics`
-Aggregated analytics data for all charts. System Owner only.
+Aggregated analytics data for all charts. Dashboard JWT required (any authenticated user).
 
 **Query params:** `teamType` (optional multi-select filter).
 
@@ -299,7 +299,7 @@ Aggregated analytics data for all charts. System Owner only.
 ---
 
 #### `GET /api/dashboard/export/csv`
-Stream CSV export of all matching responses. System Owner only.
+Stream CSV export of all matching responses. Dashboard JWT required (any authenticated user).
 
 **Query params:** Same as `GET /api/dashboard/responses` (filters applied to export).
 
@@ -315,7 +315,7 @@ Stream CSV export of all matching responses. System Owner only.
 ### §Config — Assessment Configuration
 
 #### `GET /api/config`
-Returns current assessment configuration. System Owner only.
+Returns current assessment configuration. Dashboard JWT required (any authenticated user).
 
 **Response 200:**
 ```json
@@ -332,7 +332,7 @@ Returns current assessment configuration. System Owner only.
 ---
 
 #### `PATCH /api/config`
-Update the assessment due date. System Owner only.
+Update the assessment due date. Dashboard JWT required (any authenticated user).
 
 **Request:**
 ```json

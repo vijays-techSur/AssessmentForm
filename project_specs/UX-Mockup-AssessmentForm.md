@@ -80,11 +80,6 @@ AssessmentForm-Express serves two distinct user groups with non-overlapping UI s
     │
     └── New user → Validates fields on "Start Assessment"
             │
-            ├── Email = System Owner email → Inline error
-            │       "This email is registered as a System Owner.
-            │        Please access the dashboard instead."
-            │       (Stay on Identity page)
-            │
             ├── Validation failure → Inline field errors
             │       Email: "Please enter a valid email address."
             │       Name:  "Please enter your full name (at least 2 characters)."
@@ -106,10 +101,10 @@ AssessmentForm-Express serves two distinct user groups with non-overlapping UI s
 1. **Arrive:** Page shows three fields (Email, Name, Team Type) plus a time estimate ("~15–20 min, {N} sections") and **Start Assessment** button (initially disabled).
 2. **Fill identity:** Button enables only when all three fields are complete and email format is valid (real-time inline validation).
 3. **Team type selection:** Dropdown shows all four options with one-line descriptions. Selection immediately shows a preview of section count: *"You'll complete 7 sections tailored to Platform Engineering."*
-4. **Submit:** `POST /api/sessions` → server checks email against System Owner list and existing sessions.
+4. **Submit:** `POST /api/sessions` → server checks for existing session.
 5. **New respondent path:** JWT stored, redirect to `/assessment` section 0 with section list pre-loaded.
 6. **Returning respondent path:** Resume Banner displayed; assessment opens at `current_section_index`; all answers pre-populated.
-7. **System Owner path:** Error message; no session created; user stays on identity page.
+7. **Valid email path:** JWT stored, redirect to `/assessment` section 0 with section list pre-loaded.
 
 ---
 ---
@@ -439,7 +434,7 @@ Progress Bar (clickable on re-entry):
 ```
 
 **Steps:**
-1. Config Panel always visible from dashboard settings link (System Owner only; 403 for Respondents).
+1. Config Panel always visible from dashboard settings link (dashboard JWT required; Respondents receive 403).
 2. All fields read-only by default; **Edit Due Date** opens the date/time picker.
 3. Confirmation dialog shows both old and new dates clearly, with a caution statement about immediate effect.
 4. Cancel at any point reverts to no change.
@@ -545,7 +540,7 @@ Progress Bar (clickable on re-entry):
 | Ready to submit | All fields valid; CTA enabled (primary color) | Team type shows section preview |
 | Email error | Red border + inline error below email field | "Please enter a valid email address." |
 | Name error | Red border + inline error below name field | "Please enter your full name (at least 2 characters)." |
-| System Owner email | Red error banner above CTA | "This email is registered as a System Owner. Please access the dashboard instead." |
+| Dashboard login path | N/A on identity page | Users who want dashboard access use the separate dashboard login at `/dashboard/login` |
 | Returning (draft) | Resume banner; fields pre-filled; CTA = "Continue" | "Welcome back, {name}. You left off at Section N." |
 | Returning (submitted, edit open) | Resume banner with edit deadline | "Your submission is on file. Edits accepted until {date}." |
 | Session expired / stale | Warning banner | "Your previous session could not be found. Please re-enter your details." |

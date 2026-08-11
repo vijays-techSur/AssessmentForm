@@ -13,7 +13,7 @@
 - **Respondent Row:** A single row in the response list table, representing one respondent's session.
 
 **Sub-features:**
-- Secure dashboard route (System Owner role only; see F07)
+- Secure dashboard route (Dashboard JWT required; any authenticated user — see F07)
 - Response list view: paginated table with sortable columns
 - Search by respondent name or email
 - Filter by team type, submission date range, completion status
@@ -25,8 +25,8 @@
 **Process:**
 
 **Dashboard Load:**
-1. System Owner navigates to `/dashboard`.
-2. Server verifies System Owner role (see F07 §Process). Unauthorized users redirected to `/` with `ACCESS_DENIED` error.
+1. Dashboard User navigates to `/dashboard`.
+2. Server verifies dashboard JWT (role: system_owner) — see F07 §Process. Users without a dashboard JWT are redirected to `/` with `ACCESS_DENIED` error.
 3. Server returns dashboard home with:
    - Assessment status (active/closed/upcoming) from `assessment_config`.
    - Summary stats: total responses, submitted count, draft count, team type breakdown.
@@ -36,7 +36,7 @@
 1. Default display: table with columns — Respondent Name, Email, Team Type, Status (draft/submitted), Submitted At, Last Modified At.
 2. Pagination: 25 rows per page. Page controls (previous/next/page number).
 3. Column headers for Name, Email, Team Type, Status, Submitted At are sortable (ASC/DESC).
-4. System Owner applies filters/search (see below); table refreshes via `GET /api/dashboard/responses`.
+4. Dashboard User applies filters/search (see below); table refreshes via `GET /api/dashboard/responses`.
 
 **Search & Filter:**
 - **Search:** Free-text search against `respondents.name` and `respondents.email` (case-insensitive, partial match).
@@ -47,7 +47,7 @@
 - Filter state is reflected in URL query parameters for bookmarking/sharing.
 
 **Individual Response View:**
-1. System Owner clicks any row → navigates to `/dashboard/responses/:sessionId`.
+1. Dashboard User clicks any row → navigates to `/dashboard/responses/:sessionId`.
 2. System renders all sections and questions for the respondent's team type.
 3. All answers are shown in read-only format, rendered with the same question-type widgets (see F02) but non-interactive.
 4. Back button returns to the response list with filter state preserved.
@@ -61,14 +61,14 @@
 - Charts render using server-aggregated data (`GET /api/dashboard/analytics`).
 
 **CSV Export:**
-1. System Owner clicks **Export CSV**.
+1. Dashboard User clicks **Export CSV**.
 2. Client sends `GET /api/dashboard/export/csv` with current filter parameters.
 3. Server generates CSV synchronously (or async with download link for large datasets).
 4. CSV includes columns: `respondent_name`, `respondent_email`, `team_type`, `submission_status`, `submitted_at`, `last_modified_at`, then one column per question (by question ID / title), with answer values as human-readable strings.
 5. File is streamed as `Content-Disposition: attachment; filename="assessment-responses-{date}.csv"`.
 
 **Inputs:**
-- `Authorization` header (required): Bearer token identifying the System Owner (see F07).
+- `Authorization` header (required): Bearer token with dashboard JWT — see F07.
 - Filter params (optional): `teamType`, `status`, `submittedAfter`, `submittedBefore`, `search`, `page`, `pageSize`, `sortBy`, `sortDir`.
 
 **Outputs:**
@@ -85,7 +85,7 @@
 **Error States:**
 | Scenario | HTTP Status | Error Code | Message |
 |----------|-------------|------------|---------|
-| Non-System Owner accesses dashboard | 403 | `ACCESS_DENIED` | "You do not have permission to access this page." |
+| User without dashboard JWT accesses dashboard | 403 | `ACCESS_DENIED` | "You do not have permission to access this page." |
 | Invalid date range in filter | 400 | `INVALID_DATE_RANGE` | "The 'from' date must be before or equal to the 'to' date." |
 | Session ID not found in individual view | 404 | `RESPONSE_NOT_FOUND` | "The requested response could not be found." |
 | Analytics data unavailable | 500 | `ANALYTICS_ERROR` | "Analytics could not be loaded. Please refresh." |

@@ -120,7 +120,7 @@ src/app/api/
 
 | Service Module | Responsibilities |
 |----------------|-----------------|
-| `authService.ts` | JWT sign/verify, role determination, `system_owner_emails` lookup |
+| `authService.ts` | JWT sign/verify, role determination (respondent vs dashboard user) |
 | `sessionService.ts` | Session upsert, returning-respondent detection, section list hydration |
 | `sectionRoutingService.ts` | Compute effective section list for a team type; mandatory section enforcement; order assembly |
 | `questionService.ts` | Fetch section questions with options; validate answer payload schemas |

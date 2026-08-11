@@ -31,11 +31,6 @@
     │
     └── New user → Validates fields on "Start Assessment"
             │
-            ├── Email = System Owner email → Inline error
-            │       "This email is registered as a System Owner.
-            │        Please access the dashboard instead."
-            │       (Stay on Identity page)
-            │
             ├── Validation failure → Inline field errors
             │       Email: "Please enter a valid email address."
             │       Name:  "Please enter your full name (at least 2 characters)."
@@ -57,9 +52,8 @@
 1. **Arrive:** Page shows three fields (Email, Name, Team Type) plus a time estimate ("~15–20 min, {N} sections") and **Start Assessment** button (initially disabled).
 2. **Fill identity:** Button enables only when all three fields are complete and email format is valid (real-time inline validation).
 3. **Team type selection:** Dropdown shows all four options with one-line descriptions. Selection immediately shows a preview of section count: *"You'll complete 7 sections tailored to Platform Engineering."*
-4. **Submit:** `POST /api/sessions` → server checks email against System Owner list and existing sessions.
+4. **Submit:** `POST /api/sessions` → server checks for existing session.
 5. **New respondent path:** JWT stored, redirect to `/assessment` section 0 with section list pre-loaded.
 6. **Returning respondent path:** Resume Banner displayed; assessment opens at `current_section_index`; all answers pre-populated.
-7. **System Owner path:** Error message; no session created; user stays on identity page.
 
 ---

@@ -43,18 +43,13 @@ AssessmentForm-Express addresses these gaps by providing a structured, guided as
 
 | Layer | Technology |
 |---|---|
-| Frontend | React 19.2.7 / Next.js 16.2.10 App Router (SPA) |
-| Backend API | Next.js API Routes (Node.js 20 LTS runtime) |
-| Database | PostgreSQL 16 — platform-provisioned shared DB, schema `assessmentform` |
-| ORM | Drizzle ORM 0.45.2 |
-| Auth | JWT via `jose` 6.2.3 (HS256; 24h respondent / 8h system_owner); custom auth, no NextAuth |
-| Styling | Tailwind CSS 4.3.3 |
-| Charts | Recharts 3.9.2 |
-| Drag & Drop | dnd-kit 6.x |
-| Validation | Zod 4.4.3 |
-| Hosting | Internal enterprise deployment; port 4000 |
-| State Management | Client-side session + server-side auto-save (React refs for stale closure safety) |
-| Analytics | Server-side aggregation, rendered via Recharts |
+| Frontend | React / Next.js (SPA) |
+| Backend API | Node.js REST API (or Next.js API routes) |
+| Database | Persistent relational or document store (PostgreSQL or MongoDB) |
+| Auth | Email + name identity (no SSO in v1) |
+| Hosting | Internal enterprise deployment |
+| State Management | Client-side session + server-side auto-save |
+| Analytics | Server-side aggregation, rendered via charting library (e.g., Recharts, Chart.js) |
 
 **Key Architecture Decisions:**
 
@@ -154,11 +149,11 @@ AssessmentForm-Express addresses these gaps by providing a structured, guided as
 
 ---
 
-### F6: Dashboard (Open to All Users)
-**Description:** Any user can access the dashboard by logging in with their email at `/dashboard/login`. No pre-configured allowlist is required. The dashboard provides access to all submissions, filtering and search capabilities, and visual analytics to inform DP tool adoption decisions.
+### F6: System Owner Dashboard
+**Description:** System Owners have a dedicated dashboard view that provides access to all submissions, filtering and search capabilities, and visual analytics. This is the primary tool for System Owners to analyze assessment results and inform DP tool adoption decisions.
 
 **Capabilities:**
-- Dashboard accessible to any user with a valid email — no pre-configuration required
+- Secure dashboard route accessible to any user with a valid dashboard JWT (dashboard JWT required)
 - **Response list view:** Table of all submissions with respondent name, email, team type, submission date, and completion status
 - **Search & filter:** Filter responses by team type, submission date range, and completion status; search by name or email
 - **Individual response view:** Drill-down into any single respondent's full answers
@@ -173,15 +168,15 @@ AssessmentForm-Express addresses these gaps by providing a structured, guided as
 
 ---
 
-### F7: Access Control
-**Description:** The system supports two entry points: respondent (assessment form) and dashboard (response analytics). Any user with a valid email can access the dashboard — no pre-configured allowlist required. Respondent data isolation is enforced server-side.
+### F7: Role-Based Access Control
+**Description:** The system supports two roles: Respondent and Dashboard User (System Owner). Respondents access only the assessment form and their own responses. Dashboard Users access the dashboard with full analytics. Any user with a valid email can log into the dashboard — no pre-configured allowlist is required.
 
 **Capabilities:**
-- Two entry points: assessment form (`POST /api/sessions`) and dashboard (`POST /api/auth/login`)
-- Dashboard open to all users — login requires only a valid email address
-- Respondents cannot access other respondents' data (session isolation enforced)
-- Dashboard JWT holders cannot submit assessments as respondents
-- No complex RBAC, allowlist, or permission hierarchy needed
+- Two roles: Respondent and Dashboard User (System Owner)
+- Dashboard access open to any user who logs in via `POST /api/auth/login` with a valid email
+- Respondents cannot access the dashboard or other respondents' data
+- System Owners can access the dashboard and all response data, but cannot submit an assessment as a respondent (or can do so from a separate respondent context)
+- No complex RBAC or permission hierarchy needed in v1
 
 **Priority:** P0 (Critical — MVP core)
 
@@ -213,20 +208,6 @@ AssessmentForm-Express addresses these gaps by providing a structured, guided as
 
 ---
 
-### F10: Global Navigation Bar
-**Description:** A sticky navigation bar (AppNav component) rendered globally in the root layout is visible on all non-dashboard pages. It provides persistent access to the System Owner Dashboard and a Logout control.
-
-**Capabilities:**
-- Sticky top navigation bar displayed on all assessment-flow pages
-- Shows the application brand: "Developer Platform Assessment"
-- "System Owner Dashboard" link visible and accessible to authenticated users
-- "Logout" button displayed when the user is logged in; clicking it clears the JWT and redirects to the start page
-- Navigation bar is part of the root layout (always mounted); does not re-render on section navigation
-
-**Priority:** P0 (Critical — implemented in v1)
-
----
-
 ## 6. Non-Functional Requirements
 
 | Category | Requirement |
@@ -235,7 +216,7 @@ AssessmentForm-Express addresses these gaps by providing a structured, guided as
 | Auto-save latency | Auto-save completes within 3 seconds of triggering (section navigation or idle timeout) |
 | Availability | Targeting 99.5% uptime during the active assessment window (~2 weeks) |
 | Data integrity | No response data lost due to browser closure, network interruption, or session timeout |
-| Security | Dashboard accessible only to System Owner role; respondents cannot access others' data |
+| Security | Dashboard accessible to any user with a valid dashboard JWT; respondents cannot access others' data |
 | Scalability | Support up to 500 concurrent respondents without degradation (enterprise internal scale) |
 | Browser support | Modern browsers: Chrome, Firefox, Safari, Edge (latest 2 major versions) |
 | Accessibility | WCAG 2.1 AA compliance for form elements and navigation |
@@ -285,7 +266,6 @@ AssessmentForm-Express addresses these gaps by providing a structured, guided as
 | F7 | Role-Based Access Control | P0 | MVP |
 | F8 | Assessment Configuration Management | P1 | Pre-launch |
 | F9 | Submission Confirmation & Respondent Feedback | P1 | Pre-launch |
-| F10 | Global Navigation Bar | P0 | MVP |
 
 **Priority Legend:**
 - **P0** — Critical; must be present for the product to function at all

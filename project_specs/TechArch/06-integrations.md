@@ -75,7 +75,7 @@ Failure: LOG only — does not block submission response to respondent
 
 Email + name identity is used in lieu of enterprise SSO (Azure AD, Okta, Google Workspace, etc.). This eliminates SSO configuration dependencies for the initial rollout.
 
-**Future migration path:** The `respondents` table can be extended with `sso_provider TEXT` and `external_user_id TEXT` columns. `POST /api/sessions` would be augmented with an OIDC callback endpoint. The JWT role model is unchanged — `role` claim would still be determined by `system_owner_emails` lookup.
+**Future migration path:** The `respondents` table can be extended with `sso_provider TEXT` and `external_user_id TEXT` columns. `POST /api/sessions` would be augmented with an OIDC callback endpoint. The JWT role model is unchanged — the `role` claim continues to use `"respondent"` or `"system_owner"` based on which login endpoint is used.
 
 ---
 

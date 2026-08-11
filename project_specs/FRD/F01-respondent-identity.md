@@ -49,7 +49,7 @@
 - `email` must not be blank; max length 254 characters.
 - `name` must not be blank; min 2 characters, max 200 characters; must contain at least one non-whitespace character.
 - `team_type` must be one of the four valid enum values; invalid values rejected with `INVALID_TEAM_TYPE`.
-- If respondent email matches a System Owner email (see F07), return `SYSTEM_OWNER_CANNOT_RESPOND` error — System Owners may not submit assessments from the respondent flow in v1.
+- If the JWT presented to `POST /api/sessions` has `role === "system_owner"` (dashboard JWT), return `SYSTEM_OWNER_CANNOT_RESPOND` error — Dashboard Users may not submit assessments from the respondent flow in v1.
 - Duplicate session creation for the same email is handled by upsert (return existing session, not a new one).
 
 **Error States:**
@@ -58,7 +58,7 @@
 | Email format invalid | 400 | `INVALID_EMAIL_FORMAT` | "Please enter a valid email address." |
 | Name blank or too short | 400 | `INVALID_NAME` | "Please enter your full name (at least 2 characters)." |
 | Team type not recognized | 400 | `INVALID_TEAM_TYPE` | "Please select a valid team type." |
-| System Owner email used in respondent flow | 403 | `SYSTEM_OWNER_CANNOT_RESPOND` | "This email is registered as a System Owner. Please access the dashboard instead." |
+| Dashboard JWT (role: system_owner) used in respondent flow | 403 | `SYSTEM_OWNER_CANNOT_RESPOND` | "Dashboard users cannot submit assessments as respondents. Please use the respondent login." |
 | Session creation fails (DB error) | 500 | `SESSION_CREATE_FAILED` | "Unable to start your session. Please try again." |
 | Session not found on resume (stale localStorage) | 404 | `SESSION_NOT_FOUND` | "Your previous session could not be found. Please re-enter your details." |
 

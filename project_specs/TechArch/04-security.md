@@ -9,7 +9,7 @@ AssessmentForm-Express uses **email-identity + JWT** authentication. There is no
 **Respondent flow:**
 1. Respondent submits email + name + team_type to `POST /api/sessions`.
 2. Server looks up email in `respondents` table (case-insensitive). Creates or loads the session.
-3. Server checks email against `system_owner_emails` (case-insensitive): no match → `role = "respondent"`.
+3. Server issues JWT with `role = "respondent"`.
 4. Server signs a JWT with secret `JWT_SECRET` (HS256):
    ```json
    { "session_id": "uuid", "email": "user@example.com", "role": "respondent", "iat": 1752758400, "exp": 1752844800 }
@@ -17,11 +17,11 @@ AssessmentForm-Express uses **email-identity + JWT** authentication. There is no
    - Token expiry: **24 hours** (covers multi-day resume without re-login).
 5. JWT returned to client; stored in `localStorage`.
 
-**Dashboard login flow (open to all users):**
-1. Any user submits their email to `POST /api/auth/login`.
-2. Server validates the email format only — no allowlist check. All users have dashboard access.
+**Dashboard User flow:**
+1. User submits email + name to `POST /api/auth/login`.
+2. Any valid email is accepted — no allowlist check is performed.
 3. Server issues JWT with `role = "system_owner"`, expiry **8 hours**.
-4. Client stores JWT in `localStorage ("dashboard_token")`; attaches as `Authorization: Bearer {token}` on all dashboard requests.
+4. Client stores JWT; attaches as `Authorization: Bearer {token}` on all dashboard requests.
 
 **JWT verification (all protected routes):**
 - Signature verified with `JWT_SECRET`; tampered tokens → `401 TOKEN_INVALID`.
@@ -37,19 +37,19 @@ AssessmentForm-Express uses **email-identity + JWT** authentication. There is no
 │ Resource                                │ Respondent     │ System Owner   │
 ├─────────────────────────────────────────┼────────────────┼────────────────┤
 │ POST /api/sessions                      │ ✓ (no auth)    │ ✗ (blocked)    │
-│ POST /api/auth/login                    │ ✓ (open)       │ ✓ (open)       │
+│ POST /api/auth/login                    │ ✗ (blocked)    │ ✓ (no auth)    │
 │ GET /api/sessions/:id (own session)     │ ✓              │ ✓              │
 │ GET /api/sessions/:id (other session)   │ ✗ 403          │ ✓              │
 │ GET /api/sections?teamType=...          │ ✓              │ ✓              │
 │ GET /api/sections/:id/questions         │ ✓              │ ✓              │
 │ PUT /api/responses/:sessionId           │ ✓ (own session)│ ✗ 403          │
 │ POST /api/submissions/:sessionId        │ ✓ (own session)│ ✗ 403          │
-│ GET /api/dashboard/responses            │ ✓ (dashboard JWT) │ ✓           │
-│ GET /api/dashboard/responses/:sessionId │ ✓ (dashboard JWT) │ ✓           │
-│ GET /api/dashboard/analytics            │ ✓ (dashboard JWT) │ ✓           │
-│ GET /api/dashboard/export/csv           │ ✓ (dashboard JWT) │ ✓           │
-│ GET /api/config                         │ ✓ (dashboard JWT) │ ✓           │
-│ PATCH /api/config                       │ ✓ (dashboard JWT) │ ✓           │
+│ GET /api/dashboard/responses            │ ✗ 403          │ ✓              │
+│ GET /api/dashboard/responses/:sessionId │ ✗ 403          │ ✓              │
+│ GET /api/dashboard/analytics            │ ✗ 403          │ ✓              │
+│ GET /api/dashboard/export/csv           │ ✗ 403          │ ✓              │
+│ GET /api/config                         │ ✗ 403          │ ✓              │
+│ PATCH /api/config                       │ ✗ 403          │ ✓              │
 └─────────────────────────────────────────┴────────────────┴────────────────┘
 ```
 
@@ -57,10 +57,9 @@ AssessmentForm-Express uses **email-identity + JWT** authentication. There is no
 - Every request to `/api/sessions/:id`, `/api/responses/:id`, `/api/submissions/:id` verifies that the `session_id` path param's `respondent_id` matches the email in the JWT.
 - Mismatch returns `403 SESSION_ACCESS_DENIED` — respondents cannot access, modify, or submit other respondents' sessions.
 
-**Dashboard access:**
-- `POST /api/auth/login` is open to any user with a valid email — no allowlist required.
-- Dashboard JWT (`role = "system_owner"`) is required for all `/api/dashboard/**` and `/api/config` routes.
-- `POST /api/sessions` still rejects dashboard JWTs with `403 SYSTEM_OWNER_CANNOT_RESPOND` to prevent accidental dual-role confusion.
+**Dashboard User restrictions:**
+- `POST /api/sessions` rejects requests carrying a dashboard JWT (`role === "system_owner"`) with `403 SYSTEM_OWNER_CANNOT_RESPOND`.
+- `POST /api/submissions/:id` rejects if `role === "system_owner"` with `403 SYSTEM_OWNER_CANNOT_SUBMIT`.
 
 ### 5.3 Data Protection
 

@@ -45,7 +45,7 @@ All IDs used in this document are extracted directly from the source specificati
 - **Scalability:** 500 concurrent respondents without degradation
 - **Browser Support:** Chrome, Firefox, Safari, Edge (latest 2 major versions)
 - **Accessibility:** WCAG 2.1 AA for all form elements and navigation
-- **Security:** Dashboard restricted to System Owner role; data isolation enforced per respondent
+- **Security:** Dashboard requires a valid dashboard JWT (any authenticated user); data isolation enforced per respondent
 - **Data Privacy:** Respondent email/name stored; no external data sharing
 - **Auditability:** Submission timestamps and last-modified per response stored
 - **Data Integrity:** No response data lost due to browser closure, network interruption, or session timeout
@@ -319,11 +319,11 @@ This table provides forward traceability: PRD Feature → FRD Chunk → TechArch
 
 **PRD Capabilities → FRD Sub-features → TechArch Components**
 
-- Two roles: Respondent and System Owner
-  - FRD: Role determined at session creation/login by email match against `system_owner_emails`; JWT issued with `role` claim
+- Two roles: Respondent and Dashboard User (System Owner)
+  - FRD: Role determined by which login endpoint is used — `POST /api/auth/login` issues `role: "system_owner"` to any valid email; `POST /api/sessions` issues `role: "respondent"`
   - TechArch: `authService.ts`; JWT payload `{ session_id, email, role, iat, exp }`; HS256 signed with `JWT_SECRET`
-- System Owner login flow (separate from respondent flow)
-  - FRD: `POST /api/auth/login` (no team_type; no respondent session created); System Owner JWT expires in 8 hours
+- Dashboard login flow (separate from respondent flow)
+  - FRD: `POST /api/auth/login` (no team_type; no respondent session created); any valid email accepted; dashboard JWT expires in 8 hours
   - TechArch: `/api/auth/login/route.ts`; `authService.ts`
 - Respondent login flow
   - FRD: `POST /api/sessions` (with team_type); Respondent JWT expires in 24 hours
@@ -336,7 +336,7 @@ This table provides forward traceability: PRD Feature → FRD Chunk → TechArch
   - TechArch: `requireSessionOwner` middleware
 
 **Key API Endpoints:** `POST /api/auth/login`, `POST /api/sessions`  
-**Key Error Codes:** `AUTH_REQUIRED`, `TOKEN_EXPIRED`, `TOKEN_INVALID`, `ACCESS_DENIED`, `SESSION_ACCESS_DENIED`, `NOT_A_SYSTEM_OWNER`, `SYSTEM_OWNER_CANNOT_RESPOND`, `SYSTEM_OWNER_CANNOT_SUBMIT`
+**Key Error Codes:** `AUTH_REQUIRED`, `TOKEN_EXPIRED`, `TOKEN_INVALID`, `ACCESS_DENIED`, `SESSION_ACCESS_DENIED`, `SYSTEM_OWNER_CANNOT_RESPOND`, `SYSTEM_OWNER_CANNOT_SUBMIT`
 
 ---
 
@@ -505,13 +505,13 @@ This section defines the complete test case inventory for each feature and maps 
 
 | Test ID | Test Description | Acceptance Criteria | User Story | Pass Condition |
 |---------|-----------------|---------------------|------------|----------------|
-| TEST-F7-01 | System Owner email assigned system_owner role and redirected to dashboard | JWT role=system_owner; client routed to /dashboard | US-7.1 | role claim correct; dashboard accessible |
-| TEST-F7-02 | Non-System-Owner email assigned respondent role | JWT role=respondent; client routed to /assessment | US-7.1 | role claim correct |
+| TEST-F7-01 | Any valid email logged in via POST /api/auth/login is assigned system_owner role and redirected to dashboard | JWT role=system_owner; client routed to /dashboard | US-7.1 | role claim correct; dashboard accessible |
+| TEST-F7-02 | Email submitted via POST /api/sessions assigned respondent role | JWT role=respondent; client routed to /assessment | US-7.1 | role claim correct |
 | TEST-F7-03 | System Owner JWT expires after 8 hours | 401 TOKEN_EXPIRED returned after 8h | US-7.1 | Expiry enforced at server |
 | TEST-F7-04 | Respondent JWT expires after 24 hours | 401 TOKEN_EXPIRED returned after 24h | US-7.4 | Expiry enforced at server |
 | TEST-F7-05 | Respondent accessing /dashboard returns 403 | 403 ACCESS_DENIED; dashboard UI not rendered | US-7.2 | Client-side guard prevents flash; server returns 403 |
 | TEST-F7-06 | Respondent cannot access another respondent's session | 403 SESSION_ACCESS_DENIED | US-7.2 | Server rejects cross-session access |
-| TEST-F7-07 | System Owner email blocked in respondent identity flow | Error: "This email is registered as a System Owner." | US-7.3 | 403 SYSTEM_OWNER_CANNOT_RESPOND |
+| TEST-F7-07 | Dashboard JWT (role: system_owner) blocked in respondent identity flow | Error: "Dashboard users cannot submit assessments as respondents." | US-7.3 | 403 SYSTEM_OWNER_CANNOT_RESPOND |
 | TEST-F7-08 | System Owner JWT blocked from submitting | 403 SYSTEM_OWNER_CANNOT_SUBMIT | US-7.3 | Server rejects submission by System Owner |
 | TEST-F7-09 | Expired JWT prompts re-login with unsaved changes warning | Warning: "Your session expired. Please log in again — your last saved answers are preserved." | US-7.4 | 401 returned; client intercepts and shows warning |
 | TEST-F7-10 | Tampered JWT rejected | 401 TOKEN_INVALID | US-7.4 | Signature verification fails |
@@ -587,7 +587,7 @@ This section defines the complete test case inventory for each feature and maps 
 | Auto-save latency | Auto-save completes within 3 seconds | `useAutoSave.ts` with 3s SLA; TEST-F4-03 | Performance test: save request response time |
 | Availability | 99.5% uptime during 2-week window | Single Docker container; PostgreSQL 15+; enterprise infrastructure | Uptime monitoring during assessment window |
 | Data Integrity | No response data lost on browser close | Server-side auto-save on every navigation; idle timer; retry logic | Resilience test: interrupt browser mid-session; verify data persistence |
-| Security | Dashboard accessible only to System Owner | `requireSystemOwner` middleware; `AuthGuard.tsx`; JWT HS256 | TEST-F7-01 through TEST-F7-10; penetration check |
+| Security | Dashboard requires valid dashboard JWT (any authenticated user) | `requireSystemOwner` middleware; `AuthGuard.tsx`; JWT HS256 | TEST-F7-01 through TEST-F7-10; penetration check |
 | Scalability | 500 concurrent respondents | Connection pool (max 20); stateless API routes; PostgreSQL | Load test at 500 concurrent sessions |
 | Browser Support | Chrome, Firefox, Safari, Edge (latest 2 major versions) | dnd-kit (all browsers); Tailwind CSS; standard fetch API | Cross-browser test suite on all 4 browsers |
 | Accessibility | WCAG 2.1 AA | Tailwind CSS WCAG primitives; ARIA labels on progress indicator; dnd-kit keyboard support | Automated axe-core scan + manual screen reader testing |

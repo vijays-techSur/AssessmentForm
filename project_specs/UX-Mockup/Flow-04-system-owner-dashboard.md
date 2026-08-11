@@ -111,7 +111,7 @@
 ```
 
 **Steps:**
-1. Config Panel always visible from dashboard settings link (System Owner only; 403 for Respondents).
+1. Config Panel always visible from dashboard settings link (dashboard JWT required; Respondents receive 403).
 2. All fields read-only by default; **Edit Due Date** opens the date/time picker.
 3. Confirmation dialog shows both old and new dates clearly, with a caution statement about immediate effect.
 4. Cancel at any point reverts to no change.

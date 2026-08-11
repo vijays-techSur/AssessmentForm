@@ -14,11 +14,10 @@
 | `AUTH_REQUIRED` | 401 | F07 | No `Authorization` header or missing JWT on protected route | Re-authenticate |
 | `TOKEN_EXPIRED` | 401 | F07 | JWT past its `expires_at` timestamp | Re-authenticate |
 | `TOKEN_INVALID` | 401 | F07 | JWT signature invalid or payload tampered | Re-authenticate |
-| `ACCESS_DENIED` | 403 | F06, F07, F08 | Authenticated user lacks required role (e.g., Respondent on dashboard route) | No |
+| `ACCESS_DENIED` | 403 | F06, F07, F08 | Authenticated user lacks required role (e.g., Respondent JWT on dashboard route) | No |
 | `SESSION_ACCESS_DENIED` | 403 | F07 | Authenticated user's email does not match the session being accessed | No |
-| `NOT_A_SYSTEM_OWNER` | 403 | F07 | Email not found in `system_owner_emails` on System Owner login attempt | No |
-| `SYSTEM_OWNER_CANNOT_RESPOND` | 403 | F01, F07 | System Owner email used in respondent identity flow | No |
-| `SYSTEM_OWNER_CANNOT_SUBMIT` | 403 | F05, F07 | System Owner JWT used in submission endpoint | No |
+| `SYSTEM_OWNER_CANNOT_RESPOND` | 403 | F01, F07 | Dashboard JWT (role: system_owner) used in respondent identity flow | No |
+| `SYSTEM_OWNER_CANNOT_SUBMIT` | 403 | F05, F07 | Dashboard JWT used in submission endpoint | No |
 
 ---
 
