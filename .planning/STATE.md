@@ -3,7 +3,7 @@
 **Workflow Mode:** spec-express
 **Current Milestone:** v1
 **Status:** initialized
-**Last activity:** 2026-08-11 - Phase 12 plan created (4c-bugfix-polish): documents and codifies all 15 post-build fixes including port 4000, NODE_TLS_REJECT_UNAUTHORIZED process-level export, DB search_path via connection string, npm ci sentinel, local next binary, allowedDevOrigins, auto-save stale closure fix, navigation gated on save result, Zod UUID relaxation, team_type in session response, global AppNav, dashboard Logout button, system owner seeding, and migration FK schema fix
+**Last activity:** 2026-08-11 - Re-executed express task assessmentform-express-spa-multi-step-as; recreated aggregated SUMMARY.md; running UAT verification
 
 ---
 
