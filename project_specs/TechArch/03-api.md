@@ -210,19 +210,20 @@ export interface AssessmentConfig {
 
 ### 4.3 Endpoint Reference
 
-#### `POST /api/auth/login` — System Owner Login
+#### `POST /api/auth/login` — Dashboard Login
 
 | Field | Value |
 |-------|-------|
 | Auth | None |
-| Role | System Owner |
+| Role | Any authenticated user (dashboard JWT issued to any valid email) |
 
 **Request body:**
 ```json
-{ "email": "owner@example.com", "name": "Jane Smith" }
+{ "email": "user@example.com", "name": "Jane Smith" }
 ```
 **Response 200:** `{ token, role: "system_owner", email, expires_at }`  
-**Errors:** `400 INVALID_EMAIL_FORMAT`, `403 NOT_A_SYSTEM_OWNER`
+**Behavior:** Any valid email is accepted. No allowlist check is performed.  
+**Errors:** `400 INVALID_EMAIL_FORMAT`
 
 ---
 
@@ -326,7 +327,7 @@ export interface AssessmentConfig {
 | Field | Value |
 |-------|-------|
 | Auth | Bearer JWT |
-| Role | System Owner only |
+| Role | Dashboard JWT required (any authenticated user) |
 
 **Query params:**
 
@@ -352,7 +353,7 @@ export interface AssessmentConfig {
 | Field | Value |
 |-------|-------|
 | Auth | Bearer JWT |
-| Role | System Owner only |
+| Role | Dashboard JWT required (any authenticated user) |
 
 **Response 200:** `ResponseDetail`  
 **Errors:** `401 AUTH_REQUIRED`, `403 ACCESS_DENIED`, `404 RESPONSE_NOT_FOUND`
@@ -364,7 +365,7 @@ export interface AssessmentConfig {
 | Field | Value |
 |-------|-------|
 | Auth | Bearer JWT |
-| Role | System Owner only |
+| Role | Dashboard JWT required (any authenticated user) |
 
 **Query params:** `teamType` (optional, multi-select)  
 **Response 200:** `AnalyticsData`  
@@ -377,7 +378,7 @@ export interface AssessmentConfig {
 | Field | Value |
 |-------|-------|
 | Auth | Bearer JWT |
-| Role | System Owner only |
+| Role | Dashboard JWT required (any authenticated user) |
 | Response type | `text/csv` |
 
 **Query params:** Same as `GET /api/dashboard/responses` (filters applied to export).  
@@ -392,7 +393,7 @@ export interface AssessmentConfig {
 | Field | Value |
 |-------|-------|
 | Auth | Bearer JWT |
-| Role | System Owner only |
+| Role | Dashboard JWT required (any authenticated user) |
 
 **Response 200:** `AssessmentConfig`  
 **Errors:** `401 AUTH_REQUIRED`, `403 ACCESS_DENIED`, `500 CONFIG_NOT_FOUND`
@@ -404,7 +405,7 @@ export interface AssessmentConfig {
 | Field | Value |
 |-------|-------|
 | Auth | Bearer JWT |
-| Role | System Owner only |
+| Role | Dashboard JWT required (any authenticated user) |
 
 **Request body:** `{ "due_date": "2026-08-07T23:59:59Z" }`  
 **Response 200:** `AssessmentConfig` (updated)  

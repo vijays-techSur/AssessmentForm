@@ -9,7 +9,7 @@ AssessmentForm-Express uses **email-identity + JWT** authentication. There is no
 **Respondent flow:**
 1. Respondent submits email + name + team_type to `POST /api/sessions`.
 2. Server looks up email in `respondents` table (case-insensitive). Creates or loads the session.
-3. Server checks email against `system_owner_emails` (case-insensitive): no match → `role = "respondent"`.
+3. Server issues JWT with `role = "respondent"`.
 4. Server signs a JWT with secret `JWT_SECRET` (HS256):
    ```json
    { "session_id": "uuid", "email": "user@example.com", "role": "respondent", "iat": 1752758400, "exp": 1752844800 }
@@ -17,9 +17,9 @@ AssessmentForm-Express uses **email-identity + JWT** authentication. There is no
    - Token expiry: **24 hours** (covers multi-day resume without re-login).
 5. JWT returned to client; stored in `localStorage`.
 
-**System Owner flow:**
-1. System Owner submits email + name to `POST /api/auth/login`.
-2. Server verifies email exists in `system_owner_emails` (active record, case-insensitive); if not, returns `403 NOT_A_SYSTEM_OWNER`.
+**Dashboard User flow:**
+1. User submits email + name to `POST /api/auth/login`.
+2. Any valid email is accepted — no allowlist check is performed.
 3. Server issues JWT with `role = "system_owner"`, expiry **8 hours**.
 4. Client stores JWT; attaches as `Authorization: Bearer {token}` on all dashboard requests.
 
@@ -57,8 +57,8 @@ AssessmentForm-Express uses **email-identity + JWT** authentication. There is no
 - Every request to `/api/sessions/:id`, `/api/responses/:id`, `/api/submissions/:id` verifies that the `session_id` path param's `respondent_id` matches the email in the JWT.
 - Mismatch returns `403 SESSION_ACCESS_DENIED` — respondents cannot access, modify, or submit other respondents' sessions.
 
-**System Owner restrictions:**
-- `POST /api/sessions` rejects System Owner emails with `403 SYSTEM_OWNER_CANNOT_RESPOND`.
+**Dashboard User restrictions:**
+- `POST /api/sessions` rejects requests carrying a dashboard JWT (`role === "system_owner"`) with `403 SYSTEM_OWNER_CANNOT_RESPOND`.
 - `POST /api/submissions/:id` rejects if `role === "system_owner"` with `403 SYSTEM_OWNER_CANNOT_SUBMIT`.
 
 ### 5.3 Data Protection

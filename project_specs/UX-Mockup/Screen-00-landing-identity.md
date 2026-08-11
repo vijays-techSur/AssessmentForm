@@ -96,7 +96,7 @@
 | Ready to submit | All fields valid; CTA enabled (primary color) | Team type shows section preview |
 | Email error | Red border + inline error below email field | "Please enter a valid email address." |
 | Name error | Red border + inline error below name field | "Please enter your full name (at least 2 characters)." |
-| System Owner email | Red error banner above CTA | "This email is registered as a System Owner. Please access the dashboard instead." |
+| Dashboard login path | N/A on identity page | Users who want dashboard access use the separate dashboard login at `/dashboard/login` |
 | Returning (draft) | Resume banner; fields pre-filled; CTA = "Continue" | "Welcome back, {name}. You left off at Section N." |
 | Returning (submitted, edit open) | Resume banner with edit deadline | "Your submission is on file. Edits accepted until {date}." |
 | Session expired / stale | Warning banner | "Your previous session could not be found. Please re-enter your details." |

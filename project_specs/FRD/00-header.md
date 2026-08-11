@@ -51,7 +51,7 @@ This Functional Requirements Document specifies the detailed behavior of every f
 | Term | Definition |
 |------|-----------|
 | **Respondent** | An enterprise team member who completes the assessment form. Identified by email + name. |
-| **System Owner** | A privileged user who can view all responses, analytics, and configure assessment settings. Identified by a pre-configured email address. |
+| **System Owner** | Any user who logs in via the dashboard login (`POST /api/auth/login`) with a valid email. Can view all responses, analytics, and configure assessment settings. No pre-configured email list is required. |
 | **Assessment** | The full multi-step questionnaire consisting of sections and questions. |
 | **Section** | A logical grouping of 5–6 related questions within the assessment. Max 7–8 sections per assessment. |
 | **Team Type** | One of four respondent categories: Program/Project, Platform Engineering, Infrastructure/Cloud, Data/API Governance. Determines which optional sections are shown. |
@@ -79,7 +79,7 @@ This Functional Requirements Document specifies the detailed behavior of every f
 | Scalability | 500 concurrent respondents without degradation |
 | Browser support | Chrome, Firefox, Safari, Edge (latest 2 major versions) |
 | Accessibility | WCAG 2.1 AA for all form elements and navigation |
-| Security | Dashboard accessible only to System Owner role |
+| Security | Dashboard accessible to any user with a valid dashboard JWT (role: system_owner); respondents cannot access dashboard routes |
 | Data Privacy | Respondent email/name stored; no external data sharing |
 | Auditability | Submission timestamps and last-modified per response stored |
 

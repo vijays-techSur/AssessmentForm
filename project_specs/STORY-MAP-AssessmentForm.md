@@ -54,8 +54,8 @@ Story map entries use `SM-{Epic}.{NN}` (e.g., SM-0.1 maps to US-0.1 in Epic 0).
 | SM-3.2 | Epic 3 (F3) | **US-3.2** — Always See the Three Mandatory Sections | PER-01, PER-02 | *JTBD-01.3 → Identify:* General DP Alignment, Current Status, and Feedback & Adaptability sections are always present regardless of team type selected | R1 |
 | SM-3.3 | Epic 3 (F3) | **US-3.3** — Have Platform Engineering-Specific Sections Available | PER-02 | *JTBD-02.1 → Identify & Route:* Selecting "Platform Engineering" surfaces 7 sections including CI/CD, Plugin Ecosystem, and Onboarding — no program-level sections appear | R1 |
 | SM-3.4 | Epic 3 (F3) | **US-3.4** — Have Data/API Governance-Specific Sections Available | PER-01 | *JTBD-01.3 → Identify:* Selecting "Data/API Governance" routes to 6 sections including Governance & Compliance; Adoption Readiness and Tool Evaluation do not appear | R1 |
-| SM-7.1 | Epic 7 (F7) | **US-7.1** — Be Automatically Assigned the Correct Role at Login | PER-03 | *JTBD-03.3 → Configure:* Dana's pre-configured email is recognized at session creation and the JWT is issued with `role: "system_owner"` — no manual role selection required | R1 |
-| SM-7.3 | Epic 7 (F7) | **US-7.3** — Be Prevented From Submitting the Assessment as a System Owner | PER-03 | *JTBD-03.2 → Dataset integrity:* Attempting to start an assessment with a System Owner email returns a 403 error before any questions are displayed — no contamination of the response dataset | R1 |
+| SM-7.1 | Epic 7 (F7) | **US-7.1** — Be Automatically Assigned the Correct Role at Login | PER-03 | *JTBD-03.3 → Configure:* Any user who logs in via `POST /api/auth/login` with a valid email is issued a JWT with `role: "system_owner"` and routed to the dashboard — no allowlist or manual role selection required | R1 |
+| SM-7.3 | Epic 7 (F7) | **US-7.3** — Be Prevented From Submitting the Assessment as a Dashboard User | PER-03 | *JTBD-03.2 → Dataset integrity:* Attempting to use a dashboard JWT in the respondent flow returns a 403 error before any questions are displayed — no contamination of the response dataset | R1 |
 
 ---
 
@@ -159,7 +159,7 @@ Full traceability: **JTBD Outcome → Journey Stage → NaC → Story**
 | JTBD-03.2 | Deduplication guarantee visible | STG-06: Monitor — JRN-03.2 S2 | Given the response list view, when the System Owner reviews it, then a deduplication status banner is visible confirming zero duplicate email addresses were detected | US-5.1, US-6.1 |
 | JTBD-03.3 | Due date update propagation | STG-06: Configure — JRN-03.1 S1 | Given an active assessment, when the System Owner updates the due date from the dashboard, then the respondent edit-window banner reflects the new date on the next page load without any code deployment | US-8.3 |
 | JTBD-03.3 | Configuration guard | STG-06: Configure — JRN-03.1 S1 | Given the System Owner entering a new due date, when they click Save, then a confirmation dialog displays the old and new dates before the change is committed | US-8.2 |
-| JTBD-03.3 | Role-enforced dashboard access | STG-06: Configure — JRN-03.1 S1-2 | Given Dana's System Owner email, when she logs in, then she is automatically routed to the dashboard with full access — and a Respondent-role attempt to access `/dashboard` is blocked with 403 | US-7.1, US-7.2 |
+| JTBD-03.3 | Role-enforced dashboard access | STG-06: Configure — JRN-03.1 S1-2 | Given any user who logs in via the dashboard login with a valid email, when they authenticate, then they are automatically routed to the dashboard with full access — and a Respondent-role attempt to access `/dashboard` is blocked with 403 | US-7.1, US-7.2 |
 
 ---
 
@@ -330,7 +330,7 @@ Verifies that NaC derived from JTBD align with the acceptance criteria defined i
 | Non-dismissible re-entry banner with due date | US-9.2 | AC: "persistent re-entry banner is displayed at the top of every section"; "The re-entry banner is not dismissible" | ✅ Aligned |
 | Session token expiry warning with saved-data reassurance | US-7.4 | AC: "Any unsaved changes at the time of expiry trigger a warning: 'Your session expired… your last saved answers are preserved'" | ✅ Aligned |
 | Platform Engineering sections surfaced; no program-level content | US-3.3 | AC: "routes to: General DP Alignment → Current Status → Platform Needs… → Feedback & Adaptability (7 sections)"; "Sections specific to other team types… do not appear" | ✅ Aligned |
-| System Owner email blocked from respondent assessment entry | US-7.3 | AC: "Attempting to start an assessment session with a System Owner email returns 403" | ✅ Aligned |
+| Dashboard JWT blocked from respondent assessment entry | US-7.3 | AC: "Attempting to use a dashboard JWT in the respondent flow returns 403" | ✅ Aligned |
 
 **Result:** All 18 NaC-to-AC mappings are aligned. No NaC contradicts or exceeds the acceptance criteria defined in UserStories-AssessmentForm.md. NaC in most cases are equal to or more specific than the AC (adding measurable thresholds from JTBD success measures), which is the intended relationship.
 

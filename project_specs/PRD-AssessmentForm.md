@@ -153,7 +153,7 @@ AssessmentForm-Express addresses these gaps by providing a structured, guided as
 **Description:** System Owners have a dedicated dashboard view that provides access to all submissions, filtering and search capabilities, and visual analytics. This is the primary tool for System Owners to analyze assessment results and inform DP tool adoption decisions.
 
 **Capabilities:**
-- Secure dashboard route accessible only to System Owner role
+- Secure dashboard route accessible to any user with a valid dashboard JWT (dashboard JWT required)
 - **Response list view:** Table of all submissions with respondent name, email, team type, submission date, and completion status
 - **Search & filter:** Filter responses by team type, submission date range, and completion status; search by name or email
 - **Individual response view:** Drill-down into any single respondent's full answers
@@ -169,11 +169,11 @@ AssessmentForm-Express addresses these gaps by providing a structured, guided as
 ---
 
 ### F7: Role-Based Access Control
-**Description:** The system supports two roles: Respondent and System Owner. Respondents access only the assessment form and their own responses. System Owners access the dashboard with full analytics. Access is determined at login by email identity — System Owner emails are pre-configured in the system.
+**Description:** The system supports two roles: Respondent and Dashboard User (System Owner). Respondents access only the assessment form and their own responses. Dashboard Users access the dashboard with full analytics. Any user with a valid email can log into the dashboard — no pre-configured allowlist is required.
 
 **Capabilities:**
-- Two roles: Respondent and System Owner
-- System Owner accounts identified by pre-configured email list (admin configuration)
+- Two roles: Respondent and Dashboard User (System Owner)
+- Dashboard access open to any user who logs in via `POST /api/auth/login` with a valid email
 - Respondents cannot access the dashboard or other respondents' data
 - System Owners can access the dashboard and all response data, but cannot submit an assessment as a respondent (or can do so from a separate respondent context)
 - No complex RBAC or permission hierarchy needed in v1
@@ -216,7 +216,7 @@ AssessmentForm-Express addresses these gaps by providing a structured, guided as
 | Auto-save latency | Auto-save completes within 3 seconds of triggering (section navigation or idle timeout) |
 | Availability | Targeting 99.5% uptime during the active assessment window (~2 weeks) |
 | Data integrity | No response data lost due to browser closure, network interruption, or session timeout |
-| Security | Dashboard accessible only to System Owner role; respondents cannot access others' data |
+| Security | Dashboard accessible to any user with a valid dashboard JWT; respondents cannot access others' data |
 | Scalability | Support up to 500 concurrent respondents without degradation (enterprise internal scale) |
 | Browser support | Modern browsers: Chrome, Firefox, Safari, Edge (latest 2 major versions) |
 | Accessibility | WCAG 2.1 AA compliance for form elements and navigation |

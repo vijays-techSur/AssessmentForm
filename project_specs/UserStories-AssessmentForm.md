@@ -492,14 +492,14 @@
 ---
 
 ### US-7.1: Be Automatically Assigned the Correct Role at Login
-**As a** Dana Okafor, **I want to** be automatically recognized as a System Owner when I log in with my pre-configured email, **so that** I'm directed to the dashboard without any manual role selection or configuration.
+**As a** Dana Okafor, **I want to** be automatically directed to the dashboard when I log in via the dashboard login page, **so that** I can access assessment data without any manual role selection or pre-configuration.
 
 **Acceptance Criteria:**
-- [ ] At session creation (`POST /api/sessions`), the server checks the submitted email against the `system_owner_emails` table (case-insensitive)
-- [ ] If the email matches, the JWT is issued with `role: "system_owner"`; otherwise `role: "respondent"`
-- [ ] System Owner JWT expires after 8 hours; Respondent JWT expires after 24 hours
+- [ ] Logging in via `POST /api/auth/login` with any valid email issues a JWT with `role: "system_owner"` — no allowlist check is performed
+- [ ] Logging in via `POST /api/sessions` issues a JWT with `role: "respondent"`
+- [ ] Dashboard JWT expires after 8 hours; Respondent JWT expires after 24 hours
 - [ ] The role claim is embedded in the JWT and verified server-side on every protected API call
-- [ ] An empty `system_owner_emails` table results in all users being assigned the Respondent role
+- [ ] The dashboard is accessible to any user who successfully logs in via `POST /api/auth/login`
 
 **Priority:** P0 | **Feature Ref:** F7
 
@@ -518,14 +518,14 @@
 
 ---
 
-### US-7.3: Be Prevented From Submitting the Assessment as a System Owner
-**As a** Dana Okafor, **I want to** be clearly informed that I cannot submit a respondent assessment using my System Owner email, **so that** the dataset is not contaminated with System Owner entries.
+### US-7.3: Be Prevented From Submitting the Assessment as a Dashboard User
+**As a** Dana Okafor, **I want to** be clearly informed that I cannot submit a respondent assessment using my dashboard credentials, **so that** the dataset is not contaminated with dashboard user entries.
 
 **Acceptance Criteria:**
-- [ ] Attempting to start an assessment session with a System Owner email returns 403: "This email is registered as a System Owner. Please access the dashboard instead."
-- [ ] Attempting to submit (`POST /api/submissions/:sessionId`) with a System Owner JWT returns 403: "System Owners cannot submit assessments as respondents."
-- [ ] No respondent session record is created for System Owner email addresses in the `respondents` table
-- [ ] The error is shown on the identity capture page, not mid-assessment, preventing any data entry
+- [ ] Attempting to use a dashboard JWT (`role: "system_owner"`) in the respondent flow (`POST /api/sessions`) returns 403: "Dashboard users cannot submit assessments as respondents."
+- [ ] Attempting to submit (`POST /api/submissions/:sessionId`) with a dashboard JWT returns 403: "Dashboard users cannot submit assessments as respondents."
+- [ ] No respondent session record is created when a dashboard JWT is used in the respondent flow
+- [ ] The error is returned immediately on the session creation attempt, preventing any data entry
 
 **Priority:** P0 | **Feature Ref:** F7
 
