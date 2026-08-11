@@ -686,50 +686,46 @@ This Functional Requirements Document specifies the detailed behavior of every f
 
 ## F07: Role-Based Access Control
 
-**Description:** The system supports exactly two roles: Respondent and System Owner. Role assignment is determined at session creation by matching the respondent's email against a pre-configured list of System Owner emails stored in `system_owner_emails`. No complex permission hierarchy, OAuth, or SSO is required in v1. Role enforcement happens server-side on every protected API route.
+**Description:** The system supports two roles: Respondent and Dashboard User. The dashboard is open to all users — any valid email can log into the dashboard via `POST /api/auth/login`. No allowlist, pre-configured email list, or `system_owner_emails` check is required for dashboard access. Role enforcement happens server-side on every protected API route.
 
 **Terminology:**
-- **Respondent Role:** The default role for all non-System-Owner email addresses. Grants access to the assessment form and the respondent's own session data only.
-- **System Owner Role:** A privileged role granted to emails listed in `system_owner_emails`. Grants access to the dashboard, all response data, and configuration management.
-- **Pre-configured Email List:** The `system_owner_emails` table (or environment-variable list) of email addresses with System Owner access.
-- **Protected Route:** An API endpoint or UI route that requires a specific role; returns 403 if the caller's role does not match.
-- **JWT Token:** A signed JSON Web Token issued by `POST /api/sessions` that encodes `{ session_id, email, role }`. Used as the bearer token for all subsequent API calls.
+- **Respondent Role:** The default role for assessment participants. Grants access to the assessment form and the respondent's own session data only. JWT issued by `POST /api/sessions`.
+- **Dashboard Role (`system_owner`):** Granted to any user who logs in via `POST /api/auth/login`. Grants access to the dashboard, all response data, and configuration management. No pre-configuration required.
+- **Protected Route:** An API endpoint or UI route that requires a valid dashboard JWT; returns 401/403 if the token is missing, invalid, or expired.
+- **JWT Token:** A signed JSON Web Token encoding `{ session_id, email, role }`. Used as the bearer token for all subsequent API calls.
 - **Role Claim:** The `role` field in the JWT payload: either `"respondent"` or `"system_owner"`.
 
 **Sub-features:**
-- Email-to-role mapping at session creation
+- Any user with a valid email can access the dashboard via `/dashboard/login`
 - JWT generation with role claim
-- Server-side role validation on every protected route
-- Respondent cannot access dashboard or other respondents' data
-- System Owner cannot submit an assessment from the respondent flow (in v1)
-- No UI route rendered if role does not match (client-side guard + server-side enforcement)
+- Server-side JWT validation (signature + expiry) on every protected route
+- Respondent cannot access other respondents' data (session isolation enforced)
+- No UI route rendered if JWT is missing or expired (client-side guard + server-side enforcement)
 
 **Process:**
 
-**Role Determination at Login — Two Separate Entry Points:**
+**Two Separate Entry Points:**
 
 - **Respondents** use `POST /api/sessions` on the assessment start page (email + name + team type).
-- **System Owners** use `POST /api/auth/login` on the dedicated dashboard login page (email + name; no team type). The dashboard login page is a distinct UI route (e.g., `/dashboard/login`) separate from the assessment start page.
+- **Dashboard users** use `POST /api/auth/login` on `/dashboard/login` (email only; no team type; no allowlist check).
 
-These are not interchangeable: `POST /api/sessions` accepts `team_type` and returns `session_id` + respondent session context; `POST /api/auth/login` does not accept `team_type`, does not create a respondent session, and returns only a JWT with `role: "system_owner"`.
+These are not interchangeable: `POST /api/sessions` accepts `team_type` and returns `session_id` + respondent session context; `POST /api/auth/login` does not accept `team_type`, does not create a respondent session, and returns only a dashboard JWT.
 
-1. **Respondent flow:** Respondent submits email + name + team_type via `POST /api/sessions`. Server checks email against `system_owner_emails`; if match, returns `SYSTEM_OWNER_CANNOT_RESPOND` (403). Otherwise issues a Respondent JWT and creates/loads the session.
-2. **System Owner flow:** System Owner submits email + name via `POST /api/auth/login`. Server checks email against `system_owner_emails`; if no match, returns `NOT_A_SYSTEM_OWNER` (403). If match, issues a System Owner JWT (no session record created).
-3. Server issues a signed JWT with payload `{ session_id, email, role, issued_at, expires_at }`. Expiry: 8 hours for System Owners; 24 hours for Respondents.
-4. JWT returned to client; stored in `localStorage` or `sessionStorage`.
+1. **Respondent flow:** Respondent submits email + name + team_type via `POST /api/sessions`. Server creates/loads the session and issues a Respondent JWT (24h expiry).
+2. **Dashboard login flow:** Any user submits email via `POST /api/auth/login`. Server validates email format only and issues a dashboard JWT with `role = "system_owner"` (8h expiry). No allowlist check.
+3. JWT returned to client; stored in `localStorage`.
 
-**System Owner Dashboard Access:**
-1. System Owner navigates to `/dashboard`.
-2. Client attaches JWT as `Authorization: Bearer {token}` header.
-3. Server middleware extracts and verifies JWT signature and expiry.
-4. Server checks `role === "system_owner"`; if not, returns 403 `ACCESS_DENIED`.
-5. If token expired, returns 401 `TOKEN_EXPIRED`; client redirects to login.
+**Dashboard Access:**
+1. User navigates to `/dashboard` — link visible in global nav on all pages.
+2. If no dashboard JWT in localStorage, redirected to `/dashboard/login`.
+3. User enters any valid email → receives dashboard JWT → redirected to `/dashboard`.
+4. Client attaches JWT as `Authorization: Bearer {token}` on all dashboard API calls.
+5. Server middleware verifies JWT signature and expiry only. If expired, returns 401 `TOKEN_EXPIRED`.
 
 **Respondent Route Protection:**
 1. Respondent accesses `/assessment` or any `/api/responses/*` or `/api/sessions/*` endpoint.
-2. Server middleware extracts JWT; verifies `role === "respondent"` or `role === "system_owner"` (System Owners are not blocked from reading their own session if it exists, but submit is blocked).
-3. `GET /api/dashboard/*` routes: Respondent JWT returns 403 `ACCESS_DENIED`.
-4. `GET /api/dashboard/responses/:sessionId`: Only allowed if `role === "system_owner"`; respondents cannot view others' sessions.
+2. Server middleware extracts JWT and verifies signature + expiry.
+3. `/api/responses/:sessionId` and `/api/sessions/:sessionId` validate that the session belongs to the authenticated email (data isolation).
 
 **Data Isolation for Respondents:**
 1. All `/api/responses/:sessionId` and `/api/sessions/:sessionId` requests validate that the `session_id` in the path belongs to the authenticated user's email (extracted from JWT).

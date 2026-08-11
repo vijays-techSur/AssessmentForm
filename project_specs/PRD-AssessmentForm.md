@@ -154,11 +154,11 @@ AssessmentForm-Express addresses these gaps by providing a structured, guided as
 
 ---
 
-### F6: System Owner Dashboard
-**Description:** System Owners have a dedicated dashboard view that provides access to all submissions, filtering and search capabilities, and visual analytics. This is the primary tool for System Owners to analyze assessment results and inform DP tool adoption decisions.
+### F6: Dashboard (Open to All Users)
+**Description:** Any user can access the dashboard by logging in with their email at `/dashboard/login`. No pre-configured allowlist is required. The dashboard provides access to all submissions, filtering and search capabilities, and visual analytics to inform DP tool adoption decisions.
 
 **Capabilities:**
-- Secure dashboard route accessible only to System Owner role
+- Dashboard accessible to any user with a valid email — no pre-configuration required
 - **Response list view:** Table of all submissions with respondent name, email, team type, submission date, and completion status
 - **Search & filter:** Filter responses by team type, submission date range, and completion status; search by name or email
 - **Individual response view:** Drill-down into any single respondent's full answers
@@ -173,15 +173,15 @@ AssessmentForm-Express addresses these gaps by providing a structured, guided as
 
 ---
 
-### F7: Role-Based Access Control
-**Description:** The system supports two roles: Respondent and System Owner. Respondents access only the assessment form and their own responses. System Owners access the dashboard with full analytics. Access is determined at login by email identity — System Owner emails are pre-configured in the system.
+### F7: Access Control
+**Description:** The system supports two entry points: respondent (assessment form) and dashboard (response analytics). Any user with a valid email can access the dashboard — no pre-configured allowlist required. Respondent data isolation is enforced server-side.
 
 **Capabilities:**
-- Two roles: Respondent and System Owner
-- System Owner accounts identified by pre-configured email list (admin configuration)
-- Respondents cannot access the dashboard or other respondents' data
-- System Owners can access the dashboard and all response data, but cannot submit an assessment as a respondent (or can do so from a separate respondent context)
-- No complex RBAC or permission hierarchy needed in v1
+- Two entry points: assessment form (`POST /api/sessions`) and dashboard (`POST /api/auth/login`)
+- Dashboard open to all users — login requires only a valid email address
+- Respondents cannot access other respondents' data (session isolation enforced)
+- Dashboard JWT holders cannot submit assessments as respondents
+- No complex RBAC, allowlist, or permission hierarchy needed
 
 **Priority:** P0 (Critical — MVP core)
 
