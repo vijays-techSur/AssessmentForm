@@ -58,12 +58,13 @@ Failure: LOG only — does not block submission response to respondent
 
 **Runtime requirements:**
 - Node.js 20 LTS (provided by base image `node:20-alpine`).
-- PostgreSQL 15+ reachable at `DATABASE_URL`.
+- PostgreSQL 16 shared DB at `pivota-spec-driven-primary.prod.svc:5432` reachable via `DATABASE_URL`.
 - Port 4000 exposed internally; TLS termination handled by enterprise reverse proxy.
+- `NODE_TLS_REJECT_UNAUTHORIZED=0` exported at process level to allow platform-internal TLS connections.
 
 **Network requirements:**
 - All traffic is internal; no public internet exposure required.
-- PostgreSQL accessible from the container on port 5432.
+- PostgreSQL platform-shared DB accessible from the container; app uses schema `assessmentform` via `options=-csearch_path%3Dassessmentform%2Cpublic` in the connection string (set at connection string level, not via `pool.on('connect')`, to avoid async race conditions).
 - Optional: Email relay accessible from the container if `EMAIL_RELAY_URL` is configured.
 
 **Configuration injection:** All environment variables injected at container startup (not baked into image).

@@ -918,6 +918,89 @@ These are not interchangeable: `POST /api/sessions` accepts `team_type` and retu
 ---
 ---
 
+## F10: Global Navigation Bar (AppNav)
+
+**ID:** F-NAV-01  
+**Description:** A sticky navigation bar (`AppNav` component) rendered in the root layout is persistently visible on all non-dashboard assessment pages. It provides branding, a direct link to the System Owner Dashboard, and a Logout control for authenticated users.
+
+**Sub-features:**
+- Global sticky nav bar in the root layout (`app/layout.tsx`)
+- Application brand label: "Developer Platform Assessment"
+- "System Owner Dashboard" link visible to authenticated users
+- "Logout" button shown when a JWT is present in localStorage; clears JWT and redirects to start page on click
+- Nav bar does not re-render or flash during SPA section transitions
+
+**Process:**
+1. Root layout mounts `AppNav` once; it persists across all client-side navigations within the assessment flow.
+2. `AppNav` reads JWT from localStorage on mount to determine logged-in state.
+3. If JWT is present: renders brand label + Dashboard link + Logout button.
+4. If JWT is absent: renders brand label only (no dashboard link, no logout button).
+5. Clicking Logout: clears `localStorage` JWT, clears session state, redirects to `/` (identity capture page).
+6. Dashboard link navigates to `/dashboard`.
+
+**Validation:**
+- Nav bar is always rendered regardless of assessment progress state.
+- Dashboard link is only shown when a valid JWT is present; non-authenticated users do not see it.
+
+**API Surface:** None (client-side only; reads localStorage for auth state).
+
+**Schema Surface:** None.
+
+---
+---
+
+## Implementation Bug Fixes (v1 Actual)
+
+The following requirements document bugs discovered and fixed during implementation that deviate from the original spec.
+
+---
+
+### F-SESSION-FIX-01: Session API Returns `team_type`
+
+**Description:** The `POST /api/sessions` and `GET /api/sessions/:sessionId` responses include a `team_type` field in the session response payload. This allows the assessment wizard to load the correct sections on resume without depending on `localStorage` for team type storage.
+
+**Actual behavior:** `team_type` is returned directly from the DB respondent record in the session API response. The wizard reads `team_type` from the API response, not from localStorage.
+
+**Rationale:** localStorage-based `team_type` retrieval creates a failure mode when localStorage is cleared or the session is resumed from a different browser.
+
+---
+
+### F-AUTOSAVE-FIX-01: Auto-Save Uses React Refs to Prevent Stale Closures
+
+**Description:** The auto-save implementation stores all save parameters (session ID, token, current section, responses) in React refs rather than in closure-captured state variables. This prevents the stale closure bug where an idle-timer callback captures outdated values from the initial render.
+
+**Actual behavior:** `useAutoSave` hook stores `sessionId`, `token`, `sectionId`, and `responses` in `useRef` objects updated on every render. The idle timer callback reads from refs, always using the latest values.
+
+---
+
+### F-VALIDATION-FIX-01: `question_id` Validated as `string.min(1)` Not UUID
+
+**Description:** The Zod validation schema for `question_id` in the auto-save endpoint uses `z.string().min(1)` rather than `z.string().uuid()`. The seed data uses deterministic non-RFC-UUID identifiers for questions.
+
+**Actual behavior:** Any non-empty string is accepted as a valid `question_id` in API payloads. Referential integrity is still enforced at the database FK level.
+
+---
+
+### F-DB-FIX-01: DB Schema Isolation via Connection String `options=` Parameter
+
+**Description:** The `assessmentform` schema search_path is set via the PostgreSQL connection string `options=-csearch_path%3Dassessmentform%2Cpublic` parameter, not via a `pool.on('connect')` callback.
+
+**Actual behavior:** Setting search_path in `pool.on('connect')` creates an async race condition where the first few queries may execute before the SET command completes. The connection string `options=` approach sets the search_path synchronously at the driver/protocol level.
+
+**Connection string format:**
+```
+postgres://user:pass@pivota-spec-driven-primary.prod.svc:5432/dbname?options=-csearch_path%3Dassessmentform%2Cpublic
+```
+
+---
+
+### F-AUTH-FIX-01: System Owner Email
+
+**Description:** The seeded system owner email is `admin@assessmentform.dev` (not `vijay@gmail.com` or `owner@example.com`). This is the email pre-inserted into the `system_owner_emails` table by the seed script.
+
+---
+---
+
 ## Database Schema (DDL)
 
 > **Database:** PostgreSQL (or compatible relational store). All timestamps are stored as `TIMESTAMPTZ` (UTC). UUIDs use `gen_random_uuid()` as default. `JSONB` is used for flexible answer payloads.

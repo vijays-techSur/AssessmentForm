@@ -18,7 +18,7 @@ AssessmentForm-Express uses **email-identity + JWT** authentication. There is no
 5. JWT returned to client; stored in `localStorage`.
 
 **System Owner flow:**
-1. System Owner submits email + name to `POST /api/auth/login`.
+1. System Owner submits email + name to `POST /api/auth/login`. The seeded system owner is `admin@assessmentform.dev`.
 2. Server verifies email exists in `system_owner_emails` (active record, case-insensitive); if not, returns `403 NOT_A_SYSTEM_OWNER`.
 3. Server issues JWT with `role = "system_owner"`, expiry **8 hours**.
 4. Client stores JWT; attaches as `Authorization: Bearer {token}` on all dashboard requests.
@@ -68,6 +68,7 @@ AssessmentForm-Express uses **email-identity + JWT** authentication. There is no
 | **Data in transit** | HTTPS enforced via enterprise reverse proxy (TLS 1.2+). App server runs HTTP internally; TLS termination at the network edge. |
 | **Data at rest** | PostgreSQL database disk encryption handled by enterprise infrastructure team. |
 | **JWT secret** | `JWT_SECRET` injected via environment variable; never committed to source control; 256-bit minimum entropy. |
+| **TLS / SSL** | `NODE_TLS_REJECT_UNAUTHORIZED=0` exported at the Node.js process level (before Next.js initializes) to allow platform-internal self-signed DB certs. `rejectUnauthorized: false` also set on the Drizzle/pg connection config. |
 | **SQL injection** | All database queries use parameterized statements (no string concatenation). Drizzle ORM enforces this. |
 | **JSONB payload validation** | Server-side schema validation on every `answer_payload` before persistence; type mismatch returns `400 INVALID_ANSWER_PAYLOAD`. |
 | **Input sanitization** | All user-provided strings trimmed and length-bounded server-side; no HTML rendered from user input (React's JSX escaping prevents XSS). |

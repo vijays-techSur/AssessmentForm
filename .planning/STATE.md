@@ -3,7 +3,7 @@
 **Workflow Mode:** spec-express
 **Current Milestone:** v1
 **Status:** initialized
-**Last activity:** 2026-08-10 - UAT verified express task assessmentform-express-spa-multi-step-as (39/39 passed, 1 fix cycle); fixed docker-compose port 4000→3000; recreated SUMMARY.md + UAT.md
+**Last activity:** 2026-08-11 - Specs recreated and updated to reflect actual implementation: port 4000, shared DB schema isolation, team_type in session response, global AppNav nav bar, auto-save stale closure fix, Zod UUID relaxation, search_path connection string fix, NODE_TLS_REJECT_UNAUTHORIZED process-level export
 
 ---
 

@@ -103,19 +103,20 @@ This pattern was chosen over a microservices approach because:
 │  ┌──────────────────────────────────────────────┐  │
 │  │          Docker Container (single)           │  │
 │  │                                              │  │
-│  │  Node.js 20 LTS  (Next.js 14+ App Router)   │  │
+│  │  Node.js 20 LTS  (Next.js 16.2.10 App Router) │  │
 │  │  Port 4000 (HTTP — internal only)            │  │
 │  │                                              │  │
 │  │  ENV:                                        │  │
-│  │    DATABASE_URL=postgres://...               │  │
+│  │    DATABASE_URL=postgres://...?options=...   │  │
 │  │    JWT_SECRET=<secret>                       │  │
+│  │    NODE_TLS_REJECT_UNAUTHORIZED=0            │  │
 │  │    EMAIL_RELAY_URL= (optional)               │  │
 │  │    EMAIL_FROM_ADDRESS= (optional)            │  │
 │  └──────────────────────────────────────────────┘  │
 │                                                    │
 │  ┌──────────────────────────────────────────────┐  │
-│  │      PostgreSQL 15+ (internal host)          │  │
-│  │      Port 5432                               │  │
+│  │  PostgreSQL 16 (pivota-spec-driven-primary   │  │
+│  │  .prod.svc:5432, schema: assessmentform)     │  │
 │  └──────────────────────────────────────────────┘  │
 └────────────────────────────────────────────────────┘
 ```
@@ -373,7 +374,7 @@ src/app/api/
 
 ### 3.2 Complete DDL
 
-> **Database:** PostgreSQL 15+  
+> **Database:** PostgreSQL 16 (platform-provisioned shared DB; schema: `assessmentform`)  
 > All `TIMESTAMPTZ` columns are stored in UTC.  
 > UUIDs use `gen_random_uuid()`.  
 > `JSONB` used for polymorphic answer payloads.
@@ -966,10 +967,12 @@ export interface AssessmentConfig {
   "section_id": "platform_needs",
   "current_section_index": 3,
   "responses": [
-    { "question_id": "uuid", "answer_payload": { "type": "likert", "value": 4 } }
+    { "question_id": "string-min-1", "answer_payload": { "type": "likert", "value": 4 } }
   ]
 }
 ```
+> **Note:** `question_id` is validated as `string (min length 1)`, not strict UUID format. The seed data uses deterministic non-RFC-UUID identifiers.
+
 **Response 200:** `{ saved: true, last_saved_at: "ISO8601" }`  
 **Behavior:** Upsert on `(session_id, question_id)`. Empty `responses` array is valid.  
 **Retry:** Client retries 3× on failure with exponential backoff (1s, 2s, 4s).  
@@ -1202,22 +1205,21 @@ The following are explicitly out of scope for v1:
 
 | Layer | Technology | Version | Purpose |
 |-------|-----------|---------|---------|
-| **Frontend framework** | React | 18.x | Component model for SPA |
-| **Full-stack framework** | Next.js (App Router) | 14.x+ | SPA shell + API Routes co-located |
-| **Language** | TypeScript | 5.x | Type safety across frontend and backend |
-| **Styling** | Tailwind CSS | 3.x | Utility-first CSS; WCAG 2.1 AA compliant primitives |
-| **Charts** | Recharts | 2.x | React-native analytics charts (bar, pie, stacked bar) |
+| **Frontend framework** | React | 19.2.7 | Component model for SPA |
+| **Full-stack framework** | Next.js (App Router) | 16.2.10 | SPA shell + API Routes co-located |
+| **Language** | TypeScript | 6.0.3 | Type safety across frontend and backend |
+| **Styling** | Tailwind CSS | 4.3.3 | Utility-first CSS; WCAG 2.1 AA compliant primitives |
+| **Charts** | Recharts | 3.9.2 | React-native analytics charts (bar, pie, stacked bar) |
 | **Drag-and-drop** | dnd-kit | 6.x | Ranking question drag-and-drop; accessible, keyboard-navigable |
-| **Database** | PostgreSQL | 15+ | Relational data store with JSONB for answer payloads |
-| **ORM / Query builder** | Drizzle ORM | 0.x | Typesafe SQL queries; parameterized; lightweight |
-| **JWT** | jose | 5.x | JWT sign/verify (Edge-compatible; works in Next.js middleware) |
-| **Form state** | React Hook Form | 7.x | Performant uncontrolled form state; validation integration |
-| **Validation (shared)** | Zod | 3.x | Runtime schema validation for API payloads (server + client) |
+| **Database** | PostgreSQL | 16 | Platform-provisioned shared DB; schema: `assessmentform` |
+| **ORM / Query builder** | Drizzle ORM | 0.45.2 | Typesafe SQL queries; parameterized; lightweight |
+| **JWT** | jose | 6.2.3 | JWT sign/verify (HS256); 24h respondent / 8h system_owner |
+| **Validation (shared)** | Zod | 4.4.3 | Runtime schema validation for API payloads (server + client) |
 | **HTTP client** | Native `fetch` | — | Browser fetch API; no additional HTTP lib needed |
-| **CSV generation** | csv-stringify | 6.x | Streaming CSV serialization for export endpoint |
+| **CSV generation** | csv-stringify | 6.8.1 | Streaming CSV serialization for export endpoint |
 | **Runtime** | Node.js | 20 LTS | Application server runtime |
 | **Container** | Docker | 24.x+ | Single container packaging for enterprise deployment |
-| **Package manager** | pnpm | 8.x | Efficient monorepo-ready package management |
+| **Package manager** | npm | — | Standard Node.js package management |
 
 ### 6.2 Key Dependency Rationale
 
@@ -1234,12 +1236,12 @@ The following are explicitly out of scope for v1:
 
 | Variable | Required | Description |
 |----------|----------|-------------|
-| `DATABASE_URL` | ✓ | PostgreSQL connection string (`postgres://user:pass@host:5432/db`) |
+| `DATABASE_URL` | ✓ | PostgreSQL connection string with schema isolation: `postgres://user:pass@pivota-spec-driven-primary.prod.svc:5432/db?options=-csearch_path%3Dassessmentform%2Cpublic` |
 | `JWT_SECRET` | ✓ | HS256 signing secret (min 256-bit entropy; random string) |
-| `NEXTAUTH_URL` | ✓ | Public base URL of the application (for cookie/redirect config) |
 | `EMAIL_RELAY_URL` | Optional | SMTP relay or internal email service URL; stretch goal |
 | `EMAIL_FROM_ADDRESS` | Optional | Sender address for confirmation emails; required if `EMAIL_RELAY_URL` is set |
 | `NODE_ENV` | ✓ | `production` \| `development` |
+| `NODE_TLS_REJECT_UNAUTHORIZED` | ✓ | Set to `0` at process level (exported in `server.js` before Next.js starts, not in `.env.local`) to allow self-signed TLS certs on platform-internal DB connections |
 
 ---
 ---
@@ -1302,8 +1304,9 @@ Failure: LOG only — does not block submission response to respondent
 
 **Runtime requirements:**
 - Node.js 20 LTS (provided by base image `node:20-alpine`).
-- PostgreSQL 15+ reachable at `DATABASE_URL`.
+- PostgreSQL 16 shared DB at `pivota-spec-driven-primary.prod.svc:5432` reachable via `DATABASE_URL`.
 - Port 4000 exposed internally; TLS termination handled by enterprise reverse proxy.
+- `NODE_TLS_REJECT_UNAUTHORIZED=0` exported at process level to allow platform-internal TLS connections.
 
 **Network requirements:**
 - All traffic is internal; no public internet exposure required.

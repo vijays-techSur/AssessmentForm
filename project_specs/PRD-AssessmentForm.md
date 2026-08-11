@@ -43,13 +43,18 @@ AssessmentForm-Express addresses these gaps by providing a structured, guided as
 
 | Layer | Technology |
 |---|---|
-| Frontend | React / Next.js (SPA) |
-| Backend API | Node.js REST API (or Next.js API routes) |
-| Database | Persistent relational or document store (PostgreSQL or MongoDB) |
-| Auth | Email + name identity (no SSO in v1) |
-| Hosting | Internal enterprise deployment |
-| State Management | Client-side session + server-side auto-save |
-| Analytics | Server-side aggregation, rendered via charting library (e.g., Recharts, Chart.js) |
+| Frontend | React 19.2.7 / Next.js 16.2.10 App Router (SPA) |
+| Backend API | Next.js API Routes (Node.js 20 LTS runtime) |
+| Database | PostgreSQL 16 — platform-provisioned shared DB, schema `assessmentform` |
+| ORM | Drizzle ORM 0.45.2 |
+| Auth | JWT via `jose` 6.2.3 (HS256; 24h respondent / 8h system_owner); custom auth, no NextAuth |
+| Styling | Tailwind CSS 4.3.3 |
+| Charts | Recharts 3.9.2 |
+| Drag & Drop | dnd-kit 6.x |
+| Validation | Zod 4.4.3 |
+| Hosting | Internal enterprise deployment; port 4000 |
+| State Management | Client-side session + server-side auto-save (React refs for stale closure safety) |
+| Analytics | Server-side aggregation, rendered via Recharts |
 
 **Key Architecture Decisions:**
 
@@ -208,6 +213,20 @@ AssessmentForm-Express addresses these gaps by providing a structured, guided as
 
 ---
 
+### F10: Global Navigation Bar
+**Description:** A sticky navigation bar (AppNav component) rendered globally in the root layout is visible on all non-dashboard pages. It provides persistent access to the System Owner Dashboard and a Logout control.
+
+**Capabilities:**
+- Sticky top navigation bar displayed on all assessment-flow pages
+- Shows the application brand: "Developer Platform Assessment"
+- "System Owner Dashboard" link visible and accessible to authenticated users
+- "Logout" button displayed when the user is logged in; clicking it clears the JWT and redirects to the start page
+- Navigation bar is part of the root layout (always mounted); does not re-render on section navigation
+
+**Priority:** P0 (Critical — implemented in v1)
+
+---
+
 ## 6. Non-Functional Requirements
 
 | Category | Requirement |
@@ -266,6 +285,7 @@ AssessmentForm-Express addresses these gaps by providing a structured, guided as
 | F7 | Role-Based Access Control | P0 | MVP |
 | F8 | Assessment Configuration Management | P1 | Pre-launch |
 | F9 | Submission Confirmation & Respondent Feedback | P1 | Pre-launch |
+| F10 | Global Navigation Bar | P0 | MVP |
 
 **Priority Legend:**
 - **P0** — Critical; must be present for the product to function at all

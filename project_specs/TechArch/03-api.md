@@ -293,10 +293,12 @@ export interface AssessmentConfig {
   "section_id": "platform_needs",
   "current_section_index": 3,
   "responses": [
-    { "question_id": "uuid", "answer_payload": { "type": "likert", "value": 4 } }
+    { "question_id": "string-min-1", "answer_payload": { "type": "likert", "value": 4 } }
   ]
 }
 ```
+> **Note:** `question_id` is validated as `string (min length 1)`, not strict UUID format. The seed data uses deterministic non-RFC-UUID identifiers.
+
 **Response 200:** `{ saved: true, last_saved_at: "ISO8601" }`  
 **Behavior:** Upsert on `(session_id, question_id)`. Empty `responses` array is valid.  
 **Retry:** Client retries 3× on failure with exponential backoff (1s, 2s, 4s).  
