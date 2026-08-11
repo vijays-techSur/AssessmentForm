@@ -3,7 +3,7 @@
 **Workflow Mode:** spec-express
 **Current Milestone:** v1
 **Status:** initialized
-**Last activity:** 2026-08-11 - Security audit (OPEN_THREATS): 4 open findings (2 CRITICAL, 1 HIGH, 1 MEDIUM) — enforcement=warn; see SECURITY.md
+**Last activity:** 2026-08-11 - UAT verified express task assessmentform-express-spa-multi-step-as (78/78 passed, 0 fix cycles)
 
 ---
 
@@ -33,7 +33,7 @@ Spec documents were generated in `project_specs/` during initialization. Use `/p
 
 | # | Description | Date | Commit | UAT | Directory |
 |---|-------------|------|--------|-----|-----------|
-| assessmentform-express-spa-multi-step-as | Multi-Step Assessment Form SPA (Next.js + PostgreSQL + Drizzle ORM) | 2026-08-05 | f98e675 | ✓ 39/39 (2026-08-11) — re-verified 2026-08-11 | [assessmentform-express-spa-multi-step-as](./express/assessmentform-express-spa-multi-step-as/) |
+| assessmentform-express-spa-multi-step-as | Multi-Step Assessment Form SPA (Next.js + PostgreSQL + Drizzle ORM) | 2026-08-05 | f98e675 | ✓ 78/78 (2026-08-11, chromium+firefox) | [assessmentform-express-spa-multi-step-as](./express/assessmentform-express-spa-multi-step-as/) |
 
 ## Blockers/Concerns
 
