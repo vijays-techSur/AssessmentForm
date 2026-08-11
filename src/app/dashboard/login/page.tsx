@@ -3,7 +3,7 @@
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 
-// System Owner Login Page — F07 §System Owner Login Flow (separate from respondent /api/sessions)
+// Dashboard Login — open to all users with a valid email.
 // Route: /dashboard/login
 // POST to /api/auth/login with { email }; stores JWT in localStorage "dashboard_token" on success.
 export default function DashboardLoginPage() {
@@ -27,10 +27,7 @@ export default function DashboardLoginPage() {
       const data = await res.json();
 
       if (!res.ok) {
-        // F07 error codes: NOT_A_SYSTEM_OWNER, INVALID_EMAIL_FORMAT
-        if (data?.error?.code === 'NOT_A_SYSTEM_OWNER') {
-          setError('This email is not registered as a System Owner. Please check your email or contact your administrator.');
-        } else if (data?.error?.code === 'INVALID_EMAIL_FORMAT') {
+        if (data?.error?.code === 'INVALID_EMAIL_FORMAT') {
           setError('Please enter a valid email address.');
         } else {
           setError('Login failed. Please try again.');
@@ -38,7 +35,7 @@ export default function DashboardLoginPage() {
         return;
       }
 
-      // Store System Owner JWT in localStorage — F07 §Client-side session
+      // Store dashboard JWT in localStorage
       localStorage.setItem('dashboard_token', data.token);
       router.replace('/dashboard');
     } catch {
