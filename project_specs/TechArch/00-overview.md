@@ -103,7 +103,7 @@ This pattern was chosen over a microservices approach because:
 │  ┌──────────────────────────────────────────────┐  │
 │  │          Docker Container (single)           │  │
 │  │                                              │  │
-│  │  Node.js 20 LTS  (Next.js 14+ App Router)   │  │
+│  │  Node.js 20 LTS  (Next.js 16.2.10 App Router) │  │
 │  │  Port 4000 (HTTP — internal only)            │  │
 │  │                                              │  │
 │  │  ENV:                                        │  │
@@ -114,8 +114,8 @@ This pattern was chosen over a microservices approach because:
 │  └──────────────────────────────────────────────┘  │
 │                                                    │
 │  ┌──────────────────────────────────────────────┐  │
-│  │      PostgreSQL 15+ (internal host)          │  │
-│  │      Port 5432                               │  │
+│  │  PostgreSQL 16 (pivota-spec-driven-primary   │  │
+│  │  .prod.svc:5432, schema: assessmentform)     │  │
 │  └──────────────────────────────────────────────┘  │
 └────────────────────────────────────────────────────┘
 ```

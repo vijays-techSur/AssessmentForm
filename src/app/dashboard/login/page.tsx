@@ -3,7 +3,7 @@
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 
-// System Owner Login Page — F07 §System Owner Login Flow (separate from respondent /api/sessions)
+// Dashboard Login — open to all users with a valid email.
 // Route: /dashboard/login
 // POST to /api/auth/login with { email }; stores JWT in localStorage "dashboard_token" on success.
 export default function DashboardLoginPage() {
@@ -27,10 +27,7 @@ export default function DashboardLoginPage() {
       const data = await res.json();
 
       if (!res.ok) {
-        // F07 error codes: NOT_A_SYSTEM_OWNER, INVALID_EMAIL_FORMAT
-        if (data?.error?.code === 'NOT_A_SYSTEM_OWNER') {
-          setError('This email is not registered as a System Owner. Please check your email or contact your administrator.');
-        } else if (data?.error?.code === 'INVALID_EMAIL_FORMAT') {
+        if (data?.error?.code === 'INVALID_EMAIL_FORMAT') {
           setError('Please enter a valid email address.');
         } else {
           setError('Login failed. Please try again.');
@@ -38,7 +35,7 @@ export default function DashboardLoginPage() {
         return;
       }
 
-      // Store System Owner JWT in localStorage — F07 §Client-side session
+      // Store dashboard JWT in localStorage
       localStorage.setItem('dashboard_token', data.token);
       router.replace('/dashboard');
     } catch {
@@ -51,15 +48,15 @@ export default function DashboardLoginPage() {
   return (
     <div className="min-h-screen bg-gray-50 flex items-center justify-center">
       <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-8 w-full max-w-md">
-        <h1 className="text-2xl font-semibold text-gray-900 mb-2">System Owner Login</h1>
+        <h1 className="text-2xl font-semibold text-gray-900 mb-2">Dashboard Login</h1>
         <p className="text-gray-500 text-sm mb-6">
-          Enter your System Owner email address to access the dashboard.
+          Enter your email address to access the response summary and analytics dashboard.
         </p>
 
         <form onSubmit={handleSubmit} className="flex flex-col gap-4">
           <div>
             <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-1">
-              System Owner Email *
+              Email Address *
             </label>
             <input
               id="email"
@@ -68,7 +65,7 @@ export default function DashboardLoginPage() {
               onChange={e => setEmail(e.target.value)}
               required
               autoFocus
-              placeholder="dana@company.com"
+              placeholder="you@company.com"
               className={`w-full border rounded-md px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 ${
                 error ? 'border-red-400' : 'border-gray-300'
               }`}
@@ -85,18 +82,14 @@ export default function DashboardLoginPage() {
             disabled={loading || !email}
             className="w-full bg-blue-600 text-white rounded-md py-2 px-4 text-sm font-medium hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
           >
-            {loading ? 'Signing in…' : 'Access Dashboard →'}
+            {loading ? 'Signing in…' : 'View Dashboard →'}
           </button>
         </form>
 
         <p className="mt-6 text-xs text-gray-400 text-center">
-          This dashboard is restricted to System Owners only.
-          <br />
-          Respondents should{' '}
           <a href="/" className="text-blue-500 underline">
-            use the assessment form
+            ← Back to Assessment Form
           </a>
-          .
         </p>
       </div>
     </div>

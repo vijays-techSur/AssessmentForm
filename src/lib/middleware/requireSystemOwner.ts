@@ -2,11 +2,10 @@ import { NextRequest, NextResponse } from 'next/server';
 import { verifyJwt } from '@/lib/auth/authService';
 
 /**
- * requireSystemOwner — TechArch §2.4
+ * requireSystemOwner — Dashboard auth middleware (open to all authenticated users)
  * Applied to: GET /api/dashboard/**, GET /api/config, PATCH /api/config
- * Verifies JWT signature, expiry, and that role === 'system_owner'.
- *
- * FRD F07: 403 ACCESS_DENIED for non-system_owner JWTs
+ * Verifies JWT signature and expiry. Role check removed — dashboard access is
+ * open to any user with a valid dashboard JWT (issued by POST /api/auth/login).
  *
  * Usage (direct await pattern):
  *   const authError = await requireSystemOwner(req);
@@ -25,13 +24,7 @@ export async function requireSystemOwner(req: NextRequest): Promise<NextResponse
 
   const token = authHeader.slice(7);
   try {
-    const payload = await verifyJwt(token);
-    if (payload.role !== 'system_owner') {
-      return NextResponse.json(
-        { error: { code: 'ACCESS_DENIED', message: 'You do not have permission to access this resource.' } },
-        { status: 403 }
-      );
-    }
+    await verifyJwt(token); // verify signature + expiry only — no role restriction
     return null; // Authorized
   } catch (err: unknown) {
     const isExpired =

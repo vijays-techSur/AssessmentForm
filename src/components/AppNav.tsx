@@ -41,10 +41,10 @@ export function AppNav() {
       {/* Right-side actions */}
       <div className="flex items-center gap-4 text-sm">
         <Link
-          href="/dashboard/login"
+          href={isDashboardUser ? '/dashboard' : '/dashboard/login'}
           className="text-gray-600 hover:text-blue-600 font-medium transition-colors"
         >
-          {isDashboardUser ? 'Dashboard' : 'System Owner Dashboard'}
+          Dashboard
         </Link>
 
         {isLoggedIn && !isDashboardUser && (
