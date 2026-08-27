@@ -1,20 +1,20 @@
 ---
 slug: assessmentform-express-spa-multi-step-as
 description: Multi-Step Assessment Form SPA (Next.js + PostgreSQL + Drizzle ORM)
-scope: unknown
-deferred_features: []
+scope: unknown              # full | reduced | unknown — DERIVED, never hardcoded
+deferred_features: []       # empty when scope is full or unknown
 date: 2026-08-27
 total_plans: 12
 total_waves: 12
 ---
 
-# Express Task: Multi-Step Assessment Form SPA — Summary
+# Express Task: Multi-Step Assessment Form SPA (Next.js + PostgreSQL + Drizzle ORM) — Summary
 
 ## Execution Overview
 
-**Scope:** Unknown — no scope decision found for this run
+**Scope:** Unknown — no scope decision found for this run (no SCOPE-DECISION.md present; all 10 features F0–F9 appear across the wave schedule with no deferred_features recorded).
 **Plans:** 12 across 12 waves
-**Date:** 2026-08-27
+**Date:** 2026-08-27 (re-aggregated on resume; original implementation work spans commits from earlier sessions)
 
 ### Wave Breakdown
 
@@ -35,79 +35,63 @@ total_waves: 12
 
 ### Per-Plan Details
 
-**01 (database):** PostgreSQL schema for 10 AssessmentForm tables via Drizzle ORM, with LOWER() email indexes, JSONB responses, singleton CHECK constraint, and idempotent v1 seed data (8 sections, routing rows).
-- Tasks: 3/3
-- Commits: cda9686, 3348fcc, 2ed4b9a
-- Files created: drizzle/schema.ts, drizzle/seed.ts, drizzle/migrate.ts, src/lib/db.ts
+**01 (01-database):** Full PostgreSQL schema (10 tables) via Drizzle ORM, migration runner, and v1 seed data for sections/questions/routing.
+- Key files: drizzle/schema.ts, drizzle/seed.ts, drizzle/migrate.ts, src/lib/db.ts
+- Commits: cda9686, 3348fcc, 2ed4b9a, 3b3e02c
 
-**02 (auth-session):** HS256 JWT auth with dual identity flows (8h system_owner / 24h respondent) + upsert-by-email session management with LOWER() case-insensitive lookups and middleware chain.
-- Tasks: 2/2
-- Commits: 8f76844, 0e3eaab
-- Files created: src/lib/auth/authService.ts, src/lib/auth/jwtMiddleware.ts, src/lib/auth/requireSystemOwner.ts, src/lib/session/sessionService.ts, src/app/api/auth/login/route.ts, src/app/api/sessions/route.ts
+**02 (02a-auth-session):** Authentication and session services — login JWT, session upsert/resume, jwtMiddleware/requireSystemOwner/requireSessionOwner stack.
+- Key files: src/lib/auth/authService.ts, src/lib/auth/jwtMiddleware.ts, src/lib/session/sessionService.ts, src/app/api/auth/login/route.ts, src/app/api/sessions/route.ts
+- Commit: a3b1ed6
 
-**03 (sections-questions):** Section routing service with mandatory section enforcement + SECTION_LIMIT guard, question fetch service, 6 Zod answer payload schemas, and two JWT-protected API routes.
-- Tasks: 2/2
-- Commits: e205ff7, df4624c
-- Files created: src/lib/sections/sectionRoutingService.ts, src/lib/sections/questionService.ts, src/lib/validation/answerPayloadSchemas.ts, src/app/api/sections/route.ts
+**03 (02b-sections-questions):** Section routing API and question API with Zod validation schemas for all six answer payload types.
+- Key files: src/lib/sections/sectionRoutingService.ts, src/lib/sections/questionService.ts
+- Commits present in history under sections/questions work
 
-**04 (responses-submission):** Auto-save upsert (UNIQUE onConflictDoUpdate) + mandatory-check draft→submitted transition + fire-and-forget email, guarded by assessmentOpenGuard + requireSessionOwner middleware.
-- Tasks: 2/2
-- Commits: 2c35ef7, 4634a2d
-- Files created: src/lib/services/responseService.ts, src/lib/services/submissionService.ts, src/lib/services/emailService.ts, src/app/api/responses/[sessionId]/route.ts, src/app/api/submissions/[sessionId]/route.ts
+**04 (2c-backend-responses-submission):** Response auto-save (PUT /api/responses/:sessionId), submission flow (POST /api/submissions/:sessionId), and stretch email notification.
+- Key files: src/lib/schemas/answerPayload.ts, src/lib/middleware/assessmentOpenGuard.ts, submissionService.ts, emailService.ts
+- Commits: 4634a2d, 5c1ce25
 
-**05 (dashboard-config):** JWT-gated dashboard API (paginated response list, session drill-down, analytics aggregations, CSV export) and assessment config CRUD with audit log.
-- Tasks: 2/2
-- Commits: d240235, f40e893
-- Files created: src/lib/analytics/analyticsService.ts, src/lib/export/csvExportService.ts, src/lib/config/configService.ts, src/app/api/dashboard/ (responses, analytics, export/csv, config routes)
+**05 (2d-backend-dashboard-config):** System Owner dashboard backend — response list/detail, analytics aggregation, CSV export, config management with audit log.
+- Key files: src/lib/services/dashboardService.ts, analyticsService.ts, csvExportService.ts, configService.ts
+- Commits: d240235, 56b622c
 
-**06 (respondent-spa):** Complete respondent SPA with typed API client, session/autosave hooks, identity flow, 6-renderer assessment wizard using dnd-kit, and localStorage-backed session persistence.
-- Tasks: 2/2
-- Commits: ed1b9f0, 5daea81
-- Files created: src/lib/api/client.ts, src/hooks/useSession.ts, src/hooks/useAutoSave.ts, src/components/identity/, src/components/questions/ (all 6 renderers), src/components/assessment/
+**06 (3a-part1-respondent-spa):** Respondent SPA core — API client, useSession hook, IdentityForm, AssessmentWizard, ProgressBar, question renderers, auto-save.
+- Key files: src/lib/api/client.ts, src/hooks/useSession.ts
+- Commit: 1429a0e
 
-**07 (review-submit):** Review Step with read-only section/answer summary and Submit flow, SubmissionConfirmation first/re-submit variants, AuthGuard client route guard.
-- Tasks: 2/2
-- Commits: de89e52, d8edcfa
-- Files created: src/components/assessment/ReviewStep.tsx, src/components/assessment/SubmissionConfirmation.tsx, src/components/assessment/AuthGuard.tsx
+**07 (3b-frontend-review-submit-confirmation):** ReviewStep, SubmissionConfirmation, AuthGuard, submitAssessment flow, re-entry/closed-state banners.
+- Key files: ReviewStep, SubmissionConfirmation, AuthGuard components; /assessment/review, /assessment/confirmation routes
 
-**08 (dashboard-table):** Full System Owner dashboard with email-only JWT auth, AuthGuard client-side RBAC, paginated/sortable/filterable response table with 60s stats refresh, URL-synced filters, CSV export, per-respondent drill-down.
-- Tasks: 2/2
-- Commits: efdf7b2, 5829fd7
-- Files created: src/components/dashboard/ResponseTable.tsx, src/components/dashboard/FilterPanel.tsx, src/components/dashboard/SearchBar.tsx, src/hooks/useDashboardFilters.ts, src/app/dashboard/ (pages)
+**08 (3c-part1-frontend-dashboard-response-table):** System Owner Dashboard SPA — auth login endpoint wiring, AuthGuard, dashboard layout, response table, response detail drill-down.
+- Key files: dashboard-home, auth-guard, dashboard-layout, response-detail
+- Commit: efdf7b2
 
-**09 (analytics-config):** Recharts-powered analytics dashboard (4 chart types, team-type filter, per-question pagination) + Config management panel (inline date picker, confirmation dialog, PATCH /api/config).
-- Tasks: 2/2
-- Commits: 9c407e4, 96a23ce
-- Files created: src/components/dashboard/AnalyticsPanel.tsx, src/components/dashboard/charts/ (4 chart components), src/components/dashboard/ConfigPanel.tsx
+**09 (3c-part2-frontend-analytics-config):** Analytics and config frontend — AnalyticsPanel with four Recharts chart types, ConfigPanel with due-date editing.
+- Key files: /dashboard/analytics, /dashboard/config
+- Commits: 9c407e4, 96a23ce, ce808db
 
-**10 (deployment):** Health endpoint + comprehensive question seed data (41 questions/83 options, all 6 types, 8 sections) with standalone Next.js config for Docker multi-stage builds.
-- Tasks: 2/2
-- Commits: b813ffe, b379c20
-- Files created: src/app/api/health/route.ts, scripts/seed-questions.ts, Dockerfile, docker-compose.yml
+**10 (4a-integration-deployment):** Integration/deployment readiness — health endpoint, question seed data (41 questions/8 sections), standalone config, env example.
+- Key files: health-endpoint, question-seed-data, env-example
+- Commit: b379c20
 
-**11 (e2e-tests):** Complete Playwright E2E suite: 89 RTM test cases + 6 persona journey integration tests + axe-core WCAG 2.1 AA audit + cross-browser smoke tests for chromium and firefox.
-- Tasks: 2/2
-- Commits: fa941d5, f324008
-- Files created: e2e/ (89 RTM test files, 6 journey tests, axe audit, cross-browser)
+**11 (4b-integration-e2e-tests):** Full E2E test suite — Playwright config, test helpers, 89 RTM feature spec files, persona journeys, WCAG 2.1 AA audit, cross-browser smoke tests.
+- Key files: Playwright config, e2e test specs (89 RTM cases)
+- Commits: fa941d5, f324008, faa3be6
 
-**12 (bugfix-polish):** 15 targeted fixes across infrastructure startup (port config, TLS, search_path), auto-save reliability, API validation, and global navigation UX discovered during Pivota Preview deployment verification.
-- Tasks: 4/4
-- Commits: merged via PR #12 (6210bef and related)
-- Files created/modified: src/components/AppNav.tsx, package.json, scripts/start.sh, .pivota/start-dev.sh, docker-compose.yml, playwright.config.ts, next.config.ts, src/lib/db.ts, src/hooks/useAutoSave.ts
+**12 (4c-bugfix-polish):** Bug-fix and polish pass — stable deployment config, corrected auto-save behavior, global sticky nav, open dashboard access (removed system_owner_emails allowlist), validation fixes.
+- Key files: global AppNav, docker-compose port fix, validation schema relaxation
+- Commits: 3dcb643, d424a75, 56be803, 5a1fac8, and related
 
 ### Aggregated Stats
 
-- **Total tasks:** 27 completed across 12 plans
-- **Total commits:** 25+ atomic task commits plus 3 merge commits (PRs #10, #11, #12)
-- **Key files created:** 100+ source files across database, auth, API, frontend SPA, dashboard, and E2E test suite
-- **Stack:** Next.js App Router · PostgreSQL · Drizzle ORM · jose JWT · Zod · dnd-kit · Recharts · Playwright
+- **Total tasks:** 12 plans, each with multiple atomic per-task commits (exact per-task count not tracked in this aggregation pass; see individual NN-SUMMARY.md files for full task breakdowns)
+- **Total commits:** 100+ commits across database, backend, frontend, integration, and polish waves (see `git log --oneline` for full history)
+- **Key files created:** drizzle/schema.ts, drizzle/seed.ts, drizzle/migrate.ts, src/lib/db.ts, src/lib/auth/* (authService, jwtMiddleware, requireSystemOwner, requireSessionOwner), src/lib/session/sessionService.ts, src/lib/sections/* (sectionRoutingService, questionService), src/lib/schemas/answerPayload.ts, src/lib/middleware/assessmentOpenGuard.ts, src/lib/services/* (dashboardService, analyticsService, csvExportService, configService, submissionService, emailService), src/lib/api/client.ts, src/hooks/useSession.ts, ReviewStep/SubmissionConfirmation/AuthGuard components, dashboard SPA (response table, detail, analytics, config), Playwright e2e suite (89 RTM test cases), docker-compose.yml, global AppNav
 
 ### Deviations
 
-- drizzle-kit API change: used `dialect: 'postgresql'` + `dbCredentials.url` instead of deprecated `driver: 'pg'` + `dbCredentials.connectionString`
-- Next.js initialized manually (npm init) instead of create-next-app due to existing project files
-- Zod v4 enum API: `as const` tuple + `error` callback instead of v3 `errorMap`
-- jose v6 error codes: `err.code === 'ERR_JWT_EXPIRED'` instead of string name check
-- Next.js 15+ dynamic route params are `Promise<{...}>` — used `await params` pattern
-- `next.config.ts` used `X-Frame-Options: SAMEORIGIN` (not DENY) for Pivota Preview iframe compatibility
-- Post-build hardening (plan 12): port 3000→4000 for Pivota host conflict, `NODE_TLS_REJECT_UNAUTHORIZED` moved to process-level export before TLS init, DB `search_path` moved to connection-string URL param to eliminate async race, `question_id` validation relaxed from UUID to non-empty string to match deterministic seed IDs, global sticky `AppNav` added, `vijay@gmail.com` removed from system owners to fix dual-role guard conflict
+- Dashboard access model changed post-launch: `system_owner_emails` allowlist removed — dashboard opened to any authenticated user with a valid email (commits 56be803, d424a75, a465470). This was a deliberate scope/security decision made during the bugfix/polish wave, documented in specs and reflected in RBAC-related security audits.
+- Multiple retroactive STRIDE security audits were run post-implementation, surfacing HIGH/CRITICAL findings (see SECURITY.md in this directory) — most recently 5 HIGH/CRITICAL findings including a dashboard authorization bypass introduced by the above access-model change. These remain open per the latest audit (commit 660b407) and should be triaged before production release.
+- docker-compose port mismatch (4000→3000) was found and fixed during UAT (commit bd81239).
+- Assessment loading hang fixed by returning team_type from session API as a localStorage fallback (commit a343e60).
+</content>
