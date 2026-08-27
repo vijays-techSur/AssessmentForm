@@ -48,7 +48,7 @@ export default function DashboardLoginPage() {
   return (
     <div className="min-h-screen bg-gray-50 flex items-center justify-center">
       <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-8 w-full max-w-md">
-        <h1 className="text-2xl font-semibold text-gray-900 mb-2">Dashboard Login</h1>
+        <h1 className="text-2xl font-semibold text-gray-900 mb-2">System Owner Login</h1>
         <p className="text-gray-500 text-sm mb-6">
           Enter your email address to access the response summary and analytics dashboard.
         </p>
@@ -56,7 +56,7 @@ export default function DashboardLoginPage() {
         <form onSubmit={handleSubmit} className="flex flex-col gap-4">
           <div>
             <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-1">
-              Email Address *
+              System Owner Email *
             </label>
             <input
               id="email"
@@ -82,7 +82,7 @@ export default function DashboardLoginPage() {
             disabled={loading || !email}
             className="w-full bg-blue-600 text-white rounded-md py-2 px-4 text-sm font-medium hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
           >
-            {loading ? 'Signing in…' : 'View Dashboard →'}
+            {loading ? 'Signing in…' : 'Access Dashboard'}
           </button>
         </form>
 
