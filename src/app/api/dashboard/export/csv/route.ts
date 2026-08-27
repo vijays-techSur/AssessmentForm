@@ -9,7 +9,7 @@ export async function GET(req: NextRequest) {
   const authError = await requireSystemOwner(req);
   if (authError) return authError;
 
-  const { searchParams } = new URL(req.url);
+  const { searchParams } = new URL(req.url, 'http://localhost');
 
   const date = new Date().toISOString().slice(0, 10); // YYYY-MM-DD
   const filename = `assessment-responses-${date}.csv`;

@@ -1,10 +1,10 @@
 'use client';
-import { useEffect } from 'react';
+import { Suspense, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { useSession } from '@/hooks/useSession';
 import { AssessmentWizard } from '@/components/assessment/AssessmentWizard';
 
-export default function AssessmentPage() {
+function AssessmentContent() {
   const router = useRouter();
   const { session, token, isLoading } = useSession();
 
@@ -28,4 +28,12 @@ export default function AssessmentPage() {
   }
 
   return <AssessmentWizard session={session} token={token} />;
+}
+
+export default function AssessmentPage() {
+  return (
+    <Suspense fallback={<div className="flex justify-center items-center h-screen text-gray-400">Loading…</div>}>
+      <AssessmentContent />
+    </Suspense>
+  );
 }

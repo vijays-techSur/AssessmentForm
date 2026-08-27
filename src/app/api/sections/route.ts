@@ -19,7 +19,7 @@ import type { AuthenticatedRequest } from '@/types/auth';
  * Response 500: { error: { code: "SECTION_ROUTING_EMPTY" | "SECTION_LIMIT_EXCEEDED", message: "..." } }
  */
 async function handleGet(req: AuthenticatedRequest): Promise<NextResponse> {
-  const { searchParams } = new URL(req.url);
+  const { searchParams } = new URL(req.url, 'http://localhost');
   const teamType = searchParams.get('teamType');
 
   // FRD F03 §Validation: teamType must be one of four valid values

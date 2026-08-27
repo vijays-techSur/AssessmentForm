@@ -8,7 +8,7 @@ export async function GET(req: NextRequest) {
   const authError = await requireSystemOwner(req);
   if (authError) return authError;
 
-  const { searchParams } = new URL(req.url);
+  const { searchParams } = new URL(req.url, 'http://localhost');
   const teamTypeFilter = searchParams.getAll('teamType');
 
   try {
