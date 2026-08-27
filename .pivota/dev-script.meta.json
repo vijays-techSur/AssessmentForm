@@ -1,8 +1,8 @@
 {
   "generator_version": "init-dev-server@1",
   "catalog_entry": "react-next",
-  "generated_at": "2026-08-11T17:20:54Z",
-  "inspection_inputs_hash": "127e0dd5426c6ad75397faed44a095f07526a3170298265c7a4187d7edb236d9",
+  "generated_at": "2026-08-11T18:05:40Z",
+  "inspection_inputs_hash": "04dd42300e1871067d6d0488914f7dc432b2e0eaeffb86f2e1e83ba372a26a43",
   "inspection_inputs": {
     "matched_globs": [
       "docker-compose.yml",
@@ -10,10 +10,26 @@
       "package.json"
     ],
     "manifest_signatures": [
-      "docker-compose.yml:services:app,db",
-      "package.json:dep:next@^16.2.10",
-      "package.json:dep:react@^19.2.7",
-      "package.json:dev-script:next dev -H 0.0.0.0 -p 4000"
+      "package.json:dependencies:next@^16.2.10",
+      "package.json:dependencies:react@^19.2.7",
+      "package.json:dev-script:next dev -H 0.0.0.0 -p 4000",
+      "package.json:script:build=next build",
+      "package.json:script:db:generate=drizzle-kit generate",
+      "package.json:script:db:migrate=tsx drizzle/migrate.ts",
+      "package.json:script:db:push=drizzle-kit push",
+      "package.json:script:db:seed=tsx drizzle/seed.ts",
+      "package.json:script:db:setup=npm run db:push -- --force && npm run db:seed || echo '[warn] db:setup failed — continuing'",
+      "package.json:script:db:studio=drizzle-kit studio",
+      "package.json:script:dev=next dev -H 0.0.0.0 -p 4000",
+      "package.json:script:lint=next lint",
+      "package.json:script:start=next start -H 0.0.0.0 -p 4000",
+      "package.json:script:test:e2e:accessibility=playwright test e2e/accessibility/",
+      "package.json:script:test:e2e:chromium=playwright test --project=chromium",
+      "package.json:script:test:e2e:firefox=playwright test --project=firefox",
+      "package.json:script:test:e2e:journeys=playwright test e2e/journeys/",
+      "package.json:script:test:e2e:report=playwright show-report",
+      "package.json:script:test:e2e:smoke=playwright test e2e/smoke/",
+      "package.json:script:test:e2e=playwright test"
     ],
     "existing_scripts": [
       "scripts/start.sh"

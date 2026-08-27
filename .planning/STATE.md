@@ -3,7 +3,7 @@
 **Workflow Mode:** spec-express
 **Current Milestone:** v1
 **Status:** initialized
-**Last activity:** 2026-08-11 - UAT re-verified express task assessmentform-express-spa-multi-step-as (39/39 passed, 1 fix cycle); security re-audit: OPEN_THREATS (4 open findings, enforcement=warn)
+**Last activity:** 2026-08-27 - Completed express task: Multi-Step Assessment Form SPA (Next.js + PostgreSQL + Drizzle ORM)
 
 ---
 
@@ -31,9 +31,10 @@ Spec documents were generated in `project_specs/` during initialization. Use `/p
 
 ### Express Tasks Completed
 
-| # | Description | Date | Commit | UAT | Directory |
-|---|-------------|------|--------|-----|-----------|
-| assessmentform-express-spa-multi-step-as | Multi-Step Assessment Form SPA (Next.js + PostgreSQL + Drizzle ORM) | 2026-08-05 | f98e675 | ✓ 39/39 (2026-08-11) — re-verified 2026-08-11 | [assessmentform-express-spa-multi-step-as](./express/assessmentform-express-spa-multi-step-as/) |
+| # | Description | Date | Commit | Scope | UAT | Directory |
+|---|-------------|------|--------|-------|-----|-----------|
+| assessmentform-express-spa-multi-step-as | Multi-Step Assessment Form SPA (Next.js + PostgreSQL + Drizzle ORM) | 2026-08-05 | f98e675 | — | ✓ 39/39 (2026-08-11) | [assessmentform-express-spa-multi-step-as](./express/assessmentform-express-spa-multi-step-as/) |
+| assessmentform-express-spa-multi-step-as | Multi-Step Assessment Form SPA (Next.js + PostgreSQL + Drizzle ORM) | 2026-08-27 | 1930a00 | — | ✓ 39/39 (2026-08-11) | [assessmentform-express-spa-multi-step-as](./express/assessmentform-express-spa-multi-step-as/) |
 
 ## Blockers/Concerns
 
