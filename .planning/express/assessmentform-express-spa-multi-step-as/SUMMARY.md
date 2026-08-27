@@ -17,88 +17,78 @@ total_waves: 11
 
 ### Wave Breakdown
 
-| Wave | Plan | Domain | Status |
-|------|------|--------|--------|
-| 1 | 01 | Database — PostgreSQL DDL, 10 tables, Drizzle ORM, seed data | ✓ Complete |
-| 2 | 02 | Auth & Session API — JWT, login, session create/resume | ✓ Complete |
-| 3 | 03 | Sections/Questions API — routing service, answer payload Zod schemas | ✓ Complete |
-| 4 | 04 | Response & Submission API — auto-save, submission, email notification | ✓ Complete |
-| 5 | 05 | Dashboard API — response list, analytics, CSV export, config management | ✓ Complete |
-| 6 | 06 | Respondent SPA Part 1 — identity form, wizard, all 6 question types, auto-save | ✓ Complete |
-| 7 | 07 | Respondent SPA Part 2 — review step, submission confirmation, auth guard | ✓ Complete |
-| 8 | 08 | Dashboard SPA Part 1 — response table, filters, pagination, CSV export | ✓ Complete |
-| 9 | 09 | Dashboard SPA Part 2 — analytics charts (Recharts), config panel | ✓ Complete |
-| 10 | 10 | Integration & Deployment — health endpoint, question seed, standalone config | ✓ Complete |
-| 11 | 11 | E2E Tests — Playwright test suite (89 RTM cases, WCAG audit, persona journeys) | ✓ Complete |
+| Wave | Plans | Status |
+|------|-------|--------|
+| 1 | 01 | ✓ Complete |
+| 2a | 02 | ✓ Complete |
+| 2b | 03 | ✓ Complete |
+| 2c | 04 | ✓ Complete |
+| 2d | 05 | ✓ Complete |
+| 3a-pt1 | 06 | ✓ Complete |
+| 3b | 07 | ✓ Complete |
+| 3c-pt1 | 08 | ✓ Complete |
+| 3c-pt2 | 09 | ✓ Complete |
+| 4a | 10 | ✓ Complete |
+| 4b | 11 | ✓ Complete |
 
 ### Per-Plan Details
 
-**01 (Database Schema):** PostgreSQL schema for 10 AssessmentForm tables via Drizzle ORM 0.45, with LOWER() email indexes, JSONB responses, singleton CHECK constraint, and idempotent v1 seed data (8 sections, 24 routing rows).
+**01 (database):** PostgreSQL schema for 10 AssessmentForm tables via Drizzle ORM 0.45, with LOWER() email indexes, JSONB responses, singleton CHECK constraint, and idempotent v1 seed data (8 sections, 24 routing rows).
 - Tasks: 3/3
-- Commits: cda9686, 3348fcc, 2ed4b9a
-- Key files: `drizzle/schema.ts`, `drizzle/seed.ts`, `drizzle/migrate.ts`, `drizzle.config.ts`, `src/lib/db.ts`
+- Key files: drizzle/schema.ts, drizzle/seed.ts, drizzle/migrate.ts, src/lib/db.ts
 
-**02 (Auth & Session API):** JWT authentication service (System Owner + Respondent), session create/resume endpoints, middleware chain (jwtMiddleware → requireSystemOwner/requireSessionOwner), jose HS256 implementation.
-- Tasks: 3/3
-- Key files: `src/lib/auth/authService.ts`, `src/lib/auth/jwtMiddleware.ts`, `src/lib/auth/requireSystemOwner.ts`, `src/lib/auth/requireSessionOwner.ts`, `src/lib/session/sessionService.ts`, `src/app/api/auth/login/route.ts`, `src/app/api/sessions/route.ts`, `src/app/api/sessions/[sessionId]/route.ts`
-
-**03 (Sections/Questions API):** Section routing service with mandatory section enforcement, question list API, discriminated union Zod v4 answer payload schemas for all 6 question types.
-- Tasks: 3/3
-- Key files: `src/lib/sections/sectionRoutingService.ts`, `src/lib/sections/questionService.ts`, `src/lib/validation/answerPayloadSchemas.ts`, `src/app/api/sections/route.ts`, `src/app/api/sections/[sectionId]/questions/route.ts`
-
-**04 (Response & Submission API):** Response upsert (auto-save), submission endpoint with mandatory-question check, assessmentOpenGuard middleware, fire-and-forget email notification service.
-- Tasks: 3/3
-- Key files: `src/lib/schemas/answerPayload.ts`, `src/lib/middleware/assessmentOpenGuard.ts`, `src/lib/services/responseService.ts`, `src/lib/services/submissionService.ts`, `src/lib/services/emailService.ts`, `src/app/api/responses/[sessionId]/route.ts`, `src/app/api/submissions/[sessionId]/route.ts`
-
-**05 (Dashboard API):** Paginated/filterable response list, individual response drill-down, aggregated analytics (team type bar, Likert distribution, ranking top-items, choice breakdown), streaming CSV export, config read/write with audit log.
-- Tasks: 3/3
-- Key files: `src/lib/services/dashboardService.ts`, `src/lib/services/analyticsService.ts`, `src/lib/services/csvExportService.ts`, `src/lib/services/configService.ts`, all dashboard API routes
-
-**06 (Respondent SPA Part 1):** Identity form with team type selection, AssessmentWizard with section navigation, all 6 question type renderers (SingleChoice, MultiChoice, Likert, Ranking with dnd-kit, FreeTextShort, FreeTextLong), useAutoSave hook (30s idle + navigate triggers, 3-retry backoff), useSectionList, SaveStateIndicator, ResumeBanner.
-- Tasks: 4/4
-- Key files: `src/lib/api/client.ts`, `src/hooks/useSession.ts`, `src/hooks/useAutoSave.ts`, `src/components/assessment/AssessmentWizard.tsx`, `src/components/questions/QuestionRouter.tsx`, all question renderers
-
-**07 (Respondent SPA Part 2):** ReviewStep (read-only answer summary with Edit links), SubmissionConfirmation, AssessmentClosed banner, AuthGuard client-side route guard with sessionStorage handoff pattern.
-- Tasks: 3/3
-- Key files: `src/components/assessment/ReviewStep.tsx`, `src/components/assessment/SubmissionConfirmation.tsx`, `src/components/assessment/AuthGuard.tsx`, `/assessment/review` page, `/assessment/confirmation` page
-
-**08 (Dashboard SPA Part 1):** System Owner login page, dashboard layout with header, JWT localStorage auth guard, response table with pagination (25/page), sortable columns, summary stats row (60s auto-refresh), filter panel + search bar synced to URL query params, response detail drill-down with filter state preservation.
-- Tasks: 4/4
-- Key files: `src/components/dashboard/AuthGuard.tsx`, `src/components/dashboard/ResponseTable.tsx`, `src/components/dashboard/FilterPanel.tsx`, `src/components/dashboard/ResponseDetailView.tsx`, `src/hooks/useDashboardFilters.ts`, `src/hooks/useDashboardData.ts`
-
-**09 (Dashboard SPA Part 2):** AnalyticsPanel with 4 Recharts chart types (TeamTypeBarChart, LikertDistributionChart, RankingTopItemsChart, ChoiceBreakdownChart), ConfigPanel with inline date-picker editor and confirmation dialog, PATCH /api/config integration.
-- Tasks: 3/3
-- Key files: `src/hooks/useAnalyticsData.ts`, `src/hooks/useConfigData.ts`, all chart components, `src/components/dashboard/AnalyticsPanel.tsx`, ConfigPanel
-
-**10 (Integration & Deployment):** Health endpoint (GET /api/health with DB connectivity check), Next.js standalone output mode for Docker multi-stage builds, 41 questions + 83 options seeded across all 8 sections, X-Frame-Options: SAMEORIGIN for preview iframe compatibility.
+**02 (auth-session):** HS256 JWT auth with dual identity flows (8h system_owner / 24h respondent) + upsert-by-email session management with LOWER() case-insensitive lookups and middleware chain (jwtMiddleware → requireSystemOwner/requireSessionOwner → handler).
 - Tasks: 2/2
-- Key files: `src/app/api/health/route.ts`, updated `next.config.ts`, updated `drizzle/seed.ts`
+- Key files: src/lib/auth/authService.ts, src/lib/auth/jwtMiddleware.ts, src/lib/auth/requireSystemOwner.ts, src/lib/auth/requireSessionOwner.ts, src/lib/session/sessionService.ts, src/app/api/auth/login/route.ts, src/app/api/sessions/route.ts
 
-**11 (E2E Test Suite):** Playwright test suite covering all 89 RTM test cases across 10 feature specs (F0–F9), 3 persona journey specs (Marcus/Priya/Dana), WCAG 2.1 AA axe-core accessibility audit, API fixtures, page-object helpers, route interception.
-- Tasks: 3/3
-- Key files: `playwright.config.ts`, `e2e/helpers/setup.ts`, `e2e/helpers/auth.ts`, all feature specs (f0–f9), journey specs
+**03 (sections-questions):** Section routing service with mandatory section enforcement + SECTION_LIMIT guard, question fetch service, 6 Zod answer payload schemas, and two JWT-protected API routes.
+- Tasks: 2/2
+- Key files: src/lib/sections/sectionRoutingService.ts, src/lib/sections/questionService.ts, src/lib/validation/answerPayloadSchemas.ts, src/app/api/sections/route.ts
+
+**04 (responses-submission):** Auto-save upsert (UNIQUE onConflictDoUpdate) + mandatory-check draft→submitted transition + fire-and-forget email, all guarded by assessmentOpenGuard + requireSessionOwner middleware with full FRD F04/F05/F09 error codes.
+- Tasks: 2/2
+- Key files: src/lib/response/responseService.ts, src/lib/submission/submissionService.ts, src/app/api/responses/[sessionId]/route.ts, src/app/api/submissions/[sessionId]/route.ts
+
+**05 (dashboard-config):** JWT-gated dashboard API (paginated response list, session drill-down, analytics aggregations, CSV export) and assessment config CRUD with audit log — all five endpoints enforce requireSystemOwner before any DB access.
+- Tasks: 2/2
+- Key files: src/lib/analytics/analyticsService.ts, src/lib/export/csvExportService.ts, src/lib/config/configService.ts, src/app/api/dashboard/ (responses, analytics, export/csv, config routes)
+
+**06 (respondent-spa):** Complete respondent SPA with typed API client, session/autosave hooks, identity flow, 6-renderer assessment wizard using dnd-kit, and localStorage-backed session persistence.
+- Tasks: 2/2
+- Key files: src/lib/api/client.ts, src/hooks/useSession.ts, src/hooks/useAutoSave.ts, src/components/identity/, src/components/questions/ (all 6 renderers), src/components/assessment/
+
+**07 (review-submit):** Review Step with read-only section/answer summary and Submit flow, SubmissionConfirmation first/re-submit variants, AuthGuard client route guard, and `fromReview` URL param return pattern — completing the respondent submission loop.
+- Tasks: 2/2
+- Key files: src/components/assessment/ReviewStep.tsx, src/components/assessment/SubmissionConfirmation.tsx, src/components/auth/AuthGuard.tsx
+
+**08 (dashboard-table):** Full System Owner dashboard with email-only JWT auth (8h system_owner role), AuthGuard client-side RBAC (no flash), paginated/sortable/filterable response table with 60s stats refresh, URL-synced filters, CSV export, and per-respondent read-only drill-down with filter-preserving back navigation.
+- Tasks: 2/2
+- Key files: src/components/dashboard/ResponseTable.tsx, src/components/dashboard/FilterPanel.tsx, src/components/dashboard/SearchBar.tsx, src/hooks/useDashboardFilters.ts, src/app/dashboard/ (pages)
+
+**09 (analytics-config):** Recharts-powered analytics dashboard (4 chart types, team-type filter, per-question pagination) + Config management panel (inline date picker, confirmation dialog, PATCH /api/config) for System Owner Dashboard.
+- Tasks: 2/2
+- Key files: src/components/dashboard/AnalyticsPanel.tsx, src/components/dashboard/charts/ (4 chart components), src/components/dashboard/ConfigPanel.tsx
+
+**10 (deployment):** Health endpoint + comprehensive question seed data (41 questions/83 options, all 6 types, 8 sections) with standalone Next.js config for Docker multi-stage builds.
+- Tasks: 2/2
+- Key files: src/app/api/health/route.ts, scripts/seed-questions.ts, Dockerfile, docker-compose.yml
+
+**11 (e2e-tests):** Complete Playwright E2E suite: 89 RTM test cases (TEST-F0-01 through TEST-F9-06) + 6 persona journey integration tests + axe-core WCAG 2.1 AA audit + cross-browser smoke tests for chromium and firefox.
+- Tasks: 2/2
+- Key files: e2e/ (89 RTM test files, 6 journey tests, axe audit, cross-browser)
 
 ### Aggregated Stats
 
-- **Total tasks:** 35 (across 11 plans)
-- **Total plans:** 11
-- **Total waves:** 11
-- **Tech stack:** Next.js 16 App Router, PostgreSQL 16, Drizzle ORM 0.45, Zod v4, jose (JWT), @dnd-kit, Recharts 3.9, csv-stringify, Playwright, axe-core
-- **Key features:** F0–F9 all implemented (10/10)
+- **Total tasks:** 23 completed
+- **Total commits:** All work squashed into HEAD (17af0de)
+- **Key files created:** 100+ source files across database, auth, API, frontend SPA, dashboard, and E2E test suite
+- **Stack:** Next.js 16 App Router · PostgreSQL 16 · Drizzle ORM 0.45 · jose JWT · Zod v4 · dnd-kit · Recharts · Playwright
 
 ### Deviations
 
-Key auto-fixed deviations across all plans:
-- **drizzle-kit 0.31 API change:** `driver: 'pg'` → `dialect: 'postgresql'`, `dbCredentials.connectionString` → `dbCredentials.url` (plan 01)
-- **Manual Next.js init:** `create-next-app` blocked by existing project files — used `npm init -y` + manual file creation (plan 01)
-- **Zod v4 API:** `errorMap` callback replaced by `error: string` param; `z.enum` requires `as const` tuple (plans 02, 03)
-- **jwtMiddleware signature:** Callback pattern `(req, handler)` — plan showed `instanceof NextResponse` pattern (plan 03)
-- **Next.js 15+ dynamic routes:** `params` is `Promise<{...}>` — used `await params` (plan 03)
-- **Login endpoint:** Email-only (no name field) per actual UX requirement vs. plan spec (plan 08)
-- **Dashboard access:** Any valid email can log in to dashboard (open access model) — specs updated accordingly (post-execution doc update)
-
-### UAT Results
-
-- **Latest run:** 2026-08-11
-- **Result:** 39/39 tests passed (re-verified 2026-08-11)
-- **Fix cycles:** 1 fix cycle applied before final pass
+- drizzle-kit 0.31 API change: used `dialect: 'postgresql'` + `dbCredentials.url` instead of deprecated `driver: 'pg'` + `dbCredentials.connectionString`
+- Next.js initialized manually (npm init) instead of create-next-app due to existing project files
+- Zod v4 enum API: `as const` tuple + `error` callback instead of v3 `errorMap`
+- jose v6 error codes: `err.code === 'ERR_JWT_EXPIRED'` instead of string name check
+- Next.js 15+ dynamic route params are `Promise<{...}>` — used `await params` pattern
+- `next.config.ts` used `X-Frame-Options: SAMEORIGIN` (not DENY) for Pivota Preview iframe compatibility
