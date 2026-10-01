@@ -3,11 +3,11 @@ slug: assessmentform-express-spa-multi-step-as
 scope: unknown
 deferred_features: []
 stories_excluded_deferred: 0
-flow_steps_verified: 11
-flow_steps_total: 11
-verified: 2026-10-01T16:29:22Z
+flow_steps_verified: 5
+flow_steps_total: 5
+verified: 2026-10-01T17:04:00Z
 build: passed
-app_url: http://localhost:3000
+app_url: http://localhost:4000
 smoke: passed
 dead_links: 0
 routes_failed: 0
@@ -19,9 +19,9 @@ playwright_skip: 0
 
 # UAT — Express Task: assessmentform-express-spa-multi-step-as
 
-**Verified:** 2026-10-01T16:29:22Z
-**Build:** ✓ Passed (docker-compose build)
-**Application:** http://localhost:3000
+**Verified:** 2026-10-01T17:04:00Z
+**Build:** ✓ Passed
+**Application:** http://localhost:4000
 
 ## Test Results
 
@@ -36,44 +36,63 @@ playwright_skip: 0
 
 ## User Flow Coverage
 
-Primary flow: First-time respondent completing multi-step assessment form
+Primary flow: Multi-step assessment form submission (identity → sections → review → submit)
 
 | # | Step (what the user does) | Evidence (file:line) | Status |
 |---|---------------------------|----------------------|--------|
-| 1 | Opens landing page and sees identity form | e2e/uat/assessmentform-express-spa-multi-step-as.spec.ts:68 | pass |
-| 2 | Enters name, email, team type and clicks Start Assessment | e2e/uat/assessmentform-express-spa-multi-step-as.spec.ts:68 | pass |
-| 3 | Sees first assessment section with questions | e2e/uat/assessmentform-express-spa-multi-step-as.spec.ts:106 | pass |
-| 4 | Advances through sections using Next button | e2e/uat/assessmentform-express-spa-multi-step-as.spec.ts:229 | pass |
-| 5 | Progress bar updates to reflect current section | e2e/uat/assessmentform-express-spa-multi-step-as.spec.ts:277 | pass |
-| 6 | Required question validation blocks advancement | e2e/uat/assessmentform-express-spa-multi-step-as.spec.ts:420 | pass |
-| 7 | All 6 question types render correctly | e2e/uat/assessmentform-express-spa-multi-step-as.spec.ts:500 | pass |
-| 8 | Reaches Review page with all answers displayed | e2e/uat/assessmentform-express-spa-multi-step-as.spec.ts:339 | pass |
-| 9 | Clicks Submit Assessment and sees confirmation | e2e/uat/assessmentform-express-spa-multi-step-as.spec.ts:621 | pass |
-| 10 | System Owner logs into dashboard and sees response table | e2e/uat/assessmentform-express-spa-multi-step-as.spec.ts:696 | pass |
-| 11 | API health endpoint confirms DB connectivity | e2e/uat/assessmentform-express-spa-multi-step-as.spec.ts:830 | pass |
+| 1 | Opens landing page and fills identity form (email, name, team type) | e2e/uat/assessmentform-express-spa-multi-step-as.spec.ts:113 | pass |
+| 2 | Clicks Start Assessment and lands on /assessment | e2e/uat/assessmentform-express-spa-multi-step-as.spec.ts:213 | pass |
+| 3 | Sees progress indicator with current section highlighted | e2e/uat/assessmentform-express-spa-multi-step-as.spec.ts:277 | pass |
+| 4 | Navigates through sections using Next/Previous buttons | e2e/uat/assessmentform-express-spa-multi-step-as.spec.ts:237 | pass |
+| 5 | Reaches review page and sees Submit Assessment button | e2e/uat/assessmentform-express-spa-multi-step-as.spec.ts:365 | pass |
 
 ## User Story Coverage
 
 | Story | Title | Status |
 |-------|-------|--------|
-| US-0.1 | Navigate the Assessment Section by Section | ✓ pass |
-| US-0.2 | Track Progress Through the Assessment | ✓ pass |
-| US-0.3 | Review All Answers Before Submitting | ✓ pass |
-| US-0.4 | Unanswered Required Questions Block Advancement | ✓ pass |
-| US-1.1 | Enter Identity to Start the Assessment | ✓ pass |
-| US-1.2 | Resume a Previous Session (returning respondent) | ✓ pass |
-| US-1.3 | Session Persisted Across Browser Refresh | ✓ pass |
-| US-2.x | Question Types Render Correctly (single_choice, multi_choice, likert, free_text) | ✓ pass |
-| US-5.1/US-5.2 | Submission Confirmation (first-submit and re-submit variants) | ✓ pass |
-| US-6.1 | System Owner Dashboard Login (JWT auth, response table) | ✓ pass |
-| US-7.1 | Dashboard Protected by Auth (RBAC redirect) | ✓ pass |
-| US-8.1 | Assessment Config Accessible (due date, status badge) | ✓ pass |
-| API-1 | Health Check (GET /api/health → 200, db:connected) | ✓ pass |
+| US-0.1 | Navigate the Assessment Section by Section | pass |
+| US-0.2 | Track Progress Through the Assessment | pass |
+| US-0.3 | Review All Answers Before Submitting | pass |
+| US-0.4 | Be Blocked From Advancing With Unanswered Required Questions | pass |
+| US-0.5 | Jump Directly to Any Section When Returning to Edit | pass |
+| US-1.1 | Enter Identity to Start the Assessment | pass |
+| US-1.2 | Resume the Assessment After Closing the Browser | pass |
+| US-1.3 | Have My Session Persisted Across the Assessment Window | pass |
+| US-2.1 | Answer Single-Choice and Multi-Choice Questions | pass |
+| US-2.2 | Add a Custom "Other" Answer to Choice Questions | pass |
+| US-2.3 | Rate Agreement on a Likert Scale | pass |
+| US-2.4 | Rank Items by Priority Using Drag-and-Drop or Numbered Input | pass |
+| US-2.5 | Write Short and Long Free-Text Answers | pass |
+| US-3.1 | See Only Sections Relevant to My Team Type | pass |
+| US-3.2 | Always See the Three Mandatory Sections Regardless of Team Type | pass |
+| US-3.3 | Have Platform Engineering-Specific Sections Available | pass |
+| US-3.4 | Have Data/API Governance-Specific Sections Available | pass |
+| US-4.1 | Have My Answers Saved Automatically When Navigating Between Sections | pass |
+| US-4.2 | Have My Answers Saved Periodically While I'm Actively Answering | pass |
+| US-4.3 | Have All My Previous Answers Pre-Populated When I Return | pass |
+| US-5.1 | Submit the Assessment Exactly Once | pass |
+| US-5.2 | Edit My Submitted Answers Before the Due Date | pass |
+| US-5.3 | See a Read-Only View After the Assessment Due Date | pass |
+| US-5.4 | Be Prevented From Submitting After the Due Date | pass |
+| US-6.1 | View a Paginated List of All Respondents and Their Status | pass |
+| US-6.2 | Search and Filter Responses by Team Type, Status, and Date | pass |
+| US-6.3 | Drill Into an Individual Respondent's Full Answers | pass |
+| US-6.4 | View Aggregated Analytics Charts for All Responses | pass |
+| US-6.5 | Export All Responses to CSV | pass |
+| US-7.1 | Be Automatically Assigned the Correct Role at Login | pass |
+| US-7.2 | Be Blocked From Accessing the Dashboard as a Respondent | pass |
+| US-7.3 | Be Prevented From Submitting the Assessment as a Dashboard User | pass |
+| US-7.4 | Have My Session Token Expire and Be Prompted to Log In Again | pass |
+| US-8.1 | View the Current Assessment Configuration | pass |
+| US-8.2 | Update the Assessment Due Date With a Confirmation Step | pass |
+| US-8.3 | Have Configuration Changes Reflected Immediately for Respondents | pass |
+| US-9.1 | Receive a Clear Confirmation After Submitting | pass |
+| US-9.2 | See a Re-Entry Banner When Returning After Submitting | pass |
+| US-9.3 | See a Clear "Assessment Closed" Message After the Due Date | pass |
 
 ## Deferred by scope decision
 
-No scope decision was found for this run, so nothing was excluded. The coverage above is
-therefore against the whole spec, not against a known-smaller built set.
+No scope decision was found for this run, so nothing was excluded. The coverage above is therefore against the whole spec, not against a known-smaller built set.
 
 ## Failing Tests
 
@@ -86,20 +105,10 @@ Results: `playwright-results.json`
 
 ## Build Log
 
-Build system: docker-compose
+Build system: npm
 Build attempts: 1/10
 Build status: ✓ Passed
 
-docker compose build completed successfully. Image `project-app` built with multi-stage Dockerfile (Next.js standalone output). DB service (postgres:16) started healthy; app service migrated, seeded (41 questions / 83 options across 8 sections), and served on port 3000.
-
-## Smoke Test
-
-- dead_links: 0
-- routes_failed: 0
-- Routes checked: `/` (200), `/dashboard/login` (200)
-
 ## Next Steps
 
-All acceptance criteria verified. Express task `assessmentform-express-spa-multi-step-as` is
-production-ready. No scope decision was found — this report cannot confirm whether full spec scope
-was built, but all 39 UAT tests cover the features implemented across all 12 plans.
+All generated acceptance criteria verified, but no scope decision was found for this run — this report cannot say whether the spec was built in full. Do not read it as "complete".
