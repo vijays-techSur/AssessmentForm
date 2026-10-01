@@ -1,116 +1,147 @@
 # Security Report — Express Task: assessmentform-express-spa-multi-step-as
 
-**Mode:** retroactive (re-audit — state A → this audit; whole-diff scope against `origin/main`)
-**Audited:** 2026-08-27
+**Mode:** retroactive (re-audit — state A; whole-diff scope; develop == main at HEAD)
+**Audited:** 2026-10-01
 **Verdict:** OPEN_THREATS
 **Confirmed HIGH/CRITICAL:** 5
+**threats_open:** 5
 
 ## Summary
 
-This is a re-audit of the prior SECURITY.md (commit 660b407) against the current working tree. The diff since 660b407 (`origin/main...HEAD`) touches only `.planning/STATE.md`, this task's `SUMMARY.md`, `UAT.md`, `playwright-results.json`, and `src/app/dashboard/login/page.tsx` — the last being a purely cosmetic label-text change ("Dashboard Login" → "System Owner Login", "Email Address" → "System Owner Email", "View Dashboard →" → "Access Dashboard") with no change to form logic, request payload, validation, or auth wiring. I independently re-read every file cited as evidence in the prior report — `src/app/api/auth/login/route.ts`, `src/lib/middleware/requireSystemOwner.ts`, `src/lib/auth/requireSystemOwner.ts`, `src/lib/db.ts`, `.env`, `.env.local`, `.env.local.QUARANTINED-INCIDENT-20260722`, `.gitignore`, `src/app/api/notifications/email/route.ts`, `src/lib/middleware/requireSessionOwner.ts`, `src/lib/middleware/assessmentOpenGuard.ts`, `src/lib/services/csvExportService.ts` — and confirmed byte-for-byte that none of the vulnerable code paths, tracked secret files, or missing guards have changed. All 5 prior CRITICAL/HIGH findings (dashboard authorization bypass, two committed-secret files, disabled TLS verification, unauthenticated email endpoint) remain fully present and unmitigated, and all 5 lower-severity findings remain open as well. No findings were resolved and no new findings were introduced by the tiny copy-only diff. **Verdict: OPEN_THREATS, do not ship.**
+This is the third re-audit of the working tree against the full codebase (develop branch == main at HEAD; `git diff origin/main...HEAD` is empty — the entire codebase is in scope). Every file cited in the prior SECURITY.md (state A, commit f1d0c93) was independently re-read in this session. Zero security-relevant changes were found between the prior audit and now: the only non-planning commits since the last security audit (ef1257a, af405fc) touch UAT spec files and SUMMARY docs only — no implementation file changes. All 5 CRITICAL/HIGH findings and all 5 MEDIUM/LOW findings remain fully present and unmitigated. Additionally, two additional `jwtVerify` call sites without explicit algorithm pins were identified (`src/lib/middleware/requireSessionOwner.ts:54` and `src/app/api/config/route.ts:61`) — both low-severity and safe in practice due to `jose`'s default rejection of `alg:none`. **Verdict: OPEN_THREATS — do not ship to production.**
+
+---
 
 ## Attack surface audited
 
 | Area | STRIDE | Verdict | Evidence (file:line) |
 |------|--------|---------|----------------------|
-| Post-660b407 diff scope (`origin/main...HEAD`) | — | SAFE (no functional change) | `git diff origin/main...HEAD --stat` — 5 files, only `src/app/dashboard/login/page.tsx` is source code; `git diff origin/main...HEAD -- src/app/dashboard/login/page.tsx` shows 3 JSX text-label edits only, no logic/handler/import changes |
-| Dashboard login — role verification | Elevation of Privilege | **CONFIRMED OPEN CRITICAL** | `src/app/api/auth/login/route.ts:35-44` — re-read this session; still no `isSystemOwnerEmail()` call; unconditionally signs `role: 'system_owner'` for any valid email |
-| Dashboard auth middleware — role check | Elevation of Privilege | **CONFIRMED OPEN CRITICAL** | `src/lib/middleware/requireSystemOwner.ts:16-28` — re-read this session; `verifyJwt(token)` verifies signature/expiry only, comment on line 7-8 explicitly states "Role check removed" |
-| Dead-code correct role-check implementation | — | INFO | `src/lib/auth/requireSystemOwner.ts:6-16` — re-read this session; still contains a correct `role !== 'system_owner'` → 403 check, but it is a HOF never imported by any route (only the vulnerable `middleware/requireSystemOwner.ts` is wired into `/api/dashboard/**` and `/api/config`) |
-| Session-ownership on PUT/POST responses & submissions | Tampering / IDOR | SAFE | `src/lib/middleware/requireSessionOwner.ts:73-98` — re-read this session; DB lookup + case-insensitive email comparison against JWT payload still enforced, unchanged |
-| `assessmentOpenGuard` failure treated as open | Elevation | **CONFIRMED OPEN LOW** | `src/lib/middleware/assessmentOpenGuard.ts:48-51` — re-read this session; catch block still returns `{ ok: true }` on DB error, unchanged |
-| Secrets committed to git — `.env` | Info Disclosure | **CONFIRMED OPEN HIGH** | `.env` (tracked) — re-read this session; `JWT_SECRET=uat-test-secret-32-chars-minimum-xxxxxxxx` + dev `DATABASE_URL` with password, unchanged |
-| Secrets committed to git — `.env.local` | Info Disclosure | **CONFIRMED OPEN CRITICAL** | `.env.local` (tracked) — re-read this session; production `DATABASE_URL` (`pivota-spec-driven-primary.prod.svc`) with URL-encoded password + production `JWT_SECRET=q8Fv3nT6ZpW1YxRk9LmC2aD5sH7uQ4Jb0VgEoI+NtUf=`, unchanged |
-| Secrets committed to git — `.env.local.QUARANTINED-INCIDENT-20260722` | Info Disclosure | **CONFIRMED OPEN CRITICAL** | Same tracked file, re-read this session — identical production secrets verbatim, rename is cosmetic; `git ls-files \| grep -i .env` confirms still tracked |
-| `.gitignore` missing `.env*` patterns | Info Disclosure (root cause) | **CONFIRMED OPEN (part of secret findings)** | `.gitignore` — re-read this session; only `.venv/` and `venv/` present (Python patterns), no `.env`, `.env.local`, or `.env.*` exclusion anywhere |
-| TLS certificate verification disabled | Info Disclosure / Tampering | **CONFIRMED OPEN HIGH** | `src/lib/db.ts:24` — re-read this session; `ssl: isLocal ? false : { rejectUnauthorized: false }` unchanged; `.env.local:5` still sets `NODE_TLS_REJECT_UNAUTHORIZED=0` |
-| Unauthenticated email notification endpoint | Info Disclosure / DoS | **CONFIRMED OPEN MEDIUM** | `src/app/api/notifications/email/route.ts` — re-read full file this session; zero auth imports (`jwtMiddleware`/`requireSessionOwner`/`requireSystemOwner`), Zod-validates then always calls `sendSubmissionConfirmation()` |
-| Rate limiting on login/session creation | DoS | **CONFIRMED OPEN LOW** | `grep -rn "rate.?limit\|throttle" src/` this session → zero matches |
-| JWT verify without algorithm pin (requireSessionOwner) | Spoofing | **CONFIRMED OPEN LOW** | `src/lib/middleware/requireSessionOwner.ts:54` — re-read this session; `jwtVerify(token, secret)` still has no `{ algorithms: ['HS256'] }` option (safe in practice — jose rejects `alg:none` by default — but no explicit pin) |
-| CSV export — formula injection | Tampering | **CONFIRMED OPEN LOW** | `src/lib/services/csvExportService.ts:13-33` — re-read this session; `flattenAnswerPayload()` returns raw free-text values with no leading `=`/`+`/`-`/`@` neutralization before `csv-stringify` |
-| Raw SQL / IDOR / mass-assignment / path traversal / SSRF / shell scripts | various | SAFE (unchanged) | No source touching these paths appears in the post-660b407 diff; spot-checked `db.ts`, `requireSessionOwner.ts`, `assessmentOpenGuard.ts`, `csvExportService.ts` directly this session — all match prior report's description |
+| Dashboard login — role verification | Elevation of Privilege | **CONFIRMED OPEN CRITICAL** | `src/app/api/auth/login/route.ts:38` — no `isSystemOwnerEmail()` call; unconditionally signs `role: 'system_owner'` for any valid email |
+| Dashboard auth middleware — role check | Elevation of Privilege | **CONFIRMED OPEN CRITICAL** | `src/lib/middleware/requireSystemOwner.ts:27` — `verifyJwt(token)` only; comment lines 7–8 explicit: "Role check removed" |
+| Correct role-check HOF — unwired | INFO | Dead code | `src/lib/auth/requireSystemOwner.ts:10` — correct `role !== 'system_owner'` → 403 exists but no route imports it (only `@/lib/middleware/requireSystemOwner` is wired) |
+| Secrets in `.env` (tracked) | Information Disclosure | **CONFIRMED OPEN HIGH** | `.env` tracked (`git ls-files`): `JWT_SECRET=uat-test-secret-32-chars-minimum-xxxxxxxx` + dev DB password |
+| Secrets in `.env.local` (tracked) | Information Disclosure | **CONFIRMED OPEN CRITICAL** | `.env.local` tracked: production `DATABASE_URL` (pivota-spec-driven-primary.prod.svc) + `JWT_SECRET=q8Fv3nT6ZpW1YxRk9LmC2aD5sH7uQ4Jb0VgEoI+NtUf=` |
+| Secrets in `.env.local.QUARANTINED-INCIDENT-20260722` (tracked) | Information Disclosure | **CONFIRMED OPEN CRITICAL** | Same tracked file, same production secrets verbatim — rename is cosmetic, still in git history and disk |
+| `.gitignore` missing `.env*` patterns | Information Disclosure (root cause) | **CONFIRMED OPEN** | `.gitignore` lines 1–122: only `.venv/`/`venv/` env-like patterns; no `.env`, `.env.local`, `.env.*` exclusions |
+| TLS certificate verification disabled | Information Disclosure / Tampering | **CONFIRMED OPEN HIGH** | `src/lib/db.ts:24`: `ssl: isLocal ? false : { rejectUnauthorized: false }`; `.env.local:5`: `NODE_TLS_REJECT_UNAUTHORIZED=0` |
+| Unauthenticated email notification endpoint | Information Disclosure / DoS | **CONFIRMED OPEN MEDIUM** | `src/app/api/notifications/email/route.ts:1–42` — zero auth imports; any caller can trigger email sends |
+| Session-ownership (respondent IDOR guard) | Tampering / IDOR | SAFE | `src/lib/middleware/requireSessionOwner.ts:93` — DB lookup + case-insensitive email comparison enforced, unchanged |
+| `src/app/api/sessions/[sessionId]/route.ts` wiring | Elevation of Privilege | SAFE | Imports `requireSessionOwner` from `@/lib/auth/requireSessionOwner` (HOF with correct ownership check), NOT from the broken middleware path |
+| `assessmentOpenGuard` failure treated as open | Elevation of Privilege | **CONFIRMED OPEN LOW** | `src/lib/middleware/assessmentOpenGuard.ts:51` — catch block returns `{ ok: true }` on DB error |
+| Rate limiting on login/session creation | DoS | **CONFIRMED OPEN LOW** | `grep -rn "rate.?limit\|throttle" src/` → zero matches |
+| `jwtVerify` without explicit algorithm pin — `requireSessionOwner` | Spoofing | **CONFIRMED OPEN LOW** | `src/lib/middleware/requireSessionOwner.ts:54` — `jwtVerify(token, secret)` with no `{ algorithms: ['HS256'] }` option |
+| `jwtVerify` without explicit algorithm pin — `config/route.ts` | Spoofing | **CONFIRMED OPEN LOW** | `src/app/api/config/route.ts:61` — same pattern (belt-and-suspenders extraction; safe in practice) |
+| CSV export — formula injection | Tampering | **CONFIRMED OPEN LOW** | `src/lib/services/csvExportService.ts:13–33` — `flattenAnswerPayload()` returns raw free-text values with no leading `=`/`+`/`-`/`@` neutralization |
+| Dashboard query params — SQL injection | Tampering | SAFE | `src/lib/services/dashboardService.ts:59–67` — `sortBy` uses allowlist map; `search` uses Drizzle `ilike()` (parameterized); `teamType` uses Drizzle `ANY()` (parameterized) |
+| Analytics raw SQL blocks | Tampering | SAFE | `src/lib/services/analyticsService.ts:92–108`, `:148–167` — all Drizzle `sql\`...\`` use parameterized `${q.id}` / `${responses.answer_payload}` expressions; no user-controlled strings spliced in |
+| `emailService.ts` `fetch(relayUrl, …)` | SSRF | NOT USER-CONTROLLED | `src/lib/services/emailService.ts:19,39` — `relayUrl` comes from `process.env.EMAIL_RELAY_URL`; user input cannot influence this value; not a classic SSRF |
+| CSV export SQL (filter params) | Tampering | SAFE | `src/lib/services/csvExportService.ts:39–56` — same Drizzle parameterized patterns as dashboardService |
+
+---
 
 ## Confirmed findings
 
-> Each survived adversarial refutation (input is user-controlled, no upstream guard, reachable). All 5 carried forward unchanged from the prior audit (commit 660b407) — the tiny post-660b407 diff does not touch any of these code paths.
+> All findings survived adversarial refutation. Input paths are user-controlled (or attacker-accessible), upstream guards absent or bypassed, and all code paths verified by direct file reads in this session.
 
-### FIND-09: Dashboard Authorization Bypass — Any Email Grants System Owner Access — CRITICAL
-- **Category:** authz_bypass / elevation_of_privilege
-- **Location:** `src/app/api/auth/login/route.ts:35-44`; `src/lib/middleware/requireSystemOwner.ts:16-28`
-- **Description:** `POST /api/auth/login` accepts any RFC-5322-valid email and unconditionally signs a JWT with `role: 'system_owner'` (line 38). No `isSystemOwnerEmail()` allowlist check is present, confirmed by direct read this session (lines 5-8 explicitly comment "No system_owner_emails check — any respondent or user can access the dashboard"). The gating middleware `src/lib/middleware/requireSystemOwner.ts`, wired into all 5 dashboard/config route handlers (`/api/dashboard/responses`, `/api/dashboard/responses/[sessionId]`, `/api/dashboard/analytics`, `/api/dashboard/export/csv`, `/api/config` GET+PATCH), verifies only JWT signature/expiry (line 27: "verify signature + expiry only — no role restriction") and never inspects `payload.role`. A correct role-checking implementation still exists at `src/lib/auth/requireSystemOwner.ts` but is dead code — no route imports it.
-- **Exploit:** Any party — including anonymous internet visitors — sends `POST /api/auth/login {"email":"attacker@example.com"}` and receives a valid `system_owner`-role JWT (8h expiry) with zero credential requirement. That token grants full read access to every respondent's PII via `GET /api/dashboard/export/csv` (names, emails, team types, all free-text/likert/ranking answers) and write access to assessment configuration via `PATCH /api/config`.
-- **Fix:** Product decision required — either (1) restore `isSystemOwnerEmail()` check in the login route and/or the `payload.role !== 'system_owner'` check in `requireSystemOwner.ts` middleware, reverting to an allowlist model; or (2) if "any valid email → dashboard" is a genuine accepted product requirement (e.g. internal-only tool), document it as a formal, signed-off accepted risk with compensating controls (email-domain restriction, SSO/VPN gating, rate limiting + audit logging of every login).
+### SEC-01 (FIND-09): Dashboard Authorization Bypass — Any Email Grants System Owner Access — CRITICAL
 
-### FIND-01: Production Credentials Committed to Git (`.env.local`) — CRITICAL
-- **Category:** secret_leak
+- **Category:** Elevation of Privilege / Authorization Bypass
+- **Location:** `src/app/api/auth/login/route.ts:35–44`; `src/lib/middleware/requireSystemOwner.ts:16–28`; all of `src/app/api/dashboard/**` and `src/app/api/config`
+- **Description:** `POST /api/auth/login` accepts any RFC-5322-valid email address and unconditionally issues a JWT with `role: 'system_owner'` (line 38). The comments at lines 5–8 explicitly document this: "No system_owner_emails check — any respondent or user can access the dashboard." The `isSystemOwnerEmail()` function exists in `src/lib/auth/authService.ts:38–44` but is not called here. All five dashboard/config route handlers (`/api/dashboard/responses`, `/api/dashboard/responses/[sessionId]`, `/api/dashboard/analytics`, `/api/dashboard/export/csv`, `/api/config` GET+PATCH) import their auth guard exclusively from `@/lib/middleware/requireSystemOwner`, which calls `verifyJwt(token)` only (line 27: "verify signature + expiry only — no role restriction"). The correct role-checking implementation at `src/lib/auth/requireSystemOwner.ts:10` (`req.user.role !== 'system_owner'`) is dead code — zero route files import it.
+- **Exploit:** An anonymous internet visitor sends `POST /api/auth/login {"email":"attacker@example.com"}`. No password, no allowlist check. They receive a valid `system_owner`-role JWT (8 h expiry). That token grants: (1) full read of all respondent PII and answers via `GET /api/dashboard/export/csv`; (2) read of all individual responses via `GET /api/dashboard/responses` and `GET /api/dashboard/responses/:sessionId`; (3) write access to assessment configuration (due date) via `PATCH /api/config`; (4) analytics read via `GET /api/dashboard/analytics`.
+- **Fix:** Product decision required. Option A (restore allowlist model): add `isSystemOwnerEmail()` check in `src/app/api/auth/login/route.ts` before signing the JWT, or swap `src/lib/middleware/requireSystemOwner` to `src/lib/auth/requireSystemOwner` (the HOF with the role check). Option B (accepted open-access): formally document as accepted risk with compensating controls (email-domain restriction, SSO/VPN perimeter gate, rate limiting, audit logging of every login event).
+
+---
+
+### SEC-02 (FIND-01): Production Credentials Committed to Git (`.env.local` + `.env.local.QUARANTINED-INCIDENT-20260722`) — CRITICAL
+
+- **Category:** Information Disclosure / Secret Leak
 - **Location:** `.env.local` (tracked); `.env.local.QUARANTINED-INCIDENT-20260722` (tracked)
-- **Description:** Both files remain tracked in the working tree and git history. `.env.local` contains the production `DATABASE_URL` (`pivota-spec-driven-primary.prod.svc`, URL-encoded password) and production `JWT_SECRET=q8Fv3nT6ZpW1YxRk9LmC2aD5sH7uQ4Jb0VgEoI+NtUf=`. The "QUARANTINED" copy carries identical secrets under a renamed filename — the rename does not remove it from git history or disk.
-- **Exploit:** Anyone with read access to the repository can extract the production JWT signing secret (forging any role's token — though FIND-09 already makes this unnecessary for dashboard access) and the production DB password, granting direct datastore access bypassing all application-layer controls.
-- **Fix:** Rotate the production `JWT_SECRET` and DB password immediately. `git rm --cached .env.local .env.local.QUARANTINED-INCIDENT-20260722`. Add `.env.local*` and `.env` patterns to `.gitignore`. Purge history (`git filter-repo`/BFG). Audit CI artifacts and clones for exposure.
+- **Description:** Both files are tracked in git (confirmed `git ls-files`). `.env.local` contains the production PostgreSQL connection string to `pivota-spec-driven-primary.prod.svc:5432` with URL-encoded password (`%3EAhQ%7B-%5D%2FJCVAr%5BHR2%7BdH7YIr`), and the production JWT signing secret (`q8Fv3nT6ZpW1YxRk9LmC2aD5sH7uQ4Jb0VgEoI+NtUf=`). The "QUARANTINED" file is a verbatim copy under a renamed filename — the rename does not expunge it from git history or disk. `.gitignore` has no `.env.local*` or `.env.*` patterns to prevent re-commit.
+- **Exploit:** Anyone with read access to the repository (including collaborators and any CI system that clones the repo) can: (1) extract the production JWT secret and forge tokens of any role (though SEC-01 already makes this unnecessary for dashboard access); (2) connect directly to the production database bypassing all application-layer controls — reading, modifying, or deleting all respondent data.
+- **Fix:** (1) Rotate the production `JWT_SECRET` and DB password immediately. (2) `git rm --cached .env.local ".env.local.QUARANTINED-INCIDENT-20260722"`. (3) Add `.env.local*` to `.gitignore`. (4) Purge from git history using `git filter-repo` or BFG Repo Cleaner. (5) Audit all CI artifacts and developer clones for exposure.
 
-### FIND-02: Development JWT Secret and DB Password Committed to Git (`.env`) — HIGH
-- **Category:** secret_leak
+---
+
+### SEC-03 (FIND-02): Development JWT Secret and DB Password Committed to Git (`.env`) — HIGH
+
+- **Category:** Information Disclosure / Secret Leak
 - **Location:** `.env` (tracked)
-- **Description:** `.env` contains `JWT_SECRET=uat-test-secret-32-chars-minimum-xxxxxxxx` and a localhost dev `DATABASE_URL` with a plaintext password, committed to git history — unchanged from prior audit.
-- **Exploit:** Anyone with repo access can forge JWTs for any role in environments sharing this secret (staging/UAT).
-- **Fix:** Rotate the dev/UAT `JWT_SECRET`. `git rm --cached .env`. Add `.env` to `.gitignore`. Purge from history.
+- **Description:** `.env` contains `JWT_SECRET=uat-test-secret-32-chars-minimum-xxxxxxxx` and a dev/UAT `DATABASE_URL` with plaintext password (`assessmentform_dev_password`). The file is tracked in git (confirmed `git ls-files`). `.gitignore` has no `.env` pattern.
+- **Exploit:** Anyone with repo access can forge JWTs for any role in environments sharing this secret (UAT/staging). Because SEC-01 is also open, a forged respondent token might be combined with direct DB access to exfiltrate or manipulate UAT data.
+- **Fix:** Rotate UAT `JWT_SECRET` and DB password. `git rm --cached .env`. Add `.env` to `.gitignore`. Purge history.
 
-### FIND-03: TLS Certificate Verification Disabled for Production Database — HIGH
-- **Category:** tls_misconfiguration
-- **Location:** `src/lib/db.ts:24`; `.env.local:5` (`NODE_TLS_REJECT_UNAUTHORIZED=0`)
-- **Description:** The pg `Pool` sets `ssl: { rejectUnauthorized: false }` for all non-local connections (unchanged). `NODE_TLS_REJECT_UNAUTHORIZED=0` is also set in `.env.local`, disabling TLS verification for all outbound HTTPS from the process, including the email relay `fetch()` in `emailService.ts`.
-- **Exploit:** A network-position attacker between the app and DB/email-relay sidecars can MITM connections, reading/tampering with all respondent data in transit, with no certificate warning.
-- **Fix:** Set `ssl: { rejectUnauthorized: true }` with correct CA cert via `ca:` option. Remove `NODE_TLS_REJECT_UNAUTHORIZED=0`; pin the sidecar's CA explicitly instead of disabling verification.
+---
 
-### FIND-04: Unauthenticated Email Notification Endpoint — MEDIUM
-- **Category:** missing_authentication
-- **Location:** `src/app/api/notifications/email/route.ts:25-41`
-- **Description:** `POST /api/notifications/email` has no auth guard — no import of `jwtMiddleware`, `requireSessionOwner`, or `requireSystemOwner` (confirmed by full-file read this session). Zod-validates `{ session_id, email, name, due_date }` and always forwards to `sendSubmissionConfirmation()`.
-- **Exploit:** Any unauthenticated caller can trigger emails to arbitrary addresses with attacker-chosen `name`/`due_date` content, enabling spam/phishing under the platform's sending identity, and can fingerprint whether `EMAIL_RELAY_URL` is configured.
-- **Fix:** Remove the HTTP route (redundant — `submissionService.ts` already calls `sendSubmissionConfirmation()` directly server-side) or add an internal pre-shared-secret header check.
+### SEC-04 (FIND-03): TLS Certificate Verification Disabled for Production Database Connections — HIGH
 
-## Resolved findings
+- **Category:** Information Disclosure / Tampering (MITM)
+- **Location:** `src/lib/db.ts:24`; `.env.local:5`
+- **Description:** The pg `Pool` is configured with `ssl: isLocal ? false : { rejectUnauthorized: false }` for all non-localhost connections (line 24). This disables server certificate validation entirely, making the TLS connection trivially MITM-able. In addition, `.env.local` sets `NODE_TLS_REJECT_UNAUTHORIZED=0`, which disables TLS verification globally for the Node.js process — including the `fetch()` call to `EMAIL_RELAY_URL` in `emailService.ts`.
+- **Exploit:** A network-position attacker on the path between the application pod and the DB or email-relay sidecar can present a self-signed certificate, intercept all SQL traffic (reading every respondent's data) or inject SQL responses. The `NODE_TLS_REJECT_UNAUTHORIZED=0` flag extends this risk to all HTTPS connections the process makes.
+- **Fix:** Set `ssl: { rejectUnauthorized: true, ca: fs.readFileSync('/path/to/rds-ca.pem') }` (or equivalent for the sidecar CA). Remove `NODE_TLS_REJECT_UNAUTHORIZED=0` from `.env.local`; pin the specific CA certificate instead. If the platform uses a private CA (Kubernetes PKI), mount the CA bundle and reference it explicitly.
 
-> No prior findings were found to be fixed in this re-audit. The post-660b407 diff (`origin/main...HEAD`) touches only doc/metadata files and a cosmetic label-text change in `src/app/dashboard/login/page.tsx` (no handler, validation, or auth logic changed) — none of the 5 HIGH/CRITICAL or 5 lower-severity findings from the prior audit have any code-path overlap with this diff. Every finding (FIND-01 through FIND-10, including FIND-09) was independently re-read and re-confirmed present in the current working tree this session; none are resolved.
+---
+
+### SEC-05 (FIND-04): Unauthenticated Email Notification Endpoint — MEDIUM
+
+- **Category:** Missing Authentication / Denial of Service / Information Disclosure
+- **Location:** `src/app/api/notifications/email/route.ts:25–41`
+- **Description:** `POST /api/notifications/email` performs zero authentication — no import of `jwtMiddleware`, `requireSessionOwner`, or `requireSystemOwner` (confirmed by full-file read). It Zod-validates `{ session_id, email, name, due_date }` and then calls `sendSubmissionConfirmation()`. The comment "Internal server-to-server only" is a documentation assertion with no technical enforcement.
+- **Exploit:** Any unauthenticated caller on the internet (if the endpoint is network-reachable) can: (1) trigger emails to arbitrary addresses with attacker-chosen `name`/`due_date` content, enabling phishing/spam under the platform's sending identity; (2) enumerate whether `EMAIL_RELAY_URL` is configured (200 vs. 400); (3) perform low-effort DoS against the email relay (fire-and-forget, no rate limiting). Note: the `email` field is Zod-validated as a valid email format only — it places no restriction on the domain.
+- **Fix:** Remove the HTTP endpoint entirely (the submission flow calls `sendSubmissionConfirmation()` directly from `submissionService.ts` server-side — the HTTP route is redundant). If the route must exist, add an internal pre-shared-secret header check (e.g., `X-Internal-Token: <env-var>`) or restrict it to loopback with a network policy.
+
+---
 
 ## Lower-severity findings
 
 | ID | Severity | Title | Location | Status |
 |----|----------|-------|----------|--------|
-| FIND-05 | LOW | No rate limiting on login/session creation | `POST /api/auth/login`, `POST /api/sessions` | Still open — `grep -rn "rate.?limit\|throttle" src/` → zero matches, re-verified this session |
-| FIND-06 | LOW | `assessmentOpenGuard` failure treated as open | `src/lib/middleware/assessmentOpenGuard.ts:48-51` | Still open — catch block still returns `{ ok: true }` on DB error, re-read this session |
-| FIND-07 | LOW | `jwtVerify` without explicit algorithm pin | `src/lib/middleware/requireSessionOwner.ts:54` | Still open — no `{ algorithms: ['HS256'] }` option, re-read this session; safe in practice (jose default alg rejection) |
-| FIND-08 | LOW | Missing `.gitignore` patterns for `.env` files | `.gitignore` | Still open — only `.venv/`/`venv/` present, re-read this session; root cause enabling FIND-01/FIND-02 recurrence |
-| FIND-10 | LOW | CSV export does not neutralize formula-injection characters | `src/lib/services/csvExportService.ts:13-33` | Still open — `flattenAnswerPayload()` returns raw free-text with no leading `=`/`+`/`-`/`@` sanitization, re-read this session |
+| SEC-06 (FIND-06) | LOW | `assessmentOpenGuard` failure treated as open (fail-open on DB error) | `src/lib/middleware/assessmentOpenGuard.ts:51` | Still open — catch block returns `{ ok: true }` on DB error; re-read this session |
+| SEC-07 (FIND-05) | LOW | No rate limiting on login or session creation | `POST /api/auth/login`, `POST /api/sessions` | Still open — `grep -rn "rate.?limit\|throttle" src/` → zero matches, re-verified this session |
+| SEC-08 (FIND-07/updated) | LOW | `jwtVerify` without explicit algorithm pin (two call sites) | `src/lib/middleware/requireSessionOwner.ts:54`; `src/app/api/config/route.ts:61` | Still open — both call `jwtVerify(token, secret)` without `{ algorithms: ['HS256'] }`; safe in practice (jose rejects `alg:none` by default) but lacks defense-in-depth. `authService.verifyJwt` correctly pins at line 31. |
+| SEC-09 (FIND-08) | LOW | Missing `.gitignore` patterns for `.env` files | `.gitignore` | Still open — root cause enabling SEC-02/SEC-03 recurrence; re-read lines 1–122, no `.env*` pattern present |
+| SEC-10 (FIND-10) | LOW | CSV export does not neutralize formula-injection characters | `src/lib/services/csvExportService.ts:13–33` | Still open — `flattenAnswerPayload()` returns raw free-text values with no leading `=`/`+`/`-`/`@` sanitization before `csv-stringify` |
+
+---
+
+## Resolved findings
+
+> No prior findings were found to be fixed in this re-audit. Every finding (SEC-01 through SEC-10) was independently re-read and re-confirmed present in the current working tree this session. The commits between the prior audit (f1d0c93) and HEAD (ef1257a) touch only UAT spec files, SUMMARY docs, and tsconfig.tsbuildinfo — no security-relevant implementation code was changed.
+
+---
 
 ## Accepted risks
 
 | ID | Risk | Why accepted | Owner |
 |----|------|--------------|-------|
-| AR-01 | JWT stored in localStorage (both respondent and dashboard flows) | Design constraint: SPA with no server-side session store. XSS mitigated by React's automatic HTML escaping. Tokens short-lived (8h/24h). Compounded by FIND-09: an XSS stealing a dashboard token no longer even needs the victim to be a real system owner. | Product |
-| AR-02 | LIKE wildcard injection in `search` parameter | `ilike()` uses parameterized queries; wildcards cause table scans only, no data leakage beyond what the (broken) system_owner gate already permits. | Engineering |
+| AR-01 | JWT stored in `localStorage` (both respondent and dashboard flows) | Design constraint: SPA with no server-side session store. XSS risk mitigated by React's automatic HTML escaping. Tokens short-lived (8h/24h). Risk compounded by SEC-01: an XSS stealing a dashboard token no longer requires the victim to be a real system owner. | Product |
+| AR-02 | LIKE wildcard injection in `search` parameter | `ilike()` uses Drizzle parameterized queries; wildcards at most cause table scans, no data leakage beyond what the already-open dashboard gate permits. | Engineering |
 | AR-03 | CSV export reads all rows into memory | Bounded by current assessment cohort size; stream-to-disk refactor deferred until scale requires it. | Engineering |
-| AR-04 | `docker-compose.yml` hardcoded DB password / placeholder JWT_SECRET | Development-only compose file; DB password non-reusable, clearly dev-scoped; inline comment instructs replacement before real deployment. | DevOps |
-| AR-05 | `EMAIL_RELAY_URL` operator-controlled, not allowlist-validated | No SSRF risk today — value never derived from request input; re-review if ever made configurable via an authenticated API. | Engineering |
+| AR-04 | `docker-compose.yml` hardcoded dev DB password / placeholder `JWT_SECRET` | Development-only compose file; password non-reusable in production, clearly dev-scoped; inline comment instructs replacement before deployment. | DevOps |
+| AR-05 | `EMAIL_RELAY_URL` operator-controlled, not allowlist-validated | No SSRF risk today — value never derived from request input; re-review if ever made configurable via an API endpoint. | Engineering |
+
+---
 
 ## Audit trail
 
-- **Diff scoped via:** `git diff origin/main...HEAD --stat` — 5 files, 218/-192 lines: `.planning/STATE.md`, this task's `SUMMARY.md`, `UAT.md`, `playwright-results.json`, and `src/app/dashboard/login/page.tsx`. Full diff of the source file confirmed 3 JSX text-label edits only ("Dashboard Login"→"System Owner Login", "Email Address"→"System Owner Email", "View Dashboard →"→"Access Dashboard"), no handler/import/logic changes. `git log --oneline` confirms `origin/main` tip is 660b407's parent-adjacent commit (the prior audit commit itself, 660b407, is on `origin/main` at HEAD~1 of the merge; `7891289` is the merge commit).
-- **Register:** Loaded from the prior SECURITY.md (commit 660b407) as the re-audit checklist — all 10 line items (FIND-01 through FIND-10, plus the "attack surface audited" SAFE rows) re-verified independently against current file contents by direct `Read` calls in this session, not copied from the prior report's text.
-- **Refutation:** 5 HIGH/CRITICAL candidates re-examined (FIND-09, FIND-01, FIND-02, FIND-03, FIND-04) plus 5 lower-severity (FIND-05 through FIND-08, FIND-10) — all 10 CONFIRMED still open via direct file reads this session (`src/app/api/auth/login/route.ts`, `src/lib/middleware/requireSystemOwner.ts`, `src/lib/auth/requireSystemOwner.ts`, `.env`, `.env.local`, `.env.local.QUARANTINED-INCIDENT-20260722`, `.gitignore`, `src/lib/db.ts`, `src/app/api/notifications/email/route.ts`, `src/lib/middleware/requireSessionOwner.ts`, `src/lib/middleware/assessmentOpenGuard.ts`, `src/lib/services/csvExportService.ts`). 0 resolved. 0 new findings introduced by the post-660b407 diff (confirmed the diff's only source-code file, `src/app/dashboard/login/page.tsx`, is a JSX-text-only change with no reachable security-relevant surface).
-
 | Step | Finding | Evidence Checked This Session | Result |
 |------|---------|-------------------------------|--------|
-| Post-660b407 diff scope | — | `git diff origin/main...HEAD --stat` and full diff of `src/app/dashboard/login/page.tsx` | No functional change — copy-only |
-| Dashboard login role verification | FIND-09 | `src/app/api/auth/login/route.ts:35-44` — re-read, no `isSystemOwnerEmail` call | UNMITIGATED — CONFIRMED OPEN CRITICAL |
-| Dashboard middleware role check | FIND-09 | `src/lib/middleware/requireSystemOwner.ts:16-28` — re-read, no `payload.role` check | UNMITIGATED — CONFIRMED OPEN CRITICAL |
-| Dead-code correct implementation | — | `src/lib/auth/requireSystemOwner.ts:6-16` — re-read, correct check present but unused | Confirms fix must target wired-in `middleware/` path |
-| Secrets in committed files | FIND-01, FIND-02 | `cat .env .env.local .env.local.QUARANTINED-INCIDENT-20260722` — re-read this session, secrets present verbatim, matches prior report | UNMITIGATED — CONFIRMED OPEN CRITICAL/HIGH |
-| `.gitignore` env patterns | FIND-08 | `cat .gitignore \| grep -i env` — only `.venv/`, `venv/` | UNMITIGATED — CONFIRMED OPEN LOW |
-| TLS verification | FIND-03 | `src/lib/db.ts:24` — re-read, `ssl: isLocal ? false : { rejectUnauthorized: false }` unchanged | UNMITIGATED — CONFIRMED OPEN HIGH |
-| Email endpoint auth | FIND-04 | `src/app/api/notifications/email/route.ts` — full file re-read, no auth import | UNMITIGATED — CONFIRMED OPEN MEDIUM |
-| Session-ownership guard | — | `src/lib/middleware/requireSessionOwner.ts:73-98` — re-read, email comparison intact | SAFE (unchanged) |
-| Rate limiting | FIND-05 | `grep -rn "rate.?limit\|throttle" src/` → zero matches | UNMITIGATED — CONFIRMED OPEN LOW |
-| Assessment closed fail-open | FIND-06 | `src/lib/middleware/assessmentOpenGuard.ts:48-51` — re-read, catch returns `{ ok: true }` | UNMITIGATED — CONFIRMED OPEN LOW |
-| JWT algorithm pin (requireSessionOwner) | FIND-07 | `src/lib/middleware/requireSessionOwner.ts:54` — re-read, no `algorithms` option | UNMITIGATED — CONFIRMED OPEN LOW |
-| CSV formula injection | FIND-10 | `src/lib/services/csvExportService.ts:13-33` — re-read, no leading-char sanitization | UNMITIGATED — CONFIRMED OPEN LOW |
+| Diff scope | — | `git log --oneline -10`; `git status` — only `e2e/uat/*.spec.ts` and `tsconfig.tsbuildinfo` modified, not staged; no functional implementation changes since f1d0c93 | No new attack surface |
+| Dashboard login role verification | SEC-01 | `src/app/api/auth/login/route.ts:35–44` re-read — no `isSystemOwnerEmail()` call; unconditional `role: 'system_owner'` | UNMITIGATED — CONFIRMED OPEN CRITICAL |
+| Dashboard middleware role check | SEC-01 | `src/lib/middleware/requireSystemOwner.ts:16–28` re-read — `verifyJwt(token)` only, comment explicit "Role check removed" | UNMITIGATED — CONFIRMED OPEN CRITICAL |
+| Dead-code correct role-check HOF | — | `src/lib/auth/requireSystemOwner.ts:6–16` re-read — correct check exists, zero routes import it; confirmed by grep of all route files | Confirms fix must target wired-in middleware path |
+| Wiring of session routes | — | `src/app/api/sessions/[sessionId]/route.ts:3,43` re-read — imports `requireSessionOwner` from `@/lib/auth/requireSessionOwner` (HOF, correct) not from broken middleware path | SAFE |
+| Secrets in tracked env files | SEC-02, SEC-03 | `.env`, `.env.local`, `.env.local.QUARANTINED-INCIDENT-20260722` all re-read; `git ls-files` confirms all tracked | UNMITIGATED — CONFIRMED OPEN CRITICAL/HIGH |
+| `.gitignore` env patterns | SEC-09 | `.gitignore` lines 1–122 re-read — only `.venv/`/`venv/` env-like patterns; no `.env*` exclusions | UNMITIGATED — CONFIRMED OPEN LOW |
+| TLS verification | SEC-04 | `src/lib/db.ts:24` re-read — `ssl: isLocal ? false : { rejectUnauthorized: false }` unchanged; `.env.local:5` `NODE_TLS_REJECT_UNAUTHORIZED=0` confirmed | UNMITIGATED — CONFIRMED OPEN HIGH |
+| Unauthenticated email endpoint | SEC-05 | `src/app/api/notifications/email/route.ts:1–42` full re-read — zero auth imports | UNMITIGATED — CONFIRMED OPEN MEDIUM |
+| Session-ownership IDOR guard | — | `src/lib/middleware/requireSessionOwner.ts:73–98` re-read — DB lookup + case-insensitive email comparison intact | SAFE |
+| Rate limiting | SEC-07 | `grep -rn "rate.?limit\|throttle" src/` → zero matches | UNMITIGATED — CONFIRMED OPEN LOW |
+| Assessment closed guard fail-open | SEC-06 | `src/lib/middleware/assessmentOpenGuard.ts:48–51` re-read — catch returns `{ ok: true }` | UNMITIGATED — CONFIRMED OPEN LOW |
+| JWT algorithm pin — all call sites | SEC-08 | `grep -rn "jwtVerify" src/` → 3 call sites; `authService.ts:31` pins `HS256`; `requireSessionOwner.ts:54` and `config/route.ts:61` do not | UNMITIGATED — CONFIRMED OPEN LOW (×2 call sites, both safe in practice) |
+| CSV formula injection | SEC-10 | `src/lib/services/csvExportService.ts:13–33` re-read — no leading-char sanitization in `flattenAnswerPayload()` | UNMITIGATED — CONFIRMED OPEN LOW |
+| Analytics SQL injection | — | `src/lib/services/analyticsService.ts` full read — all raw `sql\`...\`` blocks use parameterized Drizzle `${variable}` expressions; no user strings spliced directly | SAFE |
+| `emailService.ts` SSRF | — | `src/lib/services/emailService.ts:19,39` — `relayUrl` from `process.env.EMAIL_RELAY_URL`; not user-input-derived; no classic SSRF | SAFE (env-misconfiguration risk only; classified as AR-05) |
+| Dashboard service SQL (sortBy/search/teamType) | — | `src/lib/services/dashboardService.ts:59–67` — `sortBy` allowlist map; `search` via `ilike()` parameterized; `teamType` via `ANY()` parameterized | SAFE |
+| CSV export SQL filter params | — | `src/lib/services/csvExportService.ts:39–56` — same Drizzle parameterized patterns as dashboardService | SAFE |
