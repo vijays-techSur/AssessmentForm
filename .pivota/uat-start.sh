@@ -5,6 +5,7 @@ set -u
 PORT="${UAT_PORT:-3000}"
 BS="${BUILD_SYSTEM:-}"
 LOG=/tmp/pivota-uat-app.log
+# Free the port + any prior server so re-runs are clean.
 PRIOR_PID="$(cat /tmp/pivota-uat-app.pid 2>/dev/null || true)"
 if [ -n "$PRIOR_PID" ] && kill -0 "$PRIOR_PID" 2>/dev/null; then
   PGID="$(ps -o pgid= -p "$PRIOR_PID" 2>/dev/null | tr -d ' ')"
